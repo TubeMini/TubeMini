@@ -1,0 +1,13 @@
+# tubemini-server — chép file này thành config.toml đặt cạnh tubemini-server.exe rồi sửa.
+listen = "0.0.0.0:8080"
+auth_token = ""              # để rỗng = tắt (chỉ áp dụng cho /tm/v1)
+data_dir = "./data"          # sqlite + cache
+yt_dlp_path = "yt-dlp"       # hoặc đường dẫn tuyệt đối tới yt-dlp.exe
+max_ytdlp_procs = 3
+force_ipv4 = true            # bắt buộc, để IP của link khớp với iPad
+medium_quality = true        # /getvideo không có tiền tố độ phân giải thì trả 360p
+hls_resolution = 720         # độ phân giải mặc định cho HLS
+home_feed = "popular"        # trang chủ app cũ: "popular" hoặc "subscriptions"
+log_queries = false          # không ghi từ khóa tìm kiếm vào log
+region = "VN"
+language = "vi"
