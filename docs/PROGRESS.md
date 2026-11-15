@@ -321,6 +321,16 @@
 ### Còn tồn
 
 - Phép thử 4G / IP khác (anh làm): quyết định có cần proxy khi ở ngoài nhà hay không.
-- Chưa build thử Docker image (PC không có Docker). HTTPS cho iOS 6 chưa thử (Let's Encrypt không chạy được).
-- Video (không phải chỉ nghe) vẫn dừng khi app xuống nền.
-- Bản tải là 360p; HLS 720p / 1080p không tải được để xem offline.
+- HTTPS cho iOS 6 chưa thử (Let's Encrypt không chạy được).
+- ~~Chưa build thử Docker image~~, ~~video thường dừng khi app xuống nền~~, ~~bản tải chỉ có 360p~~: đã làm, xem phần bổ sung bên
+  dưới.
+
+### Bổ sung sau Giai đoạn 5 (anh yêu cầu, 15/11/2026)
+
+- [x] **Video thường cũng phát tiếng khi app xuống nền / khoá màn hình** (D29). Đã thử: chuyển sang app Cài đặt, video vẫn chạy (giây
+  12,8 → 23,6), quay lại thì hình chạy tiếp.
+- [x] **Tải về chọn 360p / 720p / 1080p** (D29): bảng chọn ghi dung lượng ước tính. 720p / 1080p tải từng segment HLS, xem offline
+  qua máy chủ HTTP nhỏ trong app. Video bị lồng tiếng AI có mục "360p (tiếng gốc)". Đã thử: bản tin 19 phút ở 720p tải trong 43 giây
+  (94,5 MB), phát từ trong máy (127.0.0.1), tua tới giây 300 có ngay.
+- [x] **Docker image** build thử bằng Podman trên máy build: chạy được; server giờ tắt êm khi nhận SIGTERM (`docker stop` 0,13
+  giây thay vì 10 giây).

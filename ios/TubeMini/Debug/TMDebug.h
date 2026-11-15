@@ -27,6 +27,8 @@
 ///   homesource subs|popular   home feed                refresh       home refresh button / pull to refresh
 ///   delrow <row>        swipe row <row> away (subscriptions, history)  clearhistory  "Xoá hết" (history)
 ///   listenbtn / dlbtn   tap "Chỉ nghe" / "Tải về" on the video page    downloads     log the downloads
+///   dlq <quality>       download the open video at 360 / 720 / 1080 (no choice sheet)
+///   dldel <video id>    delete a download
 ///   opendl <row>        tap a row of "Đã tải"                          nowplaying    log the lock screen info
 ///   proxy on|off        "Phát qua máy chủ"                             bonjour       "Tìm máy chủ trong mạng"
 ///   audio [status|toggle|seek <s>|skip <s>|stop]   the "Chỉ nghe" player behind the mini bar

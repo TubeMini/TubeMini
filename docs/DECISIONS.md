@@ -398,3 +398,26 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
   - **Mạng nhà anh:** iPad ở `192.168.2.x`, còn server và PC ở `192.168.1.x/24`, khác mạng con. Router không chuyển tiếp mDNS, nên
     iPad không tự tìm thấy server; app báo rõ lý do. Mạng nhà chỉ có một dải IP thì sẽ tìm được.
 - **VPS:** có `server/Dockerfile`. Chứng chỉ Let's Encrypt không chạy trên iOS 6 (thiếu gốc ISRG Root X1), nên khuyên dùng VPN.
+
+## D29. Video phát tiếp khi xuống nền; tải về 720p / 1080p bằng HLS — 15/11/2026
+
+- **Video ở nền:** iOS dừng MPMoviePlayerController có hình khi app rời màn hình. App đã có phiên âm thanh "playback" và
+  `UIBackgroundModes = audio`, nên chỉ cần ghi lại "đang phát" ở `willResignActive`, rồi gọi `play` lại sau khoảng 0,3 giây
+  (ở `didEnterBackground`, hoặc khi trình phát bị dừng trong vòng 1,5 giây sau khi app mất focus, trường hợp khoá màn hình). Tiếng
+  chạy tiếp, hình không vẽ; quay lại app thì hình chạy tiếp. Lần tạm dừng do người dùng về sau không bị đè.
+- **Tải 720p / 1080p:** YouTube không còn MP4 liền mạch trên 360p, chỉ có HLS (segment MPEG-TS hình + AAC tiếng tách riêng).
+  Không dùng ffmpeg, và video vẫn không đi qua server:
+  - app lấy playlist master đã lọc của server cho mức đó, rồi playlist hình / tiếng trên googlevideo;
+  - tải hết segment (3 cái cùng lúc, ghi file tạm rồi đổi tên, nên không có segment dở dang), viết `master.m3u8`, `video.m3u8` và
+    `audio.m3u8` trỏ tới file trong máy;
+  - link hết hạn (403) thì xin playlist mới: cùng segment, cùng thứ tự, tải tiếp đúng chỗ; mở lại app thì bỏ qua segment đã có.
+  - iOS 6 không phát HLS từ `file://`, nên app có **máy chủ HTTP nhỏ** (`TMLocalServer`, socket BSD + GCD, chỉ `127.0.0.1`, chỉ
+    file trong thư mục tải về, có Range). Trình phát đọc qua đó y như từ googlevideo.
+  - Dung lượng ước tính = BANDWIDTH × thời lượng × 0,55 (BANDWIDTH là đỉnh; đo thực tế: 720p ước 190 MB, thật 94,5 MB). App kiểm
+    chỗ trống trước khi tải, chừa 300 MB.
+  - Video có MP4 lồng tiếng AI thì 360p tải bằng HLS để có tiếng gốc.
+  - Lỗi bắt được khi thử: playlist tiếng đánh số segment tiếp theo playlist hình (`a/00205.ts`) trong khi file là `a/00000.ts`.
+- **Docker:** build thử bằng Podman trên máy build: image 247 MB, chạy được. Lỗi tìm ra: server làm PID 1 trong container chỉ xử lý
+  Ctrl+C, nên `docker stop` phải đợi 10 giây rồi giết; nay xử lý cả SIGTERM. Đã xoá image thử, giữ nguyên image của dự án khác.
+- Một lần em sửa template bằng script Python mở file ở chế độ ghi trước khi đọc, làm `streams.xml` rỗng; `INSTA_UPDATE=always` còn
+  ghi snapshot rỗng theo. Clippy (trường không dùng) phát hiện, đã khôi phục từ git. Từ nay đọc xong mới ghi.

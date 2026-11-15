@@ -15,4 +15,6 @@
 /// Same as tapping "Chỉ nghe" / "Tải về" (debug commands).
 - (void)listen;
 - (void)download;
+/// Downloads at `quality` (360 / 720 / 1080) without the choice sheet (debug commands).
+- (void)downloadQuality:(NSInteger)quality;
 @end

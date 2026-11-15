@@ -8,7 +8,8 @@ Xem YouTube trên iPad mini 1 (iOS 6, đã jailbreak), gồm hai phần:
   TubeRepair dùng lại được, và có thêm API `/tm/v1` cho app TubeMini. Server chỉ trả XML và link video; video thì iPad tải
   thẳng từ Google.
 - **`ios/TubeMini/` — app TubeMini** (Objective-C, Theos, armv7, iOS 6.0): app YouTube mới, giao diện tiếng Việt. Có tìm kiếm,
-  phát 360p / 720p / 1080p, theo dõi kênh (feed trang chủ), lịch sử và xem tiếp, trang kênh, giao diện sáng / tối.
+  phát 360p / 720p / 1080p, theo dõi kênh (feed trang chủ), lịch sử và xem tiếp, trang kênh, giao diện sáng / tối, chỉ nghe
+  (phát nền, thanh nghe nhạc thu nhỏ), tải về 360p / 720p / 1080p để xem offline.
   Kênh theo dõi và lịch sử lưu trên server (SQLite).
 
 Tài liệu:

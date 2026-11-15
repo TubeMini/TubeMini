@@ -201,4 +201,5 @@ docker exec -it tubemini sh -c 'vi /data/config.toml'   # đặt auth_token, reg
 - **HTTPS và iOS 6:** chứng chỉ Let's Encrypt **không chạy** trên iOS 6, vì máy không có gốc ISRG Root X1 (mới có từ 2015).
   Muốn HTTPS thì cần chứng chỉ nối tới một gốc mà iOS 6 tin (ví dụ GlobalSign Root CA R1, DigiCert Global Root CA). Em chưa thử
   cách này. Cách đơn giản hơn: VPS chạy HTTP + mã truy cập, và iPad vào qua VPN (dựng L2TP/IPsec trên chính VPS).
-- Em chưa build thử image này: máy PC không có Docker.
+- Đã build thử bằng Podman trên máy build Ubuntu (khoảng 4 phút): container chạy, `ping` và tìm kiếm trả kết quả, `docker stop` tắt
+  ngay (server xử lý SIGTERM).

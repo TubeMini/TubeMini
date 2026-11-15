@@ -46,6 +46,7 @@
             s.quality = [a[@"quality"] integerValue];
             s.kind = a[@"kind"] ?: @"mp4";
             s.url = a[@"url"];
+            s.bandwidth = [a[@"bandwidth"] longLongValue];
             [streams addObject:s];
         }
     }

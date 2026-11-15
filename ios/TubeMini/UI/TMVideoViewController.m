@@ -17,6 +17,8 @@
     BOOL _descExpanded, _subBusy;
     NSInteger _quality;
     NSInteger _resumeAt; // seconds, from the watch history; 0 = from the start
+    NSArray *_downloadChoices; // @{title, quality, hls, bytes} shown in the sheet
+    BOOL _loadingChoices;
     CGFloat _laidOutWidth;
 }
 
@@ -284,9 +286,10 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     TMDownloads *d = [TMDownloads shared];
     TMDownload *x = [d itemFor:_video.videoID];
     // (nil first: a nil item's state reads as 0 = TMDownloadWaiting)
-    if (!x || x.state == TMDownloadFailed) {
-        _video.position = _resumeAt; // the saved copy resumes there too
-        [d add:_video];              // new, or retry after a failure
+    if (x.state == TMDownloadFailed) {
+        [d retry:_video.videoID];
+    } else if (!x) {
+        [self chooseDownload];
     } else if (x.state == TMDownloadDone) {
         // Already on the iPad: play the saved copy (works without network)
         [[TMPlayer shared] playFile:x.filePath video:_video startAt:_resumeAt from:self];
@@ -299,6 +302,84 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     }
 }
 
+/// The levels this video can be saved at, with their size: 360p MP4 (or 360p HLS with the original audio
+/// when the MP4 is AI-dubbed), and the HLS levels above.
+- (void)loadDownloadChoices:(void (^)(NSArray *choices, NSString *error))done {
+    NSInteger duration = _video.duration;
+    [[TMAPIClient shared] streams:_video.videoID
+                            fresh:NO
+                       completion:^(TMStreamSet *set, NSString *error) {
+                           if (error) {
+                               done(nil, error);
+                               return;
+                           }
+                           NSMutableArray *choices = [NSMutableArray array];
+                           BOOL mp4 = set.downloadURL.length > 0 && !set.downloadDubbed;
+                           if (mp4) {
+                               // itag 18 is about 0.6 Mbit/s
+                               [choices addObject:@{ @"quality" : @360, @"hls" : @NO, @"bytes" : @(duration * 75000LL), @"title" : @"360p (MP4)" }];
+                           }
+                           for (TMStream *s in set.streams) {
+                               if (![s.kind isEqualToString:@"hls"] || (mp4 && s.quality <= 360)) continue;
+                               NSString *title = s.quality <= 360 ? @"360p (tiếng gốc)" : [NSString stringWithFormat:@"%ldp", (long)s.quality];
+                               // BANDWIDTH is the peak: on average YouTube's HLS uses a bit over half of it
+                               [choices addObject:@{ @"quality" : @(s.quality), @"hls" : @YES, @"bytes" : @(s.bandwidth * duration * 55 / 800),
+                                                     @"title" : title }];
+                           }
+                           if (!choices.count && set.downloadURL.length) {
+                               [choices addObject:@{ @"quality" : @360, @"hls" : @NO, @"bytes" : @(duration * 75000LL),
+                                                     @"title" : @"360p (tiếng lồng AI)" }];
+                           }
+                           done(choices, choices.count ? nil : @"Video này không có bản nào tải về được.");
+                       }];
+}
+
+- (void)startDownload:(NSDictionary *)choice {
+    _video.position = _resumeAt; // the saved copy resumes there too
+    [[TMDownloads shared] add:_video
+                      quality:[choice[@"quality"] integerValue]
+                          hls:[choice[@"hls"] boolValue]
+                     estimate:[choice[@"bytes"] longLongValue]];
+}
+
+- (void)chooseDownload {
+    if (_loadingChoices) return;
+    _loadingChoices = YES;
+    [_downloadButton setTitle:@"⬇ …" forState:UIControlStateNormal];
+    [self loadDownloadChoices:^(NSArray *choices, NSString *error) {
+        self->_loadingChoices = NO;
+        [self updateDownloadTitle];
+        if (error) {
+            [[[UIAlertView alloc] initWithTitle:@"Không tải được" message:error delegate:nil cancelButtonTitle:@"Đóng"
+                              otherButtonTitles:nil] show];
+            return;
+        }
+        self->_downloadChoices = choices;
+        UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Tải về để xem khi không có mạng"
+                                                           delegate:self
+                                                  cancelButtonTitle:nil
+                                             destructiveButtonTitle:nil
+                                                  otherButtonTitles:nil];
+        sheet.tag = 2;
+        for (NSDictionary *c in choices) {
+            long long bytes = [c[@"bytes"] longLongValue];
+            [sheet addButtonWithTitle:bytes > 0 ? [NSString stringWithFormat:@"%@ · khoảng %lld MB", c[@"title"], MAX(bytes >> 20, 1LL)]
+                                                : c[@"title"]];
+        }
+        [sheet showFromRect:self->_downloadButton.frame inView:self->_header animated:YES];
+    }];
+}
+
+- (void)downloadQuality:(NSInteger)quality {
+    [self loadDownloadChoices:^(NSArray *choices, NSString *error) {
+        NSDictionary *pick = nil;
+        for (NSDictionary *c in choices) {
+            if ([c[@"quality"] integerValue] <= quality && (!pick || [c[@"quality"] integerValue] > [pick[@"quality"] integerValue])) pick = c;
+        }
+        if (pick) [self startDownload:pick];
+    }];
+}
+
 - (void)chooseQuality {
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Chất lượng phát"
                                                        delegate:self
@@ -309,6 +390,11 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (actionSheet.tag == 2) {
+        if (buttonIndex >= 0 && buttonIndex < (NSInteger)_downloadChoices.count) [self startDownload:_downloadChoices[(NSUInteger)buttonIndex]];
+        _downloadChoices = nil;
+        return;
+    }
     NSArray *qualities = [TMAPIClient qualities];
     if (buttonIndex < 0 || buttonIndex >= (NSInteger)qualities.count) return;
     _quality = [qualities[(NSUInteger)buttonIndex] integerValue];

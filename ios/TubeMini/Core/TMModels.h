@@ -53,6 +53,8 @@
 @property (nonatomic, assign) NSInteger quality;
 @property (nonatomic, copy) NSString *kind; // "mp4" or "hls"
 @property (nonatomic, copy) NSString *url;
+/// HLS: BANDWIDTH of the variant (bit/s), 0 = unknown. Download size ≈ bandwidth × duration / 8.
+@property (nonatomic, assign) long long bandwidth;
 @end
 
 @interface TMStreamSet : NSObject

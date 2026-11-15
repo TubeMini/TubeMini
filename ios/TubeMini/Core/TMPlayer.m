@@ -2,6 +2,7 @@
 #import "TMAPIClient.h"
 #import "TMAudioPlayer.h"
 #import "TMImageLoader.h"
+#import "TMLocalServer.h"
 #import "TMLibrary.h"
 #import "TMLog.h"
 #import <QuartzCore/QuartzCore.h>
@@ -27,6 +28,8 @@
     NSTimer *_saveTimer;
     NSInteger _lastPosition, _lastDuration; // last known from the player (seconds)
     BOOL _audioOnly;
+    BOOL _wasPlaying; // playing when the app started to leave the screen
+    NSTimeInterval _resignedAt;
     NSString *_localPath;  // playing a downloaded file
     UIImage *_artwork;     // lock screen picture (the video thumbnail)
 }
@@ -43,11 +46,15 @@ static const NSTimeInterval kSaveInterval = 15;
 - (instancetype)init {
     if ((self = [super init])) {
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(saveProgress)
+                                                 selector:@selector(willResignActive)
+                                                     name:UIApplicationWillResignActiveNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didEnterBackground)
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(updateNowPlaying)
+                                                 selector:@selector(playbackStateChanged:)
                                                      name:MPMoviePlayerPlaybackStateDidChangeNotification
                                                    object:nil];
     }
@@ -147,7 +154,9 @@ static const NSTimeInterval kSaveInterval = 15;
     TMStream *s = [[TMStream alloc] init];
     s.kind = @"file";
     s.quality = 360;
-    s.url = [[NSURL fileURLWithPath:path] absoluteString];
+    // HLS can't be played from a file:// URL on iOS 6: serve the folder over HTTP on 127.0.0.1
+    NSURL *url = [path hasSuffix:@".m3u8"] ? [[TMLocalServer shared] urlForFile:path] : [NSURL fileURLWithPath:path];
+    s.url = url.absoluteString;
     _stream = s;
     [self startPlayback];
 }
@@ -217,7 +226,7 @@ static const NSTimeInterval kSaveInterval = 15;
 
 - (NSString *)labelFor:(TMStream *)s {
     if ([s.kind isEqualToString:@"audio"]) return @"chỉ nghe";
-    if ([s.kind isEqualToString:@"file"]) return @"đã tải (360p)";
+    if ([s.kind isEqualToString:@"file"]) return @"đã tải";
     return [s.kind isEqualToString:@"hls"] ? [NSString stringWithFormat:@"%ldp (HLS)", (long)s.quality]
                                            : [NSString stringWithFormat:@"%ldp", (long)s.quality];
 }
@@ -331,6 +340,47 @@ static const NSTimeInterval kSaveInterval = 15;
     }
     TMLog(@"[player] điều khiển từ xa: %ld", (long)event.subtype);
     [self saveProgress];
+}
+
+#pragma mark - Background
+
+- (void)willResignActive {
+    _wasPlaying = _playerVC.moviePlayer.playbackState == MPMoviePlaybackStatePlaying;
+    _resignedAt = [NSDate timeIntervalSinceReferenceDate];
+}
+
+/// Locking the screen may only make the app inactive: the pause iOS does right then is undone too
+/// (only within a moment of it, so a later pause by the user stays).
+- (void)playbackStateChanged:(NSNotification *)n {
+    [self updateNowPlaying];
+    MPMoviePlayerController *p = _playerVC.moviePlayer;
+    if (n.object != p || !_wasPlaying || p.playbackState != MPMoviePlaybackStatePaused) return;
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) return;
+    if ([NSDate timeIntervalSinceReferenceDate] - _resignedAt > 1.5) return;
+    _wasPlaying = NO; // once
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (p != self->_playerVC.moviePlayer || p.playbackState == MPMoviePlaybackStatePlaying) return;
+        TMLog(@"[player] màn hình khoá / app xuống nền: phát tiếp tiếng");
+        [p play];
+    });
+}
+
+/// iOS pauses a movie with video when the app leaves the screen (home button, lock). With the playback
+/// audio session and UIBackgroundModes = audio, playing again right away keeps the sound going in the
+/// background (frames are not drawn); back on screen the picture continues.
+- (void)didEnterBackground {
+    [self saveProgress];
+    if (!_playerVC) return;
+    if (!_wasPlaying && _playerVC.moviePlayer.playbackState != MPMoviePlaybackStatePlaying) {
+        // Already resumed by playbackStateChanged:, or paused by the user
+        return;
+    }
+    MPMoviePlayerController *p = _playerVC.moviePlayer;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (p != self->_playerVC.moviePlayer || p.playbackState == MPMoviePlaybackStatePlaying) return;
+        TMLog(@"[player] app xuống nền: phát tiếp tiếng");
+        [p play];
+    });
 }
 
 #pragma mark - Watch position

@@ -186,6 +186,11 @@ static AVPlayer *gAVPlayer;
     } else if ([verb isEqualToString:@"dlbtn"]) {
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top download];
+    } else if ([verb isEqualToString:@"dldel"]) {
+        [[TMDownloads shared] remove:arg];
+    } else if ([verb isEqualToString:@"dlq"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top downloadQuality:[arg integerValue]];
     } else if ([verb isEqualToString:@"downloads"]) {
         for (TMDownload *x in [TMDownloads shared].items) TMLog(@"[downloads] %@ %@ — %@", x.videoID, x.title, x.statusText);
         TMLog(@"[downloads] tổng %@", [TMDownloads megabytes:[[TMDownloads shared] bytesUsed]]);
@@ -289,6 +294,14 @@ static AVPlayer *gAVPlayer;
         UIAlertView *a = (UIAlertView *)v;
         TMLog(@"[debug] alert: %@ — %@", a.title, a.message);
         [a dismissWithClickedButtonIndex:a.cancelButtonIndex animated:NO];
+        return;
+    }
+    if ([v isKindOfClass:[UIActionSheet class]]) {
+        UIActionSheet *a = (UIActionSheet *)v;
+        NSMutableArray *buttons = [NSMutableArray array];
+        for (NSInteger i = 0; i < a.numberOfButtons; i++) [buttons addObject:[a buttonTitleAtIndex:i]];
+        TMLog(@"[debug] sheet: %@ — %@", a.title, [buttons componentsJoinedByString:@" | "]);
+        [a dismissWithClickedButtonIndex:-1 animated:NO];
         return;
     }
     for (UIView *s in v.subviews) [self dismissAlertsIn:s];
