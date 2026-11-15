@@ -326,7 +326,12 @@ mod tests {
     use super::*;
 
     fn svc() -> Service {
-        Service::new("Living-Room PC", Ipv4Addr::new(192, 168, 1, 30), 8080, "0.5.0")
+        Service::new(
+            "Living-Room PC",
+            Ipv4Addr::new(192, 168, 1, 30),
+            8080,
+            "0.5.0",
+        )
     }
 
     fn query(name: &str, rtype: u16) -> Vec<u8> {
