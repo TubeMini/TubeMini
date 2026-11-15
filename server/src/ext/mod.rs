@@ -137,6 +137,8 @@ const HLS_LEVELS: [u32; 2] = [720, 1080];
 
 struct StreamItem {
     quality: u32,
+    /// HLS only: BANDWIDTH of the kept variant (bit/s), 0 = unknown.
+    bandwidth: u64,
     kind: &'static str,
     url: String,
 }
@@ -205,6 +207,7 @@ async fn streams(
     let mut items: Vec<StreamItem> = Vec::new();
     let hls_item = |res: u32, playlist: &str| StreamItem {
         quality: crate::video::hls::best_height(playlist).unwrap_or(res),
+        bandwidth: crate::video::hls::best_bandwidth(playlist).unwrap_or(0),
         kind: "hls",
         url: format!("{}/getvideo/{id}{suffix}", base_url(&headers, Some(res))),
     };
@@ -212,6 +215,7 @@ async fn streams(
     match &info.progressive {
         Some(url) if !info.progressive_dubbed => items.push(StreamItem {
             quality: 360,
+            bandwidth: 0,
             kind: "mp4",
             url: mp4(url),
         }),
@@ -229,6 +233,7 @@ async fn streams(
         // Dubbed but nothing better: still playable
         items.push(StreamItem {
             quality: 360,
+            bandwidth: 0,
             kind: "mp4",
             url: mp4(url),
         });
@@ -458,11 +463,13 @@ mod tests {
         let items = [
             StreamItem {
                 quality: 360,
+                bandwidth: 0,
                 kind: "mp4",
                 url: "https://rr1.googlevideo.com/videoplayback?a=1&b=2".into(),
             },
             StreamItem {
                 quality: 480,
+                bandwidth: 1_291_038,
                 kind: "hls",
                 url: "http://192.168.1.192:8080/720/getvideo/aqz-KE-bpKQ".into(),
             },

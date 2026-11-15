@@ -248,6 +248,15 @@ pub fn best_height(playlist: &str) -> Option<u32> {
         .max()
 }
 
+/// Highest BANDWIDTH (bit/s) among the variants of a (filtered) master playlist.
+pub fn best_bandwidth(playlist: &str) -> Option<u64> {
+    playlist
+        .lines()
+        .filter_map(|l| l.strip_prefix("#EXT-X-STREAM-INF:"))
+        .filter_map(|list| attr(&attributes(list), "BANDWIDTH")?.parse().ok())
+        .max()
+}
+
 /// Removes a `SUBTITLES="..."` attribute (its renditions are dropped).
 fn strip_subtitles(inf: &str) -> String {
     match inf.find(",SUBTITLES=\"") {
@@ -364,6 +373,19 @@ mod tests {
             ),
             None
         );
+    }
+
+    #[test]
+    fn bandwidth_of_the_kept_variant() {
+        assert_eq!(
+            best_bandwidth(&filter_master(MASTER_MUSIC, 1080, 30.0).unwrap()),
+            Some(3_899_199)
+        );
+        assert_eq!(
+            best_bandwidth(&filter_master(MASTER_MUSIC, 720, 30.0).unwrap()),
+            Some(1_251_049)
+        );
+        assert_eq!(best_bandwidth("#EXTM3U\n"), None);
     }
 
     #[test]
