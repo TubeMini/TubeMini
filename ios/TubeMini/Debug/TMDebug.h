@@ -26,6 +26,7 @@
 ///   back                pop the current screen          pingtest      run "Kiểm tra kết nối"
 ///   dismissalert        log and close visible alerts    ui            log the current screen
 ///   mem                 log the app's resident memory
+///   theme dark|light    switch the colour theme         homemode grid|list   home layout
 @interface TMDebug : NSObject
 + (void)start;
 @end

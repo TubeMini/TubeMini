@@ -266,3 +266,23 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
     thì 360p chuyển sang HLS 360p tiếng gốc: cả `/getvideo` không tiền tố (app cũ) lẫn `streams` (TubeMini).
 - Đã kiểm trên iPad: playlist 360p / 720p của bản tin chỉ còn "Tiếng Việt - original"; AVPlayer báo có track tiếng.
 - Video không có bản lồng tiếng vẫn dùng MP4 360p như trước.
+
+## D24. Giao diện tối, Trang chủ dạng lưới, chặn API iOS 7+ ngay lúc build — 15/11/2026
+
+- **Giao diện tối** (anh yêu cầu): iOS 6 không có dark mode của hệ thống, nên app tự quản một bộ màu sáng / tối (`TMTheme`),
+  chọn trong Cài đặt → Giao diện.
+  - Màu áp qua appearance proxy (thanh điều hướng, thanh tab, ô tìm kiếm, công tắc phân mục) và tô lại các thanh đang hiện.
+  - Đổi giao diện thì phát `TMThemeDidChangeNotification`; mọi màn tô lại và reloadData ngay, không cần mở lại app.
+  - Bàn phím tối (`UIKeyboardAppearanceAlert`). Nút dùng kiểu tự vẽ, vì nút rounded-rect của iOS 6 luôn trắng. Công tắc phân mục
+    phải là kiểu `Bar` mới nhận màu.
+- **Trang chủ dạng lưới** (anh yêu cầu): `UICollectionView` (có từ iOS 6), 3 cột khi dọc, 4 cột khi ngang; công tắc
+  "Danh sách | Lưới" trên thanh điều hướng, app nhớ lựa chọn; nút làm mới.
+  - iOS 6 không có `willDisplayCell` cho collection view, nên tải thêm dựa vào `scrollViewDidScroll`.
+- **Ba lỗi crash do API iOS 7+** trong một ngày (`keyboardDismissMode`, `UICollectionViewController.collectionViewLayout`,
+  `UISearchBar.keyboardAppearance`):
+  - Hai lỗi sau làm app crash khi mở (đã bật chế độ lưới) và khi tìm kiếm ở giao diện tối. Anh gặp đúng lỗi này ("App bị bug").
+  - Đọc báo cáo crash trong `/var/mobile/Library/Logs/CrashReporter/` rồi dịch địa chỉ bằng `llvm-symbolizer` với file dSYM của
+    Theos (`.theos/obj/debug/armv7/TubeMini.app/TubeMini.dSYM`). Địa chỉ trong file = địa chỉ khi crash − base nạp + `0x4000`.
+  - **Từ nay build với `-Werror=unguarded-availability -Werror=partial-availability`:** header SDK 9.3 có ghi chú phiên bản, nên
+    dùng API mới hơn iOS 6.0 là build lỗi luôn. Đã thử: bắt được `collectionViewLayout`, `keyboardDismissMode`, `containsString`.
+    **Không bắt được** `UISearchBar.keyboardAppearance` (SDK không ghi chú), nên vẫn phải nhớ thủ công.

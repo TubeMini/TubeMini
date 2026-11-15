@@ -1,4 +1,5 @@
 #import "TMSearchViewController.h"
+#import "TMTheme.h"
 
 @implementation TMSearchViewController {
     UISearchBar *_bar;
@@ -19,7 +20,18 @@
     _bar.autocorrectionType = UITextAutocorrectionTypeNo;
     [_bar sizeToFit];
     self.tableView.tableHeaderView = _bar;
+    [self applyTheme];
     [self showIdleMessage:@"Nhập từ khoá rồi bấm Tìm."];
+}
+
+- (void)applyTheme {
+    [super applyTheme];
+    TMTheme *t = [TMTheme current];
+    _bar.tintColor = t.dark ? [UIColor colorWithWhite:0.16 alpha:1] : [UIColor colorWithRed:0.75 green:0.24 blue:0.24 alpha:1];
+    // UISearchBar.keyboardAppearance is iOS 7+ (crashes on iOS 6): set it on the inner text field
+    for (UIView *v in _bar.subviews) {
+        if ([v isKindOfClass:[UITextField class]]) ((UITextField *)v).keyboardAppearance = t.keyboard;
+    }
 }
 
 // iOS 6 has no keyboardDismissMode: hide the keyboard when the list starts scrolling

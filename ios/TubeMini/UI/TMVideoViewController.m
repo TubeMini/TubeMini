@@ -2,6 +2,7 @@
 #import "TMFormat.h"
 #import "TMImageLoader.h"
 #import "TMPlayer.h"
+#import "TMTheme.h"
 
 @implementation TMVideoViewController {
     TMVideo *_video;
@@ -64,7 +65,7 @@
 }
 
 static UIButton *makeButton(NSString *title, id target, SEL action) {
-    UIButton *b = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom]; // styled by TMTheme (rounded-rect is always white)
     [b setTitle:title forState:UIControlStateNormal];
     b.titleLabel.font = [UIFont boldSystemFontOfSize:16];
     [b addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
@@ -116,6 +117,20 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     _segment.selectedSegmentIndex = 0;
     [_segment addTarget:self action:@selector(segmentChanged) forControlEvents:UIControlEventValueChanged];
     [_header addSubview:_segment];
+    [self applyTheme];
+}
+
+- (void)applyTheme {
+    [super applyTheme];
+    TMTheme *t = [TMTheme current];
+    _header.backgroundColor = t.background;
+    _title.textColor = t.text;
+    _meta.textColor = t.secondaryText;
+    _desc.textColor = t.secondaryText;
+    for (UIButton *b in @[ _playButton ?: [NSNull null], _qualityButton ?: [NSNull null], _channelButton ?: [NSNull null] ]) {
+        if ([b isKindOfClass:[UIButton class]]) [t styleButton:b];
+    }
+    _segment.tintColor = t.dark ? [UIColor colorWithWhite:0.28 alpha:1] : [UIColor colorWithRed:0.62 green:0.08 blue:0.08 alpha:1];
 }
 
 - (void)fillHeader {

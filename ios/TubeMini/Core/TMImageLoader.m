@@ -1,4 +1,5 @@
 #import "TMImageLoader.h"
+#import "TMTheme.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <objc/runtime.h>
 
@@ -47,11 +48,12 @@ static const NSTimeInterval kDiskMaxAge = 7 * 86400;
     static NSCache *cache;
     static dispatch_once_t once;
     dispatch_once(&once, ^{ cache = [[NSCache alloc] init]; });
-    NSString *key = NSStringFromCGSize(size);
+    TMTheme *theme = [TMTheme current];
+    NSString *key = [NSString stringWithFormat:@"%@|%d", NSStringFromCGSize(size), theme.dark];
     UIImage *img = [cache objectForKey:key];
     if (!img) {
         UIGraphicsBeginImageContextWithOptions(size, YES, 0);
-        [[UIColor colorWithWhite:0.88 alpha:1] setFill];
+        [theme.placeholder setFill];
         UIRectFill(CGRectMake(0, 0, size.width, size.height));
         img = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();

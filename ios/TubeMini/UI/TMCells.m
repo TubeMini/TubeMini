@@ -1,8 +1,23 @@
 #import "TMCells.h"
 #import "TMFormat.h"
 #import "TMImageLoader.h"
+#import "TMTheme.h"
 
 static const CGFloat kThumbW = 160, kThumbH = 90;
+
+/// Background + selection colours of a cell for the current theme.
+static void themeCell(UITableViewCell *cell) {
+    TMTheme *t = [TMTheme current];
+    cell.backgroundColor = t.cellBackground;
+    cell.contentView.backgroundColor = t.cellBackground;
+    UIView *sel = cell.selectedBackgroundView;
+    if (!sel || sel.tag != 77) {
+        sel = [[UIView alloc] init];
+        sel.tag = 77;
+        cell.selectedBackgroundView = sel;
+    }
+    sel.backgroundColor = t.selection;
+}
 
 static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
     UILabel *l = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -56,6 +71,9 @@ static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
 }
 
 - (void)configureWithVideo:(TMVideo *)v {
+    themeCell(self);
+    _title.textColor = [TMTheme current].text;
+    _meta.textColor = [TMTheme current].secondaryText;
     _title.text = v.title;
     _meta.text = [TMFormat join:@[ v.author ?: @"", [TMFormat views:v.views], [TMFormat relativeDate:v.published] ]];
     _duration.text = [TMFormat duration:v.duration];
@@ -101,6 +119,9 @@ static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
 }
 
 - (void)configureWithChannel:(TMChannel *)c {
+    themeCell(self);
+    _name.textColor = [TMTheme current].text;
+    _meta.textColor = [TMTheme current].secondaryText;
     _name.text = c.name;
     NSString *subs = c.subscribers > 0 ? [NSString stringWithFormat:@"%@ người đăng ký", [TMFormat count:c.subscribers]] : @"";
     NSString *vids = c.videoCount > 0 ? [NSString stringWithFormat:@"%@ video", [TMFormat count:c.videoCount]] : @"";
@@ -152,6 +173,9 @@ static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
 }
 
 - (void)configureWithComment:(TMComment *)c {
+    themeCell(self);
+    _head.textColor = [TMTheme current].secondaryText;
+    _text.textColor = [TMTheme current].text;
     NSString *replies = c.replies > 0 ? [NSString stringWithFormat:@"%ld trả lời", (long)c.replies] : @"";
     _head.text = [TMFormat join:@[ c.author ?: @"", [TMFormat relativeDate:c.published], replies ]];
     _text.text = c.text;
@@ -190,12 +214,20 @@ static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
 
 - (void)showLoading {
     _label.text = nil;
+    [self applyTheme];
     [_spin startAnimating];
 }
 
 - (void)showMessage:(NSString *)message {
     [_spin stopAnimating];
     _label.text = message;
+    [self applyTheme];
+}
+
+- (void)applyTheme {
+    TMTheme *t = [TMTheme current];
+    _label.textColor = t.secondaryText;
+    _spin.activityIndicatorViewStyle = t.dark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
 }
 
 @end

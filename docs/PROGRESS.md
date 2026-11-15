@@ -185,6 +185,17 @@
 
 - Trình phát dùng MPMoviePlayerViewController toàn màn hình, chưa có trình phát nhúng trong trang.
 - Chưa có lịch sử / xem tiếp, theo dõi kênh, trang kênh đầy đủ (Giai đoạn 4).
-- Kiểm tra API iOS 7+ trước khi build đang làm bằng grep tay. Danh sách đang grep: `containsString`, `firstObject`, `separatorInset`,
-  `estimatedRowHeight`, `keyboardDismissMode`, `sizeWithAttributes`, `boundingRectWithSize`, `NSURLSession`, `UIAlertController`,
-  `barTintColor`, `tintColor` (trên UIView), `stringByAddingPercentEncoding`, `NSURLComponents`, `automaticallyAdjustsScrollViewInsets`.
+- API iOS 7+ giờ là lỗi build (D24); riêng `UISearchBar.keyboardAppearance` không bị bắt.
+
+### Bổ sung sau Giai đoạn 3 (anh yêu cầu, 15/11/2026)
+
+- [x] **Tiếng gốc thay cho lồng tiếng AI** (D23): video tiếng Việt không còn phát tiếng Anh.
+- [x] **Giao diện tối** (Cài đặt → Giao diện: Sáng / Tối), áp cho mọi màn (D24).
+- [x] **Trang chủ dạng lưới**: công tắc "Danh sách | Lưới", 3–4 cột, tải thêm khi cuộn (D24).
+- [x] Sửa hai lỗi crash do API iOS 7+, và bật cờ biên dịch để chặn loại lỗi này từ lúc build.
+
+Đã kiểm trên iPad (ảnh chụp):
+- lưới 4 cột khi ngang, cả sáng lẫn tối;
+- giao diện tối ở Trang chủ, Tìm kiếm (video, kênh), trang kênh, Chi tiết video, Cài đặt;
+- chuyển qua lại Lưới / Danh sách và Sáng / Tối không crash;
+- RAM khoảng 10–12 MB.

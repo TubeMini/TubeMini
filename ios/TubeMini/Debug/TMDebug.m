@@ -1,6 +1,9 @@
 #import "TMDebug.h"
 #import "TMAppDelegate.h"
 #import "TMAPIClient.h"
+#import "TMGridViewController.h"
+#import "TMHomeViewController.h"
+#import "TMTheme.h"
 #import "TMListViewController.h"
 #import "TMPlayer.h"
 #import "TMSearchViewController.h"
@@ -119,8 +122,15 @@ static AVPlayer *gAVPlayer;
         BOOL channels = [arg hasPrefix:@"ch:"];
         [search runSearch:channels ? [arg substringFromIndex:3] : arg scope:channels ? 1 : 0];
     } else if ([verb isEqualToString:@"open"]) {
-        UIViewController *top = [self nav].topViewController;
+        UIViewController *top = [self topScreen];
         if ([top isKindOfClass:[TMListViewController class]]) [(TMListViewController *)top selectRow:[arg integerValue]];
+        if ([top isKindOfClass:[TMGridViewController class]]) [(TMGridViewController *)top selectItem:[arg integerValue]];
+    } else if ([verb isEqualToString:@"theme"]) {
+        [TMTheme setDark:[arg isEqualToString:@"dark"]];
+    } else if ([verb isEqualToString:@"homemode"]) {
+        UINavigationController *homeNav = (UINavigationController *)[self app].tabs.viewControllers[0];
+        UIViewController *home = homeNav.viewControllers[0];
+        if ([home isKindOfClass:[TMHomeViewController class]]) [(TMHomeViewController *)home setGridMode:[arg isEqualToString:@"grid"]];
     } else if ([verb isEqualToString:@"playbtn"]) {
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top play];
@@ -128,11 +138,11 @@ static AVPlayer *gAVPlayer;
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top showSection:[arg integerValue]];
     } else if ([verb isEqualToString:@"scrollend"]) {
-        UIViewController *top = [self nav].topViewController;
-        if ([top isKindOfClass:[UITableViewController class]]) {
-            UITableView *tv = ((UITableViewController *)top).tableView;
-            [tv setContentOffset:CGPointMake(0, MAX(0, tv.contentSize.height - tv.bounds.size.height)) animated:NO];
-        }
+        UIViewController *top = [self topScreen];
+        UIScrollView *sv = nil;
+        if ([top isKindOfClass:[UITableViewController class]]) sv = ((UITableViewController *)top).tableView;
+        if ([top isKindOfClass:[UICollectionViewController class]]) sv = ((UICollectionViewController *)top).collectionView;
+        [sv setContentOffset:CGPointMake(0, MAX(0, sv.contentSize.height - sv.bounds.size.height)) animated:NO];
     } else if ([verb isEqualToString:@"back"]) {
         [[self nav] popViewControllerAnimated:NO];
     } else if ([verb isEqualToString:@"pingtest"]) {
@@ -195,16 +205,26 @@ static AVPlayer *gAVPlayer;
 }
 
 /// One line describing where the app is: tab, top screen, rows, footer text, visible alerts.
+/// Top screen of the current tab, looking through the home container to its list / grid.
++ (UIViewController *)topScreen {
+    UIViewController *top = [self nav].topViewController;
+    if ([top isKindOfClass:[TMHomeViewController class]]) return [(TMHomeViewController *)top activeChild];
+    return top;
+}
+
 + (void)logUI {
     TMAppDelegate *app = [self app];
-    UIViewController *top = [app nav].topViewController;
+    UIViewController *top = [self topScreen];
     NSMutableString *line = [NSMutableString stringWithFormat:@"[ui] tab=%lu top=%@ title=%@", (unsigned long)app.tabs.selectedIndex,
                                                               NSStringFromClass([top class]), top.title];
-    if ([top isKindOfClass:[TMListViewController class]]) {
-        TMListViewController *list = (TMListViewController *)top;
-        [line appendFormat:@" rows=%lu", (unsigned long)list.items.count];
-        if (list.items.count) {
-            id first = list.items[0];
+    NSArray *items = nil;
+    if ([top isKindOfClass:[TMListViewController class]]) items = ((TMListViewController *)top).items;
+    if ([top isKindOfClass:[TMGridViewController class]]) items = ((TMGridViewController *)top).items;
+    [line appendFormat:@" dark=%d", [TMTheme isDark]];
+    if (items) {
+        [line appendFormat:@" rows=%lu", (unsigned long)items.count];
+        if (items.count) {
+            id first = items[0];
             if ([first respondsToSelector:@selector(title)]) [line appendFormat:@" first=\"%@\"", [first valueForKey:@"title"]];
             else if ([first respondsToSelector:@selector(name)]) [line appendFormat:@" first=\"%@\"", [first valueForKey:@"name"]];
             else if ([first respondsToSelector:@selector(text)]) [line appendFormat:@" first=\"%@\"", [first valueForKey:@"text"]];

@@ -24,4 +24,6 @@
 @property (nonatomic, copy) void (^onTap)(void);
 - (void)showLoading;
 - (void)showMessage:(NSString *)message;
+/// Re-reads the theme colours.
+- (void)applyTheme;
 @end

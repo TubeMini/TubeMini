@@ -1,5 +1,6 @@
 #import "TMListViewController.h"
 #import "TMCells.h"
+#import "TMTheme.h"
 #import "TMVideoViewController.h"
 
 static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", *const kCommentCell = @"comment";
@@ -37,7 +38,27 @@ static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", 
     __weak TMListViewController *weakSelf = self;
     _footer.onTap = ^{ [weakSelf retry]; };
     self.tableView.tableFooterView = _footer;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(themeChanged)
+                                                 name:TMThemeDidChangeNotification
+                                               object:nil];
+    [self applyTheme];
     if (self.firstPage) [self reload];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)applyTheme {
+    [[TMTheme current] styleTableView:self.tableView];
+    self.refreshControl.tintColor = [TMTheme current].secondaryText;
+    [_footer applyTheme];
+}
+
+- (void)themeChanged {
+    [self applyTheme];
+    [self.tableView reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

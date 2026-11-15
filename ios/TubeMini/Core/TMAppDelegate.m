@@ -1,10 +1,12 @@
 #import "TMAppDelegate.h"
 #import "TMAPIClient.h"
 #import "TMImageLoader.h"
+#import "TMHomeViewController.h"
 #import "TMListViewController.h"
 #import "TMLog.h"
 #import "TMSearchViewController.h"
 #import "TMSettingsViewController.h"
+#import "TMTheme.h"
 #ifdef TM_DEBUG
 #import "TMDebug.h"
 #endif
@@ -33,7 +35,6 @@ static UIImage *icon(TMDrawBlock draw) {
 
 - (UINavigationController *)wrap:(UIViewController *)vc title:(NSString *)title image:(UIImage *)image {
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.navigationBar.tintColor = [UIColor colorWithRed:0.62 green:0.08 blue:0.08 alpha:1];
     nav.tabBarItem = [[UITabBarItem alloc] initWithTitle:title image:image tag:0];
     return nav;
 }
@@ -43,11 +44,9 @@ static UIImage *icon(TMDrawBlock draw) {
     TMLog(@"TubeMini %@ khởi động — iOS %@, %@", info[@"CFBundleShortVersionString"],
           [UIDevice currentDevice].systemVersion, TMDeviceModel());
     [TMImageLoader shared]; // registers for memory warnings early
+    [TMTheme applyGlobalAppearance]; // light or dark, before any bar is created
 
-    TMListViewController *home = [[TMListViewController alloc]
-        initWithTitle:@"Phổ biến"
-            firstPage:^(TMFeedBlock done) { [[TMAPIClient shared] popular:done]; }];
-    home.emptyMessage = @"Máy chủ chưa có video phổ biến.";
+    TMHomeViewController *home = [[TMHomeViewController alloc] init];
 
     UIImage *homeIcon = icon(^(CGContextRef ctx) {
         CGContextMoveToPoint(ctx, 15, 3);
@@ -79,7 +78,7 @@ static UIImage *icon(TMDrawBlock draw) {
     ];
 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.backgroundColor = [UIColor whiteColor];
+    self.window.backgroundColor = [TMTheme current].background;
     self.window.rootViewController = self.tabs;
     [self.window makeKeyAndVisible];
 

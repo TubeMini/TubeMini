@@ -17,4 +17,6 @@ typedef void (^TMFirstPageBlock)(TMFeedBlock done);
 - (void)selectRow:(NSInteger)row;
 /// Shows a message in the footer without loading (e.g. "type to search").
 - (void)showIdleMessage:(NSString *)message;
+/// Re-applies theme colours; subclasses extend it (called on TMThemeDidChangeNotification, then reloadData).
+- (void)applyTheme;
 @end

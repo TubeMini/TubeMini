@@ -1,12 +1,13 @@
 #import "TMSettingsViewController.h"
 #import "TMAPIClient.h"
 #import "TMLog.h"
+#import "TMTheme.h"
 
-enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTest, kSectionCount };
+enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTest, kSectionCount };
 
 @implementation TMSettingsViewController {
     UITextField *_server, *_token;
-    UISegmentedControl *_quality;
+    UISegmentedControl *_quality, *_theme;
     UIActivityIndicatorView *_spin;
     BOOL _testing;
 }
@@ -43,8 +44,78 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTest, kSectionCou
     _token.text = api.token;
     _quality = [[UISegmentedControl alloc] initWithItems:@[ @"360p", @"720p" ]];
     _quality.selectedSegmentIndex = api.preferredQuality >= 720 ? 1 : 0;
+    _quality.segmentedControlStyle = UISegmentedControlStyleBar; // iOS 6 only tints the bar style
     [_quality addTarget:self action:@selector(save) forControlEvents:UIControlEventValueChanged];
+    _theme = [[UISegmentedControl alloc] initWithItems:@[ @"Sáng", @"Tối" ]];
+    _theme.selectedSegmentIndex = [TMTheme isDark] ? 1 : 0;
+    _theme.segmentedControlStyle = UISegmentedControlStyleBar;
+    [_theme addTarget:self action:@selector(themePicked) forControlEvents:UIControlEventValueChanged];
     _spin = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applyTheme)
+                                                 name:TMThemeDidChangeNotification
+                                               object:nil];
+    [self applyTheme];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)themePicked {
+    [TMTheme setDark:_theme.selectedSegmentIndex == 1];
+}
+
+- (void)applyTheme {
+    TMTheme *t = [TMTheme current];
+    [t styleTableView:self.tableView];
+    for (UITextField *f in @[ _server, _token ]) {
+        f.textColor = t.text;
+        f.keyboardAppearance = t.keyboard;
+    }
+    UIColor *seg = t.dark ? [UIColor colorWithWhite:0.28 alpha:1] : [UIColor colorWithRed:0.62 green:0.08 blue:0.08 alpha:1];
+    _quality.tintColor = seg;
+    _theme.tintColor = seg;
+    _theme.selectedSegmentIndex = t.dark ? 1 : 0;
+    _spin.activityIndicatorViewStyle = t.dark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
+    [self.tableView reloadData];
+}
+
+/// Grouped section titles drawn in theme colours (iOS 6 draws them grey with a white shadow).
+- (UIView *)sectionLabel:(NSString *)text header:(BOOL)header {
+    if (!text.length) return nil;
+    UIView *box = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, header ? 44 : 60)];
+    box.backgroundColor = [UIColor clearColor];
+    UILabel *l = [[UILabel alloc] initWithFrame:CGRectInset(box.bounds, 50, header ? 6 : 4)];
+    l.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    l.backgroundColor = [UIColor clearColor];
+    l.numberOfLines = 3;
+    l.text = text;
+    l.font = header ? [UIFont boldSystemFontOfSize:17] : [UIFont systemFontOfSize:15];
+    l.textColor = header ? [TMTheme current].text : [TMTheme current].secondaryText;
+    l.textAlignment = header ? NSTextAlignmentLeft : NSTextAlignmentCenter;
+    [box addSubview:l];
+    return box;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    return [self sectionLabel:[self tableView:tableView titleForHeaderInSection:section] header:YES];
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [self sectionLabel:[self tableView:tableView titleForFooterInSection:section] header:NO];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return [self tableView:tableView titleForHeaderInSection:section].length ? 44 : 10;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return [self tableView:tableView titleForFooterInSection:section].length ? 60 : 10;
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    cell.backgroundColor = [TMTheme current].cellBackground; // iOS 6 grouped cells only take it here
 }
 
 - (void)reloadFields {
@@ -100,6 +171,7 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTest, kSectionCou
     case kSectionServer: return @"Địa chỉ máy chủ";
     case kSectionToken: return @"Mã truy cập";
     case kSectionQuality: return @"Chất lượng mặc định";
+    case kSectionTheme: return @"Giao diện";
     default: return nil;
     }
 }
@@ -126,10 +198,12 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTest, kSectionCou
     case kSectionServer: control = _server; break;
     case kSectionToken: control = _token; break;
     case kSectionQuality: control = _quality; break;
+    case kSectionTheme: control = _theme; break;
     case kSectionTest:
         cell.textLabel.text = _testing ? @"Đang kiểm tra…" : @"Kiểm tra kết nối";
         cell.textLabel.textAlignment = NSTextAlignmentCenter;
-        cell.textLabel.textColor = [UIColor colorWithRed:0.2 green:0.33 blue:0.55 alpha:1];
+        cell.textLabel.textColor = [TMTheme current].accent;
+        cell.textLabel.backgroundColor = [UIColor clearColor];
         cell.selectionStyle = UITableViewCellSelectionStyleBlue;
         _spin.center = CGPointMake(30, 22);
         _testing ? [_spin startAnimating] : [_spin stopAnimating];
