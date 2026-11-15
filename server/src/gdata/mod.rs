@@ -28,6 +28,8 @@ pub fn routes() -> Router<AppState> {
         )
         .route("/feeds/api/videos", get(search))
         .route("/feeds/api/videos/", get(search))
+        .route("/feeds/api/videos/{id}", get(single_video))
+        .route("/feeds/player/videos/{id}", get(single_video))
         .route("/feeds/api/videos/{id}/related", get(related))
         .route("/feeds/api/users/{id}/uploads", get(uploads))
 }
@@ -184,6 +186,13 @@ struct VideosFeed<'a> {
     videos: &'a [Video],
 }
 
+#[derive(Template)]
+#[template(path = "gdata/entry.xml")]
+struct SingleEntry<'a> {
+    base: &'a str,
+    v: &'a Video,
+}
+
 const ATOM: &str = "application/atom+xml; charset=UTF-8";
 
 /// Renders a page of videos as GData XML (with `<link rel='next'>` when there is more).
@@ -297,6 +306,29 @@ async fn search(State(st): State<AppState>, ctx: Ctx) -> Response {
     match st.meta.search(q, filter, ctx.param("continuation")).await {
         Ok(page) => feed(&ctx, "videos", "Kết quả tìm kiếm", &page, true),
         Err(e) => upstream_error("search", &e),
+    }
+}
+
+/// One video entry. YouTube 1.3.0 asks `/feeds/player/videos/{id}` when a video is opened by id.
+async fn single_video(State(st): State<AppState>, ctx: Ctx, Path(id): Path<String>) -> Response {
+    let Some(id) = VideoId::parse(&id) else {
+        return StatusCode::NOT_FOUND.into_response();
+    };
+    let video = match st.meta.video(&id).await {
+        Ok(v) => v,
+        Err(e) => return upstream_error("video", &e),
+    };
+    match (SingleEntry {
+        base: &ctx.base,
+        v: &video,
+    })
+    .render()
+    {
+        Ok(xml) => ([(header::CONTENT_TYPE, ATOM)], xml).into_response(),
+        Err(e) => {
+            tracing::error!("template: {e}");
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }
 

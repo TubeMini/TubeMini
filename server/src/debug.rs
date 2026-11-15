@@ -59,14 +59,28 @@ fn tool_line(name: &str, status: &Result<String, String>) -> String {
     }
 }
 
-async fn index(State(st): State<AppState>) -> Html<String> {
+#[derive(Deserialize)]
+struct IndexQuery {
+    q: Option<String>,
+}
+
+async fn index(State(st): State<AppState>, Query(iq): Query<IndexQuery>) -> Html<String> {
     let mut body = String::new();
     let _ = write!(
         body,
         "<p>tubemini-server {}</p><ul>{}{}</ul>\
          <p>Cấu hình: lắng nghe <code>{}</code>, IPv4 <code>{}</code>, vùng <code>{}</code>, \
          ngôn ngữ <code>{}</code>, token /tm/v1 <code>{}</code></p>\
-         <p><a href=\"/gd0\">Thử tải trực tiếp (Giai đoạn 0)</a></p>",
+         <p>App YouTube cũ + TubeRepair: Custom URL <code>http://&lt;IP máy này&gt;:8080</code> \
+         (thêm <code>/720</code> để xem HLS).</p>\
+         <p>XML mẫu: <a href=\"/feeds/api/standardfeeds/VN/most_popular\">trang chủ</a> · \
+         <a href=\"/feeds/api/videos?q=nh%E1%BA%A1c+tr%E1%BA%BB\">tìm kiếm</a> · \
+         <a href=\"/feeds/api/videos/aqz-KE-bpKQ/related\">liên quan</a> · \
+         <a href=\"/feeds/api/users/UCSMOQeBJ2RAnuFungnQOxLg/uploads\">video của kênh</a> · \
+         <a href=\"/schemas/2007/categories.cat\">danh mục</a> · \
+         <a href=\"/gd0\">thử tải trực tiếp</a></p>\
+         <form action=\"/\"><input name=q size=30 placeholder=\"Tìm video\"> \
+         <input type=submit value=\"Tìm\"></form>",
         env!("CARGO_PKG_VERSION"),
         tool_line("yt-dlp", &st.tools.yt_dlp),
         tool_line("deno", &st.tools.deno),
@@ -80,6 +94,35 @@ async fn index(State(st): State<AppState>) -> Html<String> {
             "bật"
         },
     );
+    if let Some(q) = iq.q.as_deref().map(str::trim).filter(|q| !q.is_empty()) {
+        match st.meta.search(q, Default::default(), None).await {
+            Ok(page) => {
+                for v in &page.videos {
+                    let _ = write!(
+                        body,
+                        "<p><a href=\"/getvideo/{id}\"><img src=\"https://i.ytimg.com/vi/{id}/mqdefault.jpg\" \
+                         width=160 height=90 align=left style=\"margin-right:8px\"></a>\
+                         <b>{t}</b><br>{a} · {d}:{s:02} · {views} lượt xem<br>\
+                         <a href=\"/getvideo/{id}\">360p</a> · <a href=\"/720/getvideo/{id}\">HLS</a></p>\
+                         <br clear=all>",
+                        id = escape_html(&v.id),
+                        t = escape_html(&v.title),
+                        a = escape_html(&v.author),
+                        d = v.duration / 60,
+                        s = v.duration % 60,
+                        views = v.views,
+                    );
+                }
+            }
+            Err(e) => {
+                let _ = write!(
+                    body,
+                    "<p class=err>Lỗi tìm kiếm: {}</p>",
+                    escape_html(&format!("{e:#}"))
+                );
+            }
+        }
+    }
     page("TubeMini server", &body)
 }
 

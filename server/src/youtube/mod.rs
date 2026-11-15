@@ -140,6 +140,8 @@ pub trait MetadataProvider: Send + Sync {
         filter: SearchFilter,
         continuation: Option<&'a str>,
     ) -> BoxFut<'a, Page>;
+    /// One video's details (for single-entry routes such as `/feeds/player/videos/{id}`).
+    fn video<'a>(&'a self, id: &'a VideoId) -> BoxFut<'a, Video>;
     fn related<'a>(&'a self, id: &'a VideoId, continuation: Option<&'a str>) -> BoxFut<'a, Page>;
     fn channel_uploads<'a>(
         &'a self,

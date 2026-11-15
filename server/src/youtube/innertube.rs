@@ -117,6 +117,20 @@ impl InnerTube {
         Ok(parse::page_in(&resp, parse::now()))
     }
 
+    /// Details of one video from the `player` endpoint (only `videoDetails` is used; the
+    /// stream URLs in that response are ignored, yt-dlp handles playback).
+    async fn video_page(&self, id: &VideoId) -> Result<Page> {
+        let resp = self
+            .call("player", json!({ "videoId": id.to_string() }))
+            .await?;
+        let video =
+            parse::video_from_player(&resp).with_context(|| format!("no videoDetails for {id}"))?;
+        Ok(Page {
+            videos: vec![video],
+            continuation: None,
+        })
+    }
+
     async fn related_page(&self, id: &VideoId, continuation: Option<&str>) -> Result<Page> {
         let resp = match continuation {
             Some(token) => self.call("next", json!({ "continuation": token })).await?,
@@ -208,6 +222,18 @@ impl MetadataProvider for InnerTube {
     ) -> BoxFut<'a, Page> {
         let key = format!("search|{query}|{filter:?}|{}", continuation.unwrap_or(""));
         Box::pin(self.cached(key, self.search_page(query, filter, continuation)))
+    }
+
+    fn video<'a>(&'a self, id: &'a VideoId) -> BoxFut<'a, super::Video> {
+        Box::pin(async move {
+            let page = self
+                .cached(format!("video|{id}"), self.video_page(id))
+                .await?;
+            page.videos
+                .into_iter()
+                .next()
+                .with_context(|| format!("no video {id}"))
+        })
     }
 
     fn related<'a>(&'a self, id: &'a VideoId, continuation: Option<&'a str>) -> BoxFut<'a, Page> {
@@ -354,5 +380,60 @@ mod tests {
         let out = interleave(vec![vec![v("a"), v("b"), v("c")], vec![v("x"), v("a")]]);
         let ids: Vec<_> = out.iter().map(|v| v.id.as_str()).collect();
         assert_eq!(ids, ["a", "x", "b", "c"]);
+    }
+
+    // Live tests against YouTube: `cargo test -- --ignored`
+
+    fn live() -> InnerTube {
+        InnerTube::new(&Config::default()).unwrap()
+    }
+
+    fn assert_complete(page: &Page, what: &str) {
+        assert!(
+            page.videos.len() >= 5,
+            "{what}: only {} videos",
+            page.videos.len()
+        );
+        let complete = page
+            .videos
+            .iter()
+            .filter(|v| v.duration > 0 && v.views > 0 && !v.author.is_empty())
+            .count();
+        assert!(complete * 10 >= page.videos.len() * 8, "{what}: {page:#?}");
+    }
+
+    #[tokio::test]
+    #[ignore = "calls YouTube"]
+    async fn live_search_and_next_page() {
+        let yt = live();
+        let page = yt
+            .search_page("nhạc trẻ", SearchFilter::default(), None)
+            .await
+            .unwrap();
+        assert_complete(&page, "search");
+        let token = page.continuation.clone().expect("continuation");
+        let page2 = yt
+            .search_page("", SearchFilter::default(), Some(&token))
+            .await
+            .unwrap();
+        assert_complete(&page2, "search page 2");
+    }
+
+    #[tokio::test]
+    #[ignore = "calls YouTube"]
+    async fn live_related_uploads_popular_video() {
+        let yt = live();
+        let id = VideoId::parse("aqz-KE-bpKQ").unwrap();
+        assert_complete(&yt.related_page(&id, None).await.unwrap(), "related");
+        assert_complete(
+            &yt.uploads_page("UCSMOQeBJ2RAnuFungnQOxLg", None)
+                .await
+                .unwrap(),
+            "uploads",
+        );
+        assert_complete(&yt.popular_page(Category::All).await.unwrap(), "popular");
+        let v = yt.video_page(&id).await.unwrap().videos.remove(0);
+        assert_eq!(v.author_id, "UCSMOQeBJ2RAnuFungnQOxLg");
+        assert!(v.duration > 600 && v.views > 1_000_000 && v.published > 0);
     }
 }

@@ -166,6 +166,63 @@ pub fn iso8601(unix: i64) -> String {
     )
 }
 
+/// `2014-11-10T06:05:55-08:00` (or `...Z`, or a bare date) → Unix seconds.
+pub fn parse_rfc3339(s: &str) -> Option<i64> {
+    let s = s.trim();
+    let num = |a: usize, b: usize| s.get(a..b)?.parse::<i64>().ok();
+    let (y, m, d) = (num(0, 4)?, num(5, 7)?, num(8, 10)?);
+    let (mut hh, mut mm, mut ss, mut offset) = (0, 0, 0, 0);
+    if s.len() >= 19 {
+        hh = num(11, 13)?;
+        mm = num(14, 16)?;
+        ss = num(17, 19)?;
+        let tz = s[19..].trim_start_matches(|c: char| c == '.' || c.is_ascii_digit());
+        if let Some(sign) = tz.chars().next().filter(|c| *c == '+' || *c == '-') {
+            let oh: i64 = tz.get(1..3)?.parse().ok()?;
+            let om: i64 = tz.get(4..6).and_then(|v| v.parse().ok()).unwrap_or(0);
+            offset = (oh * 3600 + om * 60) * if sign == '-' { -1 } else { 1 };
+        }
+    }
+    // Days from civil (Howard Hinnant)
+    let y2 = if m <= 2 { y - 1 } else { y };
+    let era = y2.div_euclid(400);
+    let yoe = y2 - era * 400;
+    let mp = (m + 9) % 12;
+    let doy = (153 * mp + 2) / 5 + d - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    let days = era * 146_097 + doe - 719_468;
+    Some(days * 86_400 + hh * 3600 + mm * 60 + ss - offset)
+}
+
+/// One video from a `player` response (`videoDetails` + `microformat`).
+pub fn video_from_player(resp: &Value) -> Option<Video> {
+    let d = resp.get("videoDetails")?;
+    let s = |k: &str| {
+        d.get(k)
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_owned()
+    };
+    let micro = resp
+        .get("microformat")
+        .and_then(|m| m.get("playerMicroformatRenderer"));
+    let date = micro
+        .and_then(|m| m.get("publishDate").or_else(|| m.get("uploadDate")))
+        .and_then(Value::as_str)
+        .and_then(parse_rfc3339)
+        .unwrap_or(0);
+    Some(Video {
+        id: d.get("videoId")?.as_str()?.to_owned(),
+        title: s("title"),
+        author: s("author"),
+        author_id: s("channelId"),
+        duration: s("lengthSeconds").parse().unwrap_or(0),
+        views: s("viewCount").parse().unwrap_or(0),
+        published: date,
+        description: s("shortDescription"),
+    })
+}
+
 /// Current Unix time in seconds.
 pub fn now() -> i64 {
     std::time::SystemTime::now()
@@ -419,6 +476,41 @@ mod tests {
             assert!(v.author.is_empty(), "{v:?}");
         }
         assert!(page.continuation.is_some());
+    }
+
+    #[test]
+    fn rfc3339_dates() {
+        assert_eq!(parse_rfc3339("1970-01-01T00:00:00Z"), Some(0));
+        assert_eq!(
+            parse_rfc3339("2014-11-10T06:05:55-08:00"),
+            Some(1_415_628_355)
+        );
+        assert_eq!(
+            parse_rfc3339("2026-11-15T08:00:00+07:00"),
+            Some(1_794_704_400)
+        );
+        assert_eq!(parse_rfc3339("2014-11-10"), Some(1_415_577_600));
+        assert_eq!(parse_rfc3339("garbage"), None);
+        assert_eq!(
+            iso8601(parse_rfc3339("2000-02-29T12:34:56Z").unwrap()),
+            "2000-02-29T12:34:56.000Z"
+        );
+    }
+
+    #[test]
+    fn player_details() {
+        let resp = serde_json::json!({
+            "videoDetails": { "videoId": "aqz-KE-bpKQ", "title": "Big Buck Bunny", "lengthSeconds": "635",
+                "channelId": "UCSMOQeBJ2RAnuFungnQOxLg", "author": "Blender", "viewCount": "23542023",
+                "shortDescription": "UHD" },
+            "microformat": { "playerMicroformatRenderer": { "publishDate": "2014-11-10T06:05:55-08:00" } }
+        });
+        let v = video_from_player(&resp).unwrap();
+        assert_eq!(
+            (v.duration, v.views, v.published),
+            (635, 23_542_023, 1_415_628_355)
+        );
+        assert_eq!(v.author_id, "UCSMOQeBJ2RAnuFungnQOxLg");
     }
 
     #[test]
