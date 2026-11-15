@@ -109,6 +109,9 @@ async fn ping(State(st): State<AppState>) -> Response {
     )
 }
 
+/// HLS levels offered besides the 360p entry. The iPad mini 1 (A5) decodes H.264 up to 1080p30 (D25).
+const HLS_LEVELS: [u32; 2] = [720, 1080];
+
 struct StreamItem {
     quality: u32,
     kind: &'static str,
@@ -186,22 +189,21 @@ async fn streams(
             url: url.clone(),
         });
     }
-    let res = st.cfg.hls_resolution.clamp(144, 2160);
     if info.hls_manifest.is_some() {
-        match crate::video::hls_playlist(&st, &id, &info, res, fresh).await {
-            Ok(playlist) => {
-                let item = hls_item(res, &playlist);
-                // Videos without anything above 360p: no second identical entry
-                if !items
-                    .iter()
-                    .any(|i| i.kind == "hls" && i.quality == item.quality)
-                {
-                    items.push(item);
+        match crate::video::hls_playlists(&st, &id, &info, &HLS_LEVELS, fresh).await {
+            Ok(playlists) => {
+                for (&res, playlist) in HLS_LEVELS.iter().zip(&playlists) {
+                    let item = hls_item(res, playlist);
+                    // Nothing above 360p, or no 1080p30: no duplicate entries
+                    if !items.iter().any(|i| i.quality == item.quality) {
+                        items.push(item);
+                    }
                 }
             }
             Err(e) => tracing::warn!("streams {id} HLS: {e:#}"),
         }
     }
+    items.sort_by_key(|i| i.quality);
     if items.is_empty() {
         return tm_error(
             StatusCode::BAD_GATEWAY,

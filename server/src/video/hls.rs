@@ -300,6 +300,17 @@ mod tests {
         );
     }
 
+    #[test]
+    fn level_1080_keeps_the_high_profile_30fps_variant() {
+        // avc1.640028 = High profile level 4.0, within the A5's H.264 limit (High 4.1, 1080p30)
+        let p = filter_master(MASTER_MUSIC, 1080, 30.0).unwrap();
+        assert_eq!(infs(&p), ["1920x1080 avc1.640028,mp4a.40.2 24"]);
+        assert_eq!(best_height(&p), Some(1080));
+        // 1080p exists only at 60 fps: the 1080 level ends up at the same 480p as the 720 level
+        let bbb = filter_master(MASTER_BBB, 1080, 30.0).unwrap();
+        assert_eq!(best_height(&bbb), Some(480));
+    }
+
     const MASTER_DUBBED: &str = include_str!("../../tests/fixtures/hls_master_dubbed.m3u8");
 
     #[test]

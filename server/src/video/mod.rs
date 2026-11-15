@@ -147,25 +147,46 @@ pub(crate) async fn hls_playlist(
     res: u32,
     fresh: bool,
 ) -> Result<Arc<String>> {
-    let key = (id.clone(), res);
-    if !fresh && let Some(hit) = st.playlists.get(&key).await {
-        return Ok(hit);
+    let mut all = hls_playlists(st, id, streams, &[res], fresh).await?;
+    Ok(all.remove(0))
+}
+
+/// [`hls_playlist`] for several resolutions, fetching YouTube's master playlist at most once.
+pub(crate) async fn hls_playlists(
+    st: &AppState,
+    id: &VideoId,
+    streams: &StreamInfo,
+    levels: &[u32],
+    fresh: bool,
+) -> Result<Vec<Arc<String>>> {
+    let mut out = Vec::with_capacity(levels.len());
+    let mut master: Option<String> = None;
+    for &res in levels {
+        let key = (id.clone(), res);
+        if !fresh && let Some(hit) = st.playlists.get(&key).await {
+            out.push(hit);
+            continue;
+        }
+        if master.is_none() {
+            let Some(url) = &streams.hls_manifest else {
+                bail!("no HLS manifest");
+            };
+            let text = st
+                .http
+                .get(url)
+                .send()
+                .await
+                .context("fetching HLS master")?
+                .error_for_status()?
+                .text()
+                .await?;
+            master = Some(text);
+        }
+        let filtered = hls::filter_master(master.as_deref().unwrap_or_default(), res, MAX_FPS)
+            .map(Arc::new)
+            .context("no H.264/AAC variant in HLS master")?;
+        st.playlists.insert(key, filtered.clone()).await;
+        out.push(filtered);
     }
-    let Some(url) = &streams.hls_manifest else {
-        bail!("no HLS manifest");
-    };
-    let master = st
-        .http
-        .get(url)
-        .send()
-        .await
-        .context("fetching HLS master")?
-        .error_for_status()?
-        .text()
-        .await?;
-    let filtered = hls::filter_master(&master, res, MAX_FPS)
-        .map(Arc::new)
-        .context("no H.264/AAC variant in HLS master")?;
-    st.playlists.insert(key, filtered.clone()).await;
-    Ok(filtered)
+    Ok(out)
 }

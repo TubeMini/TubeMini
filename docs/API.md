@@ -235,6 +235,7 @@ Các lựa chọn chất lượng, gọi ngay trước khi phát.
 <tm:streams xmlns:tm="urn:tubemini:1" video_id="dQw4w9WgXcQ" expire="1794730000" available_in="4">
   <tm:stream quality="360" kind="mp4" url="https://rr3---sn-....googlevideo.com/videoplayback?..."/>
   <tm:stream quality="720" kind="hls" url="http://192.168.1.10:8080/720/getvideo/dQw4w9WgXcQ"/>
+  <tm:stream quality="1080" kind="hls" url="http://192.168.1.10:8080/1080/getvideo/dQw4w9WgXcQ"/>
 </tm:streams>
 ```
 
@@ -242,12 +243,15 @@ Các lựa chọn chất lượng, gọi ngay trước khi phát.
   - Nếu tiếng của MP4 là bản lồng tiếng AI chứ không phải tiếng gốc (D23), mục 360 được thay bằng `kind="hls"` trỏ tới
     `<base>/360/getvideo/<id>` (HLS 360p, tiếng gốc). App coi hai kiểu như nhau.
 - `kind="hls"`: playlist HLS đã lọc trên server; segment vẫn tải thẳng từ googlevideo.
-  - `quality` là độ phân giải thật của biến thể còn lại sau khi lọc, có thể nhỏ hơn 720. Ví dụ video chỉ có 720p60 thì là 480.
+  - Có tối đa hai mục HLS: mức 720 (`/720/getvideo`) và mức 1080 (`/1080/getvideo`).
+  - `quality` là độ phân giải thật của biến thể còn lại sau khi lọc, có thể nhỏ hơn mức xin. Ví dụ video chỉ có 720p60 thì mức
+    720 là 480. Hai mục có cùng `quality` thì chỉ giữ mục đầu (video không có 1080p30 thì không có mục 1080).
   - Không có HLS dùng được thì không có phần tử này.
 - `available_in`: **số giây app phải chờ** rồi mới bắt đầu phát (D17: video có quảng cáo đầu bị khóa link tới lúc đó); 0 là phát được
   ngay. App hiện đếm ngược. URL HLS trỏ về `/getvideo` của server nên server cũng tự chờ.
 - `expire`: Unix giây lúc link hết hạn. Link được cache 5 phút. Phát lỗi (403 hoặc hết hạn) thì gọi lại với `fresh=1` một lần.
-- Thứ tự: 360 trước, HLS sau. App chọn theo chất lượng mặc định trong Cài đặt.
+- Thứ tự: `quality` tăng dần. App chọn mục có `quality` lớn nhất mà không vượt chất lượng người dùng chọn (360 / 720 / 1080);
+  không có mục nào như vậy thì lấy mục nhỏ nhất.
 
 ### Chưa làm (Giai đoạn 4)
 
