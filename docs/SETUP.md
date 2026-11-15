@@ -125,3 +125,30 @@ systemctl enable --now tuberepair
 ```
 
 Hiện chỉ phần bình luận của nó còn chạy (D7).
+
+## 7. Chạy server trên máy Linux (máy LXC 192.168.1.192)
+
+Server chính hiện chạy ở `http://192.168.1.192:8080`, không cần bật PC. PC vẫn dùng để phát triển và thử.
+
+Cài một lần trên máy đích (Ubuntu 24.04, chạy bằng root):
+
+```sh
+apt-get install -y build-essential pkg-config unzip git curl
+curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+curl -L -o /usr/local/bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp && chmod +x /usr/local/bin/yt-dlp
+curl -L -o /tmp/deno.zip https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip   && unzip -o /tmp/deno.zip -d /usr/local/bin
+```
+
+Deploy (và cả mỗi lần cập nhật) từ PC bằng Git Bash:
+
+```sh
+TM_SERVER_HOST=root@192.168.1.192 TM_SERVER_PASS=<mật khẩu root> scripts/deploy-server.sh
+```
+
+Script làm các việc sau:
+
+- gửi `server/` lên `/opt/tubemini/src` và build trên chính máy đó (binary khớp glibc của máy);
+- cài `/opt/tubemini/tubemini-server`, tạo `/opt/tubemini/config.toml` nếu chưa có (sửa tay ở đó, deploy sau không ghi đè);
+- tạo user hệ thống `tubemini`, unit systemd `tubemini`, và timer `tubemini-ytdlp-update` chạy `yt-dlp -U` mỗi ngày.
+
+Xem log: `journalctl -u tubemini -f`. Khởi động lại: `systemctl restart tubemini`.

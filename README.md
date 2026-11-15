@@ -29,6 +29,9 @@ target\release\tubemini-server.exe      # đọc config.toml cạnh exe (mẫu: 
 
 Mở cổng 8080 trên Windows Firewall (xem SETUP mục 1.5), rồi trên iPad vào `http://<IP PC>:8080/`.
 
+Chạy lâu dài trên máy Linux (systemd, tự cập nhật yt-dlp): `scripts/deploy-server.sh`, xem SETUP mục 7. Server trong nhà hiện
+chạy ở `http://192.168.1.192:8080`.
+
 ## Giấy phép
 
 GPL-3.0 — xem [LICENSE](LICENSE). Định dạng lớp GData tham khảo từ server TubeRepair

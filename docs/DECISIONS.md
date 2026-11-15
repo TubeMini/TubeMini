@@ -225,3 +225,12 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
 - App classic (iPad 1, iOS 5.1.1, `Apple iPad v5.1.1 YouTube v1.0.0.9B206`): đã cài tweak TubeRepair. App gọi đăng nhập giả rồi
   `/feeds/api/standardfeeds/US/recently_featured`, server trả feed định dạng classic (200). `tmshot` không chạy trên iOS 5 (build iOS
   6 dùng `LC_MAIN`), nên phần hiển thị cần anh xem trực tiếp.
+
+## D21. Server chính chuyển lên máy LXC 192.168.1.192 — 15/11/2026
+
+- Theo yêu cầu của anh, server chạy 24/7 trên máy LXC (Ubuntu 24.04) bằng systemd, nên không cần bật PC.
+- Build ngay trên máy đích (`scripts/deploy-server.sh`) thay vì build chéo: tránh lệch glibc (máy ảo build là Ubuntu 26.04) và tránh
+  phải dựng toolchain musl.
+- Tốc độ yt-dlp trên máy này ngang PC (D18).
+- App YouTube cũ trên iPad mini (Custom URL `http://192.168.1.192:8080/720`) đã phát được video có quảng cáo ở 720p qua máy này.
+- Server TubeRepair làm mốc cũng ở máy này (cổng 4000, D7).

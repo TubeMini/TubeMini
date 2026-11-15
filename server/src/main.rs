@@ -67,7 +67,10 @@ async fn log_request(req: Request, next: Next) -> Response {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // No colour codes when logging to journald / a file
+    let ansi = std::io::IsTerminal::is_terminal(&std::io::stdout());
     tracing_subscriber::fmt()
+        .with_ansi(ansi)
         .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()))
         .init();
 
