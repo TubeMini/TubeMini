@@ -2,8 +2,8 @@
 
 Đây là hợp đồng giữa server và các app. **Đổi API thì sửa file này trước.**
 
-Trạng thái: Giai đoạn 2. Lớp GData đã đủ cho app YouTube cũ: video, kênh, playlist, bình luận, HLS, app classic. Lớp `/tm/v1`
-thuộc Giai đoạn 3–4.
+Trạng thái: Giai đoạn 3. Lớp GData đã đủ cho app YouTube cũ. Lớp `/tm/v1` mới có `ping` và `streams`; phần còn lại thuộc Giai
+đoạn 4.
 
 ## Quy ước chung
 
@@ -191,4 +191,60 @@ App này đọc địa chỉ server từ khóa `ConfiguredServiceHost` (tweak Tu
 Đăng nhập thật, thích / không thích, viết bình luận, upload, `/feeds/api/partners/<id>/branding/default` (banner kênh; app vẫn chạy
 khi route này trả 404).
 
-## Lớp mở rộng `/tm/v1` — chưa làm (Giai đoạn 3–4)
+## Lớp mở rộng `/tm/v1` (cho app TubeMini)
+
+App TubeMini dùng **lớp GData ở trên** cho mọi danh sách (tìm kiếm, liên quan, bình luận, video của kênh) và dùng `/tm/v1` cho các
+tính năng riêng.
+
+Quy ước:
+
+- XML UTF-8, namespace `xmlns:tm="urn:tubemini:1"`, `Content-Type: application/xml; charset=UTF-8`.
+- **Token:** nếu `auth_token` trong config khác rỗng thì mọi route `/tm/v1` (kể cả `ping`) bắt buộc có header
+  `X-Auth-Token: <token>`. Thiếu hoặc sai thì trả `401` kèm `tm:error code="unauthorized"`. Lớp GData không bị ảnh hưởng.
+- **Lỗi:** trả HTTP status phù hợp kèm một phần tử duy nhất. `message` viết bằng tiếng Việt để app hiện thẳng cho người dùng:
+  ```xml
+  <tm:error xmlns:tm="urn:tubemini:1" code="no_stream" message="Không lấy được link phát cho video này."/>
+  ```
+
+  | `code` | HTTP | Khi nào |
+  | --- | --- | --- |
+  | `unauthorized` | 401 | Thiếu hoặc sai `X-Auth-Token` |
+  | `bad_request` | 400 | ID video sai |
+  | `no_stream` | 502 | yt-dlp không lấy được link (video riêng tư, bị chặn vùng, yt-dlp hỏng…) |
+  | `not_found` | 404 | Route không tồn tại dưới `/tm/v1` |
+
+### `GET /tm/v1/ping`
+
+Trạng thái server, dùng cho nút "Kiểm tra kết nối" trong Cài đặt.
+
+```xml
+<tm:ping xmlns:tm="urn:tubemini:1" server="0.3.0" yt_dlp="2026.10.26" deno="deno 2.9.8 (stable, release, x86_64-pc-windows-msvc)"
+         time="1794709999" auth="off"/>
+```
+
+- `yt_dlp` / `deno`: phiên bản, hoặc rỗng nếu thiếu (app báo "Máy chủ thiếu yt-dlp" hoặc "thiếu Deno").
+- `time`: giờ server (Unix giây). `auth`: `on` hoặc `off`.
+
+### `GET /tm/v1/videos/<id>/streams[?fresh=1]`
+
+Các lựa chọn chất lượng, gọi ngay trước khi phát.
+
+```xml
+<tm:streams xmlns:tm="urn:tubemini:1" video_id="dQw4w9WgXcQ" expire="1794730000" available_in="4">
+  <tm:stream quality="360" kind="mp4" url="https://rr3---sn-....googlevideo.com/videoplayback?..."/>
+  <tm:stream quality="720" kind="hls" url="http://192.168.1.10:8080/720/getvideo/dQw4w9WgXcQ"/>
+</tm:streams>
+```
+
+- `kind="mp4"`: link MP4 progressive ≤ 360p (H.264 + AAC), tải thẳng từ googlevideo.
+- `kind="hls"`: playlist HLS đã lọc trên server; segment vẫn tải thẳng từ googlevideo.
+  - `quality` là độ phân giải thật của biến thể còn lại sau khi lọc, có thể nhỏ hơn 720. Ví dụ video chỉ có 720p60 thì là 480.
+  - Không có HLS dùng được thì không có phần tử này.
+- `available_in`: **số giây app phải chờ** rồi mới bắt đầu phát (D17: video có quảng cáo đầu bị khóa link tới lúc đó); 0 là phát được
+  ngay. App hiện đếm ngược. URL HLS trỏ về `/getvideo` của server nên server cũng tự chờ.
+- `expire`: Unix giây lúc link hết hạn. Link được cache 5 phút. Phát lỗi (403 hoặc hết hạn) thì gọi lại với `fresh=1` một lần.
+- Thứ tự: 360 trước, HLS sau. App chọn theo chất lượng mặc định trong Cài đặt.
+
+### Chưa làm (Giai đoạn 4)
+
+`/tm/v1/subscriptions`, `/tm/v1/feed`, `/tm/v1/history`.
