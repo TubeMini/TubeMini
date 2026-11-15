@@ -334,6 +334,10 @@
   (94,5 MB), phát từ trong máy (127.0.0.1), tua tới giây 300 có ngay.
 - [x] **Docker image** build thử bằng Podman trên máy build: chạy được; server giờ tắt êm khi nhận SIGTERM (`docker stop` 0,13
   giây thay vì 10 giây).
+- [x] **Bản 0.5.1, nhóm Telegram** (D33): nhóm https://t.me/tivikit có trên README, trang giới thiệu (nút + ô có mã QR), trang
+  mô tả trong Cydia, ghi chú phát hành, và trang tổ chức https://github.com/TubeMini (repo `TubeMini/.github`). App 0.5.1 có
+  mục **Nhóm Telegram** trong Cài đặt (mã QR + @tivikit). Đã thử OTA trọn vòng 0.5.0 → 0.5.1 trên iPad (cài xong, respring,
+  app chạy).
 - [x] **Lên GitHub** (D31, D32): repo công khai https://github.com/TubeMini/TubeMini (lịch sử đã bỏ thông tin cá nhân),
   bundle id `vn.tubemini.io`, bản phát hành v0.5.0, trang https://tubemini.github.io/ (đọc được trên Safari iOS 6), nguồn
   Cydia `https://tubemini.github.io/cydia/`, cập nhật OTA trong app (tải, kiểm SHA-256, cài, respring). Đã thử OTA trọn vòng

@@ -489,3 +489,21 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
 - **Bài học về danh tính commit:** `gh repo create --add-readme` tạo commit đầu bằng tên và email thật của tài khoản. Đã thay lịch
   sử repo trang bằng một commit duy nhất (email ẩn danh) và force-push. `publish-site.sh` giờ đặt danh tính commit giống repo chính,
   vì máy không có danh tính git chung (git đã định dùng tên máy Windows).
+
+## D33. Nhóm Telegram: mã QR thay cho link trên iOS 6; bản 0.5.1 — 15/11/2026
+
+- **iOS 6 không vào được Telegram.** Thử trên iPad bằng NSURLConnection: `t.me`, `telegram.me`, `telegram.org`,
+  `web.telegram.org` đều lỗi SSL -1200 (máy chủ Telegram cần kết nối bảo mật mới hơn iOS 6; `http://t.me` cũng chuyển sang
+  https). Link bấm trên iPad chỉ ra trang lỗi, nên những chỗ người dùng iOS 6 đọc đều có **mã QR** (quét bằng camera điện thoại)
+  và tên **@tivikit** (tìm trong Telegram):
+  - trang giới thiệu: nút "Nhóm Telegram" ở đầu trang cuộn xuống ô có mã QR, link vẫn để cho máy tính / điện thoại;
+  - trang mô tả trong Cydia: chỉ mã QR + @tivikit;
+  - app 0.5.1, Cài đặt → **Nhóm Telegram**: mã QR 145 pt (29 ô × 5 pt, nét ở cả 1x và 2x) bên trái chữ; màn hẹp (iPhone dọc)
+    thì chữ xuống dưới mã. Chiều cao hàng tính lại sau khi xoay.
+- Mã QR tạo bằng `segno` và kiểm lại bằng `zxing-cpp` (cả từ ảnh chụp màn hình iPad): ra đúng `https://t.me/tivikit`.
+- README (huy hiệu + mục "Cộng đồng") và trang tổ chức `TubeMini/.github` (`profile/README.md`, `SUPPORT.md`) dùng link bình thường,
+  vì người xem dùng trình duyệt mới.
+- `publish-site.sh` thêm `?v=<sha1>` vào link `style.css` (GitHub Pages cho trình duyệt giữ CSS 10 phút, Safari đã hiện trang mới
+  với CSS cũ), và giữ ghi chú của `update.json` khi chạy lại không có `--notes`.
+- **Bản 0.5.1** (app có mục Telegram; server chỉ đổi số phiên bản). Đã thử OTA: cài bản debug 0.5.0, app thấy 0.5.1, tải, kiểm
+  SHA-256, `dpkg exit 0`, respring, app 0.5.1 chạy bình thường.
