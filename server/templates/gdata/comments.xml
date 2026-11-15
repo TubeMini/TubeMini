@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- GData comment feed. Format follows the TubeRepair server templates
+     (https://github.com/kevinf100/tuberepair.uptimetrackers.com, GPL-3.0), with the closing tag added. -->
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005' xmlns:openSearch='http://a9.com/-/spec/opensearch/1.1/' xmlns:yt='{{ base }}/schemas/2007' xmlns:media='http://search.yahoo.com/mrss/' gd:etag='W/&quot;DkcBQ3g-fip7I2A9XRRXEUw.&quot;'>
+	<id>tag:youtube.com,2008:video:{{ video_id }}:comments</id>
+	<updated>{{ updated }}</updated>
+	<category scheme='http://schemas.google.com/g/2005#kind' term='http://gdata.youtube.com/schemas/2007#comment'/>
+	<title>{{ title }}</title>
+	<logo>http://www.gstatic.com/youtube/img/logo.png</logo>
+	<link rel='http://schemas.google.com/g/2005#feed' type='application/atom+xml' href='{{ self_url }}'/>
+	<link rel='self' type='application/atom+xml' href='{{ self_url }}'/>
+{%- if let Some(next) = next %}
+	<link rel='next' type='application/atom+xml' href='{{ next }}'/>
+{%- endif %}
+	<author>
+		<name>YouTube</name>
+		<uri>http://www.youtube.com/</uri>
+	</author>
+	<generator version='2.1' uri='{{ base }}/'>YouTube data API</generator>
+	<openSearch:totalResults>{{ total }}</openSearch:totalResults>
+	<openSearch:startIndex>{{ start_index }}</openSearch:startIndex>
+	<openSearch:itemsPerPage>{{ items.len() }}</openSearch:itemsPerPage>
+{%- for c in items %}
+	<entry gd:etag='W/&quot;{{ c.id }}.&quot;'>
+		<id>tag:youtube.com,2008:video:{{ video_id }}:comment:{{ c.id }}</id>
+		<published>{{ c.published_iso() }}</published>
+		<updated>{{ c.published_iso() }}</updated>
+		<category scheme='http://schemas.google.com/g/2005#kind' term='http://gdata.youtube.com/schemas/2007#comment'/>
+		<title>Bình luận của {{ c.author }}</title>
+		<content>{{ c.text }}</content>
+		<link rel='related' type='application/atom+xml' href='{{ base }}/feeds/api/videos/{{ video_id }}?v=2'/>
+		<link rel='alternate' type='text/html' href='https://www.youtube.com/watch?v={{ video_id }}&amp;lc={{ c.id }}'/>
+		<link rel='self' type='application/atom+xml' href='{{ base }}/feeds/api/videos/{{ video_id }}/comments/{{ c.id }}?v=2'/>
+		<author>
+			<name>{{ c.author }}</name>
+			<uri>{{ base }}/feeds/api/users/{{ c.author_id }}</uri>
+			<yt:userId>{{ c.author_id }}</yt:userId>
+		</author>
+		<yt:channelId>{{ c.author_id }}</yt:channelId>
+		<yt:replyCount>{{ c.replies }}</yt:replyCount>
+		<yt:videoid>{{ video_id }}</yt:videoid>
+	</entry>
+{%- endfor %}
+</feed>

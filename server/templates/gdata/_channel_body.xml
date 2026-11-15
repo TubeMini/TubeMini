@@ -1,0 +1,16 @@
+		<id>tag:youtube.com,2008:channel:{{ c.id }}</id>
+		<updated>{{ updated }}</updated>
+		<category scheme='http://schemas.google.com/g/2005#kind' term='{{ base }}/schemas/2007#channel'/>
+		<title>{{ c.name }}</title>
+		<summary>{{ c.description }}</summary>
+		<link rel='alternate' type='text/html' href='https://www.youtube.com/channel/{{ c.id }}'/>
+		<link rel='self' type='application/atom+xml' href='{{ base }}/feeds/api/channels/{{ c.id }}?v=2'/>
+		<author>
+			<name>{{ c.name }}</name>
+			<uri>{{ base }}/feeds/api/users/{{ c.id }}</uri>
+			<yt:userId>{{ c.id }}</yt:userId>
+		</author>
+		<yt:channelId>{{ c.id }}</yt:channelId>
+		<yt:channelStatistics subscriberCount='{{ c.subscribers }}' viewCount='0'/>
+		<gd:feedLink rel='{{ base }}/schemas/2007#channel.content' href='{{ base }}/feeds/api/users/{{ c.id }}/uploads?v=2' countHint='{{ c.videos }}'/>
+		<media:thumbnail url='{{ c.avatar }}'/>

@@ -1,0 +1,863 @@
+{
+ "items": [
+  {
+   "richItemRenderer": {
+    "content": {
+     "lockupViewModel": {
+      "contentImage": {
+       "collectionThumbnailViewModel": {
+        "primaryThumbnail": {
+         "thumbnailViewModel": {
+          "image": {
+           "sources": [
+            {
+             "url": "https://i.ytimg.com/vi/WfXW6iY7_Gw/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDT_G5vxJCXy0xQ7mxTLZRWY4Cbnw",
+             "width": 480,
+             "height": 270
+            }
+           ]
+          },
+          "overlays": [
+           {
+            "thumbnailOverlayBadgeViewModel": {
+             "thumbnailBadges": [
+              {
+               "thumbnailBadgeViewModel": {
+                "icon": {
+                 "sources": [
+                  {
+                   "clientResource": {
+                    "imageName": "PLAYLISTS"
+                   }
+                  }
+                 ]
+                },
+                "text": "95 video",
+                "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+                "backgroundColor": {
+                 "lightTheme": 3355443,
+                 "darkTheme": 3355443
+                }
+               }
+              }
+             ],
+             "position": "THUMBNAIL_OVERLAY_BADGE_POSITION_BOTTOM_END"
+            }
+           },
+           {
+            "thumbnailHoverOverlayViewModel": {
+             "icon": {
+              "sources": [
+               {
+                "clientResource": {
+                 "imageName": "PLAY_ALL"
+                }
+               }
+              ]
+             },
+             "text": {
+              "content": "Phát tất cả",
+              "styleRuns": [
+               {
+                "startIndex": 0,
+                "length": 11
+               }
+              ]
+             },
+             "style": "THUMBNAIL_HOVER_OVERLAY_STYLE_COVER"
+            }
+           }
+          ],
+          "backgroundColor": {
+           "lightTheme": 4144959,
+           "darkTheme": 4144959
+          }
+         }
+        },
+        "stackColor": {
+         "lightTheme": 10066329,
+         "darkTheme": 9211020
+        }
+       }
+      },
+      "metadata": {
+       "lockupMetadataViewModel": {
+        "title": {
+         "content": "Blender Conference 2026"
+        },
+        "metadata": {
+         "contentMetadataViewModel": {
+          "metadataRows": [
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "Danh sách phát",
+               "commandRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 14,
+                 "onTap": {
+                  "innertubeCommand": {
+                   "clickTrackingParams": "CEkQ0sQMGAAiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaMoBBNxRH_c=",
+                   "commandMetadata": {
+                    "webCommandMetadata": {
+                     "url": "/@BlenderOfficial",
+                     "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                     "rootVe": 3611,
+                     "apiUrl": "/youtubei/v1/browse"
+                    }
+                   },
+                   "browseEndpoint": {
+                    "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+                    "canonicalBaseUrl": "/@BlenderOfficial"
+                   }
+                  }
+                 }
+                }
+               ],
+               "styleRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 14,
+                 "weightLabel": "FONT_WEIGHT_NORMAL"
+                }
+               ]
+              }
+             }
+            ]
+           },
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "Xem toàn bộ danh sách",
+               "commandRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 21,
+                 "onTap": {
+                  "innertubeCommand": {
+                   "clickTrackingParams": "CEkQ0sQMGAAiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaMoBBNxRH_c=",
+                   "commandMetadata": {
+                    "webCommandMetadata": {
+                     "url": "/playlist?list=PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012",
+                     "webPageType": "WEB_PAGE_TYPE_PLAYLIST",
+                     "rootVe": 5754,
+                     "apiUrl": "/youtubei/v1/browse"
+                    }
+                   },
+                   "browseEndpoint": {
+                    "browseId": "VLPLa1F2ddGya_-I9y1nXALrBqrZNdlUE012"
+                   }
+                  }
+                 }
+                }
+               ],
+               "styleRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 21,
+                 "weightLabel": "FONT_WEIGHT_MEDIUM"
+                }
+               ]
+              }
+             }
+            ]
+           }
+          ],
+          "delimiter": " • "
+         }
+        }
+       }
+      },
+      "contentId": "PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012",
+      "contentType": "LOCKUP_CONTENT_TYPE_PLAYLIST",
+      "itemPlayback": {
+       "inlinePlayerData": {
+        "onSelect": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEkQ0sQMGAAiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=WfXW6iY7_Gw&list=PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "WfXW6iY7_Gw",
+           "playlistId": "PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012",
+           "params": "OAI%3D",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV8tSTl5MW5YQUxyQnFyWk5kbFVFMDEy"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr1---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=59f5d6ea263bfc6c&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        },
+        "onVisible": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEkQ0sQMGAAiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=WfXW6iY7_Gw&list=PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012&pp=YAHIAQHwBAD4BACiBhUBAym6i5NQfjmakmtofcQ7TgL53Hs%3D",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "WfXW6iY7_Gw",
+           "playlistId": "PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012",
+           "playerParams": "YAHIAQHwBAD4BACiBhUBAym6i5NQfjmakmtofcQ7TgL53Hs%3D",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV8tSTl5MW5YQUxyQnFyWk5kbFVFMDEy"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr1---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=59f5d6ea263bfc6c&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      "rendererContext": {
+       "loggingContext": {
+        "loggingDirectives": {
+         "trackingParams": "CEkQ0sQMGAAiEwjK9t2I84iYAxWrklYBHao2KvE=",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEkQ0sQMGAAiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=WfXW6iY7_Gw&list=PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "WfXW6iY7_Gw",
+           "playlistId": "PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012",
+           "params": "OAI%3D",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV8tSTl5MW5YQUxyQnFyWk5kbFVFMDEy"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr1---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=59f5d6ea263bfc6c&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "richItemRenderer": {
+    "content": {
+     "lockupViewModel": {
+      "contentImage": {
+       "collectionThumbnailViewModel": {
+        "primaryThumbnail": {
+         "thumbnailViewModel": {
+          "image": {
+           "sources": [
+            {
+             "url": "https://i.ytimg.com/vi/JXm0-ilIknE/hqdefault.jpg?sqp=-oaymwExCOADEI4CSFryq4qpAyMIARUAAIhCGAHwAQH4Af4JgALQBYoCDAgAEAEYZSBdKFMwDw==&rs=AOn4CLBAJvVCYx9dpHGXA9U1gCElG9COoQ",
+             "width": 480,
+             "height": 270
+            }
+           ]
+          },
+          "overlays": [
+           {
+            "thumbnailOverlayBadgeViewModel": {
+             "thumbnailBadges": [
+              {
+               "thumbnailBadgeViewModel": {
+                "icon": {
+                 "sources": [
+                  {
+                   "clientResource": {
+                    "imageName": "PLAYLISTS"
+                   }
+                  }
+                 ]
+                },
+                "text": "84 video",
+                "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+                "backgroundColor": {
+                 "lightTheme": 2630945,
+                 "darkTheme": 2630945
+                }
+               }
+              }
+             ],
+             "position": "THUMBNAIL_OVERLAY_BADGE_POSITION_BOTTOM_END"
+            }
+           },
+           {
+            "thumbnailHoverOverlayViewModel": {
+             "icon": {
+              "sources": [
+               {
+                "clientResource": {
+                 "imageName": "PLAY_ALL"
+                }
+               }
+              ]
+             },
+             "text": {
+              "content": "Phát tất cả",
+              "styleRuns": [
+               {
+                "startIndex": 0,
+                "length": 11
+               }
+              ]
+             },
+             "style": "THUMBNAIL_HOVER_OVERLAY_STYLE_COVER"
+            }
+           }
+          ],
+          "backgroundColor": {
+           "lightTheme": 4143668,
+           "darkTheme": 4143668
+          }
+         }
+        },
+        "stackColor": {
+         "lightTheme": 12562332,
+         "darkTheme": 9668472
+        }
+       }
+      },
+      "metadata": {
+       "lockupMetadataViewModel": {
+        "title": {
+         "content": "Blender Conference 2025"
+        },
+        "metadata": {
+         "contentMetadataViewModel": {
+          "metadataRows": [
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "Danh sách phát",
+               "commandRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 14,
+                 "onTap": {
+                  "innertubeCommand": {
+                   "clickTrackingParams": "CEgQ0sQMGAEiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaMoBBNxRH_c=",
+                   "commandMetadata": {
+                    "webCommandMetadata": {
+                     "url": "/@BlenderOfficial",
+                     "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                     "rootVe": 3611,
+                     "apiUrl": "/youtubei/v1/browse"
+                    }
+                   },
+                   "browseEndpoint": {
+                    "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+                    "canonicalBaseUrl": "/@BlenderOfficial"
+                   }
+                  }
+                 }
+                }
+               ],
+               "styleRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 14,
+                 "weightLabel": "FONT_WEIGHT_NORMAL"
+                }
+               ]
+              }
+             }
+            ]
+           },
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "Xem toàn bộ danh sách",
+               "commandRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 21,
+                 "onTap": {
+                  "innertubeCommand": {
+                   "clickTrackingParams": "CEgQ0sQMGAEiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaMoBBNxRH_c=",
+                   "commandMetadata": {
+                    "webCommandMetadata": {
+                     "url": "/playlist?list=PLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd",
+                     "webPageType": "WEB_PAGE_TYPE_PLAYLIST",
+                     "rootVe": 5754,
+                     "apiUrl": "/youtubei/v1/browse"
+                    }
+                   },
+                   "browseEndpoint": {
+                    "browseId": "VLPLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd"
+                   }
+                  }
+                 }
+                }
+               ],
+               "styleRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 21,
+                 "weightLabel": "FONT_WEIGHT_MEDIUM"
+                }
+               ]
+              }
+             }
+            ]
+           }
+          ],
+          "delimiter": " • "
+         }
+        }
+       }
+      },
+      "contentId": "PLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd",
+      "contentType": "LOCKUP_CONTENT_TYPE_PLAYLIST",
+      "itemPlayback": {
+       "inlinePlayerData": {
+        "onSelect": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEgQ0sQMGAEiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=JXm0-ilIknE&list=PLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "JXm0-ilIknE",
+           "playlistId": "PLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd",
+           "params": "OAI%3D",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV84dS1IRXZtZkNWdVNfT0ltVzhIYUxk"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr8---sn-8pxuuxa-8jal.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=2579b4fa29489271&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        },
+        "onVisible": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEgQ0sQMGAEiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=JXm0-ilIknE&list=PLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd&pp=YAHIAQHwBAD4BACiBhUBAym6i8wcVdGcSoRQgebDMKrNF8c%3D",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "JXm0-ilIknE",
+           "playlistId": "PLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd",
+           "playerParams": "YAHIAQHwBAD4BACiBhUBAym6i8wcVdGcSoRQgebDMKrNF8c%3D",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV84dS1IRXZtZkNWdVNfT0ltVzhIYUxk"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr8---sn-8pxuuxa-8jal.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=2579b4fa29489271&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      "rendererContext": {
+       "loggingContext": {
+        "loggingDirectives": {
+         "trackingParams": "CEgQ0sQMGAEiEwjK9t2I84iYAxWrklYBHao2KvE=",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEgQ0sQMGAEiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=JXm0-ilIknE&list=PLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd&pp=0gcJCYADOCosWNin",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "JXm0-ilIknE",
+           "playlistId": "PLa1F2ddGya_8u-HEvmfCVuS_OImW8HaLd",
+           "params": "OAI%3D",
+           "playerParams": "0gcJCYADOCosWNin",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV84dS1IRXZtZkNWdVNfT0ltVzhIYUxk"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr8---sn-8pxuuxa-8jal.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=2579b4fa29489271&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "richItemRenderer": {
+    "content": {
+     "lockupViewModel": {
+      "contentImage": {
+       "collectionThumbnailViewModel": {
+        "primaryThumbnail": {
+         "thumbnailViewModel": {
+          "image": {
+           "sources": [
+            {
+             "url": "https://i.ytimg.com/vi/VZ5022VaMmA/hqdefault.jpg?sqp=-oaymwExCOADEI4CSFryq4qpAyMIARUAAIhCGAHwAQH4Af4JgALQBYoCDAgAEAEYZSBlKGUwDw==&rs=AOn4CLA6TsO494xGjXtJ7ckv63UIpPjRHw",
+             "width": 480,
+             "height": 270
+            }
+           ]
+          },
+          "overlays": [
+           {
+            "thumbnailOverlayBadgeViewModel": {
+             "thumbnailBadges": [
+              {
+               "thumbnailBadgeViewModel": {
+                "icon": {
+                 "sources": [
+                  {
+                   "clientResource": {
+                    "imageName": "PLAYLISTS"
+                   }
+                  }
+                 ]
+                },
+                "text": "87 video",
+                "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+                "backgroundColor": {
+                 "lightTheme": 2631720,
+                 "darkTheme": 2631720
+                }
+               }
+              }
+             ],
+             "position": "THUMBNAIL_OVERLAY_BADGE_POSITION_BOTTOM_END"
+            }
+           },
+           {
+            "thumbnailHoverOverlayViewModel": {
+             "icon": {
+              "sources": [
+               {
+                "clientResource": {
+                 "imageName": "PLAY_ALL"
+                }
+               }
+              ]
+             },
+             "text": {
+              "content": "Phát tất cả",
+              "styleRuns": [
+               {
+                "startIndex": 0,
+                "length": 11
+               }
+              ]
+             },
+             "style": "THUMBNAIL_HOVER_OVERLAY_STYLE_COVER"
+            }
+           }
+          ],
+          "backgroundColor": {
+           "lightTheme": 4144959,
+           "darkTheme": 4144959
+          }
+         }
+        },
+        "stackColor": {
+         "lightTheme": 12566463,
+         "darkTheme": 9211020
+        }
+       }
+      },
+      "metadata": {
+       "lockupMetadataViewModel": {
+        "title": {
+         "content": "Blender Conference 2024"
+        },
+        "metadata": {
+         "contentMetadataViewModel": {
+          "metadataRows": [
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "Danh sách phát",
+               "commandRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 14,
+                 "onTap": {
+                  "innertubeCommand": {
+                   "clickTrackingParams": "CEcQ0sQMGAIiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaMoBBNxRH_c=",
+                   "commandMetadata": {
+                    "webCommandMetadata": {
+                     "url": "/@BlenderOfficial",
+                     "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                     "rootVe": 3611,
+                     "apiUrl": "/youtubei/v1/browse"
+                    }
+                   },
+                   "browseEndpoint": {
+                    "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+                    "canonicalBaseUrl": "/@BlenderOfficial"
+                   }
+                  }
+                 }
+                }
+               ],
+               "styleRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 14,
+                 "weightLabel": "FONT_WEIGHT_NORMAL"
+                }
+               ]
+              }
+             }
+            ]
+           },
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "Xem toàn bộ danh sách",
+               "commandRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 21,
+                 "onTap": {
+                  "innertubeCommand": {
+                   "clickTrackingParams": "CEcQ0sQMGAIiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaMoBBNxRH_c=",
+                   "commandMetadata": {
+                    "webCommandMetadata": {
+                     "url": "/playlist?list=PLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x",
+                     "webPageType": "WEB_PAGE_TYPE_PLAYLIST",
+                     "rootVe": 5754,
+                     "apiUrl": "/youtubei/v1/browse"
+                    }
+                   },
+                   "browseEndpoint": {
+                    "browseId": "VLPLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x"
+                   }
+                  }
+                 }
+                }
+               ],
+               "styleRuns": [
+                {
+                 "startIndex": 0,
+                 "length": 21,
+                 "weightLabel": "FONT_WEIGHT_MEDIUM"
+                }
+               ]
+              }
+             }
+            ]
+           }
+          ],
+          "delimiter": " • "
+         }
+        }
+       }
+      },
+      "contentId": "PLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x",
+      "contentType": "LOCKUP_CONTENT_TYPE_PLAYLIST",
+      "itemPlayback": {
+       "inlinePlayerData": {
+        "onSelect": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEcQ0sQMGAIiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=VZ5022VaMmA&list=PLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "VZ5022VaMmA",
+           "playlistId": "PLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x",
+           "params": "OAI%3D",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV8tWW13NFlsT2pxcmRReGlSTUpxbDV4"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr2---sn-8pxuuxa-8jak.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=559e74db655a3260&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        },
+        "onVisible": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEcQ0sQMGAIiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=VZ5022VaMmA&list=PLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x&pp=YAHIAQHwBAD4BACiBhUBAym6i_CQTIYyQVSVfCpo3T8Ut1Q%3D",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "VZ5022VaMmA",
+           "playlistId": "PLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x",
+           "playerParams": "YAHIAQHwBAD4BACiBhUBAym6i_CQTIYyQVSVfCpo3T8Ut1Q%3D",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV8tWW13NFlsT2pxcmRReGlSTUpxbDV4"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr2---sn-8pxuuxa-8jak.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=559e74db655a3260&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      "rendererContext": {
+       "loggingContext": {
+        "loggingDirectives": {
+         "trackingParams": "CEcQ0sQMGAIiEwjK9t2I84iYAxWrklYBHao2KvE=",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CEcQ0sQMGAIiEwjK9t2I84iYAxWrklYBHao2KvEyBmctaGlnaFoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEFEPI4GGjKAQTcUR_3",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=VZ5022VaMmA&list=PLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "VZ5022VaMmA",
+           "playlistId": "PLa1F2ddGya_-Ymw4YlOjqrdQxiRMJql5x",
+           "params": "OAI%3D",
+           "loggingContext": {
+            "vssLoggingContext": {
+             "serializedContextData": "GiJQTGExRjJkZEd5YV8tWW13NFlsT2pxcmRReGlSTUpxbDV4"
+            }
+           },
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr2---sn-8pxuuxa-8jak.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=559e74db655a3260&ip=203.0.113.7&initcwndbps=3112125&mt=1794708124&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "continuation": {
+  "continuationItemRenderer": {
+   "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+   "continuationEndpoint": {
+    "clickTrackingParams": "CCsQ6IsCGAAiEwjK9t2I84iYAxWrklYBHao2KvHKAQTcUR_3",
+    "commandMetadata": {
+     "webCommandMetadata": {
+      "sendPost": true,
+      "apiUrl": "/youtubei/v1/browse"
+     }
+    },
+    "continuationCommand": {
+     "token": "4qmFsgJ4EhhVQ1NNT1FlQkoyUkFudUZ1bmduUU94TGcaKkVnbHdiR0Y1YkdsemRITVlBeUFBTUFFNEFlb0RCME5uVGtSUmFsRSUzRJoCL2Jyb3dzZS1mZWVkVUNTTU9RZUJKMlJBbnVGdW5nblFPeExncGxheWxpc3RzMTA0",
+     "request": "CONTINUATION_REQUEST_TYPE_BROWSE"
+    }
+   }
+  }
+ }
+}

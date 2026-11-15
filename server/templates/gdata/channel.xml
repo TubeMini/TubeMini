@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- GData channel entry. Format follows the TubeRepair server templates
+     (https://github.com/kevinf100/tuberepair.uptimetrackers.com, GPL-3.0), with namespaces declared. -->
+<entry xmlns='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005' xmlns:yt='{{ base }}/schemas/2007' xmlns:media='http://search.yahoo.com/mrss/' gd:etag='W/&quot;Ck8GRH47eCp7I2A9XRdTGEQ.&quot;'>
+{% include "gdata/_channel_body.xml" %}
+</entry>

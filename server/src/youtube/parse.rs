@@ -357,6 +357,320 @@ fn collect_items<'a>(v: &'a Value, out: &mut Vec<(ItemKind, &'a Value)>) {
     }
 }
 
+/// Avatar URL → small JPEG (`=s88`), absolute https (`//yt3…` → `https://yt3…`).
+pub fn small_avatar(url: &str) -> String {
+    let url = if url.starts_with("//") {
+        format!("https:{url}")
+    } else {
+        url.to_owned()
+    };
+    if let Some(pos) = url.rfind("=s") {
+        let tail = &url[pos + 2..];
+        let digits = tail.bytes().take_while(u8::is_ascii_digit).count();
+        if digits > 0 {
+            return format!("{}=s88{}", &url[..pos], &tail[digits..]);
+        }
+    }
+    url
+}
+
+fn mentions(text: &str, words: &[&str]) -> bool {
+    let lower = text.to_lowercase();
+    words.iter().any(|w| lower.contains(w))
+}
+
+const SUBSCRIBER_WORDS: &[&str] = &["người đăng ký", "subscriber"];
+const VIDEO_WORDS: &[&str] = &["video"];
+
+/// Fills subscriber / video counts from free-form texts ("1,26 Tr người đăng ký", "1,5 N video").
+fn channel_counts<'a>(ch: &mut super::Channel, texts: impl IntoIterator<Item = &'a str>) {
+    for t in texts {
+        if mentions(t, SUBSCRIBER_WORDS) {
+            ch.subscribers = parse_views(t).unwrap_or(ch.subscribers);
+        } else if mentions(t, VIDEO_WORDS) {
+            ch.videos = parse_views(t).unwrap_or(ch.videos);
+        }
+    }
+}
+
+/// Channel page header from a `browse` response of the channel.
+pub fn channel_from_browse(resp: &Value) -> Option<super::Channel> {
+    let md = find_first(resp, "channelMetadataRenderer")?;
+    let s = |k: &str| {
+        md.get(k)
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .to_owned()
+    };
+    let avatar = md
+        .get("avatar")
+        .and_then(|a| find_first(a, "url"))
+        .and_then(Value::as_str)
+        .map(small_avatar)
+        .unwrap_or_default();
+    let mut ch = super::Channel {
+        id: s("externalId"),
+        name: s("title"),
+        description: s("description"),
+        avatar,
+        ..Default::default()
+    };
+    let mut texts = Vec::new();
+    if let Some(header) = find_first(resp, "pageHeaderViewModel") {
+        let mut parts = Vec::new();
+        find_all(header, "metadataParts", &mut parts);
+        for list in parts.into_iter().filter_map(Value::as_array) {
+            texts.extend(list.iter().map(|p| text(p.get("text"))));
+        }
+    }
+    if let Some(c4) = find_first(resp, "c4TabbedHeaderRenderer") {
+        texts.push(text(c4.get("subscriberCountText")));
+        texts.push(text(c4.get("videosCountText")));
+    }
+    channel_counts(&mut ch, texts.iter().map(String::as_str));
+    (!ch.id.is_empty()).then_some(ch)
+}
+
+/// `params` of a channel tab (`/playlists`, `/videos`, …) as listed in the channel's own response.
+pub fn channel_tab_params(resp: &Value, suffix: &str) -> Option<String> {
+    let mut tabs = Vec::new();
+    find_all(resp, "tabRenderer", &mut tabs);
+    tabs.into_iter().find_map(|t| {
+        let ep = t.get("endpoint")?;
+        let url = find_first(ep, "url")?.as_str()?;
+        if !url.ends_with(suffix) {
+            return None;
+        }
+        find_first(ep, "params")?.as_str().map(str::to_owned)
+    })
+}
+
+/// `channelRenderer` (channel search results).
+pub fn channel_from_renderer(r: &Value) -> Option<super::Channel> {
+    let mut ch = super::Channel {
+        id: r.get("channelId")?.as_str()?.to_owned(),
+        name: text(r.get("title")),
+        description: text(r.get("descriptionSnippet")),
+        avatar: r
+            .get("thumbnail")
+            .and_then(|t| find_first(t, "url"))
+            .and_then(Value::as_str)
+            .map(small_avatar)
+            .unwrap_or_default(),
+        ..Default::default()
+    };
+    // YouTube now puts "@handle" in subscriberCountText and the count in videoCountText
+    let texts = [
+        text(r.get("subscriberCountText")),
+        text(r.get("videoCountText")),
+    ];
+    channel_counts(&mut ch, texts.iter().map(String::as_str));
+    Some(ch)
+}
+
+pub fn channels_in(v: &Value) -> super::Listing<super::Channel> {
+    let mut nodes = Vec::new();
+    find_all(v, "channelRenderer", &mut nodes);
+    super::Listing {
+        items: nodes
+            .into_iter()
+            .filter_map(channel_from_renderer)
+            .collect(),
+        continuation: continuation_in(v),
+    }
+}
+
+/// Labels that are not a channel name in playlist lockups.
+const PLAYLIST_LABELS: &[&str] = &[
+    "danh sách phát",
+    "xem toàn bộ danh sách",
+    "playlist",
+    "view full playlist",
+];
+
+fn video_id_in_thumb(v: &Value) -> String {
+    let mut urls = Vec::new();
+    find_all(v, "url", &mut urls);
+    urls.into_iter()
+        .filter_map(Value::as_str)
+        .find_map(|u| {
+            let rest = u.split("i.ytimg.com/vi/").nth(1)?;
+            let id = rest.split('/').next()?;
+            super::VideoId::parse(id).map(|v| v.to_string())
+        })
+        .unwrap_or_default()
+}
+
+/// `lockupViewModel` with `contentType: LOCKUP_CONTENT_TYPE_PLAYLIST`.
+pub fn playlist_from_lockup(l: &Value) -> Option<super::Playlist> {
+    if l.get("contentType").and_then(Value::as_str) != Some("LOCKUP_CONTENT_TYPE_PLAYLIST") {
+        return None;
+    }
+    let meta = l.get("metadata")?.get("lockupMetadataViewModel")?;
+    let mut badges = Vec::new();
+    if let Some(image) = l.get("contentImage") {
+        find_all(image, "text", &mut badges);
+    }
+    let count = badges
+        .into_iter()
+        .filter_map(Value::as_str)
+        .find(|t| t.chars().next().is_some_and(|c| c.is_ascii_digit()))
+        .and_then(parse_views)
+        .unwrap_or(0);
+    let mut parts = Vec::new();
+    find_all(meta, "metadataParts", &mut parts);
+    let author = parts
+        .into_iter()
+        .filter_map(Value::as_array)
+        .flatten()
+        .map(|p| text(p.get("text")))
+        .find(|t| !t.trim().is_empty() && !mentions(t, PLAYLIST_LABELS))
+        .unwrap_or_default();
+    Some(super::Playlist {
+        id: l.get("contentId")?.as_str()?.to_owned(),
+        title: text(meta.get("title")),
+        author,
+        author_id: channel_id_in(meta).unwrap_or_default(),
+        count,
+        thumb_video: l
+            .get("contentImage")
+            .map(video_id_in_thumb)
+            .unwrap_or_default(),
+    })
+}
+
+/// `playlistRenderer` (older search results).
+pub fn playlist_from_renderer(r: &Value) -> Option<super::Playlist> {
+    let byline = r.get("shortBylineText").or_else(|| r.get("longBylineText"));
+    Some(super::Playlist {
+        id: r.get("playlistId")?.as_str()?.to_owned(),
+        title: text(r.get("title")),
+        author: text(byline),
+        author_id: byline.and_then(channel_id_in).unwrap_or_default(),
+        count: r
+            .get("videoCount")
+            .and_then(Value::as_str)
+            .and_then(|c| c.parse().ok())
+            .unwrap_or(0),
+        thumb_video: video_id_in_thumb(r),
+    })
+}
+
+pub fn playlists_in(v: &Value) -> super::Listing<super::Playlist> {
+    let mut lockups = Vec::new();
+    find_all(v, "lockupViewModel", &mut lockups);
+    let mut renderers = Vec::new();
+    find_all(v, "playlistRenderer", &mut renderers);
+    let items = lockups
+        .into_iter()
+        .filter_map(playlist_from_lockup)
+        .chain(renderers.into_iter().filter_map(playlist_from_renderer))
+        .collect();
+    super::Listing {
+        items,
+        continuation: continuation_in(v),
+    }
+}
+
+/// Token that loads the comments of a `next` (watch page) response.
+pub fn comments_token(next: &Value) -> Option<String> {
+    let mut sections = Vec::new();
+    find_all(next, "itemSectionRenderer", &mut sections);
+    sections
+        .into_iter()
+        .find(|s| {
+            s.get("sectionIdentifier").and_then(Value::as_str) == Some("comment-item-section")
+        })
+        .and_then(continuation_in)
+}
+
+/// Top-level comments of a comments continuation response (new entity format + legacy renderer).
+pub fn comments_in(resp: &Value, now: i64) -> super::Listing<super::Comment> {
+    let mut items = Vec::new();
+    let mut payloads = Vec::new();
+    find_all(resp, "commentEntityPayload", &mut payloads);
+    for p in payloads {
+        let s = |path: &[&str]| str_at(p, path).unwrap_or_default().to_owned();
+        let id = s(&["properties", "commentId"]);
+        if id.is_empty() {
+            continue;
+        }
+        // Verified authors come with an empty displayName; fall back to the a11y label or the handle
+        let author = [
+            s(&["author", "displayName"]),
+            s(&["properties", "authorButtonA11y"]),
+            s(&[
+                "author",
+                "channelCommand",
+                "innertubeCommand",
+                "browseEndpoint",
+                "canonicalBaseUrl",
+            ])
+            .trim_start_matches('/')
+            .to_owned(),
+        ]
+        .into_iter()
+        .map(|a| a.trim().to_owned())
+        .find(|a| !a.is_empty())
+        .unwrap_or_default();
+        items.push(super::Comment {
+            id,
+            author,
+            author_id: s(&["author", "channelId"]),
+            text: s(&["properties", "content", "content"]),
+            published: parse_relative_age(&s(&["properties", "publishedTime"]))
+                .map_or(0, |a| now - a),
+            likes: parse_views(&s(&["toolbar", "likeCountNotliked"])).unwrap_or(0),
+            replies: parse_views(&s(&["toolbar", "replyCount"])).unwrap_or(0),
+        });
+    }
+    if items.is_empty() {
+        let mut legacy = Vec::new();
+        find_all(resp, "commentRenderer", &mut legacy);
+        for r in legacy {
+            let Some(id) = r.get("commentId").and_then(Value::as_str) else {
+                continue;
+            };
+            items.push(super::Comment {
+                id: id.to_owned(),
+                author: text(r.get("authorText")),
+                author_id: r
+                    .get("authorEndpoint")
+                    .and_then(|e| find_first(e, "browseId"))
+                    .and_then(Value::as_str)
+                    .unwrap_or_default()
+                    .to_owned(),
+                text: text(r.get("contentText")),
+                published: parse_relative_age(&text(r.get("publishedTimeText")))
+                    .map_or(0, |a| now - a),
+                likes: parse_views(&text(r.get("voteCount"))).unwrap_or(0),
+                replies: r.get("replyCount").and_then(Value::as_u64).unwrap_or(0),
+            });
+        }
+    }
+    super::Listing {
+        items,
+        continuation: top_level_continuation(resp),
+    }
+}
+
+/// The page continuation of an `onResponseReceivedEndpoints` response: the `continuationItemRenderer`
+/// that is a direct item of the action list (reply continuations are nested deeper and ignored).
+pub fn top_level_continuation(resp: &Value) -> Option<String> {
+    let actions = resp.get("onResponseReceivedEndpoints")?.as_array()?;
+    actions.iter().rev().find_map(|a| {
+        let list = a
+            .get("reloadContinuationItemsCommand")
+            .or_else(|| a.get("appendContinuationItemsAction"))?
+            .get("continuationItems")?
+            .as_array()?;
+        list.iter().rev().find_map(|item| {
+            let r = item.get("continuationItemRenderer")?;
+            find_first(r, "token")?.as_str().map(str::to_owned)
+        })
+    })
+}
+
 /// Token of the first `continuationItemRenderer` below `v`.
 pub fn continuation_in(v: &Value) -> Option<String> {
     let mut renderers = Vec::new();
@@ -476,6 +790,89 @@ mod tests {
             assert!(v.author.is_empty(), "{v:?}");
         }
         assert!(page.continuation.is_some());
+    }
+
+    #[test]
+    fn channel_home_fixture() {
+        let json = fixture("channel_home_vi.json");
+        let ch = channel_from_browse(&json).unwrap();
+        assert_eq!(ch.id, "UCSMOQeBJ2RAnuFungnQOxLg");
+        assert_eq!(ch.name, "Blender");
+        assert!(ch.subscribers > 1_000_000, "{ch:?}");
+        assert!(ch.videos > 1000, "{ch:?}");
+        assert!(
+            ch.avatar.starts_with("https://yt3.") && ch.avatar.contains("=s88"),
+            "{ch:?}"
+        );
+        let params = channel_tab_params(&json, "/playlists").unwrap();
+        assert!(params.starts_with("Eg"), "{params}");
+        assert_eq!(
+            channel_tab_params(&json, "/videos").as_deref(),
+            Some("EgZ2aWRlb3PyBgQKAjoA")
+        );
+    }
+
+    #[test]
+    fn channel_search_fixture() {
+        let list = channels_in(&fixture("channel_search_vi.json"));
+        assert_eq!(list.items.len(), 3);
+        for c in &list.items {
+            assert!(
+                super::super::is_channel_id(&c.id) && !c.name.is_empty(),
+                "{c:?}"
+            );
+            assert!(
+                c.subscribers > 0 && c.avatar.starts_with("https://"),
+                "{c:?}"
+            );
+        }
+        assert!(list.continuation.is_some());
+    }
+
+    #[test]
+    fn channel_playlists_fixture() {
+        let list = playlists_in(&fixture("channel_playlists_vi.json"));
+        assert_eq!(list.items.len(), 3);
+        for p in &list.items {
+            assert!(
+                super::super::is_playlist_id(&p.id) && !p.title.is_empty(),
+                "{p:?}"
+            );
+            assert!(p.count > 0 && p.thumb_video.len() == 11, "{p:?}");
+            assert_eq!(p.author_id, "UCSMOQeBJ2RAnuFungnQOxLg");
+            // Channel tab rows hold only labels ("Danh sách phát"); the caller fills the name in
+            assert!(p.author.is_empty(), "{p:?}");
+        }
+        assert!(list.continuation.is_some());
+    }
+
+    #[test]
+    fn comments_fixture() {
+        let list = comments_in(&fixture("comments_vi.json"), NOW);
+        assert_eq!(list.items.len(), 3);
+        for c in &list.items {
+            assert!(
+                !c.id.is_empty() && !c.author.is_empty() && !c.text.is_empty(),
+                "{c:?}"
+            );
+            assert!(super::super::is_channel_id(&c.author_id), "{c:?}");
+            assert!(c.published > 0 && c.published < NOW, "{c:?}");
+        }
+        assert!(list.items.iter().any(|c| c.likes > 0 && c.replies > 0));
+        assert!(list.continuation.is_some());
+    }
+
+    #[test]
+    fn avatars_become_small_jpeg_urls() {
+        assert_eq!(
+            small_avatar("//yt3.ggpht.com/abc=s176-c-k-c0x00ffffff-no-rj-mo"),
+            "https://yt3.ggpht.com/abc=s88-c-k-c0x00ffffff-no-rj-mo"
+        );
+        assert_eq!(
+            small_avatar("https://yt3.ggpht.com/abc=s900"),
+            "https://yt3.ggpht.com/abc=s88"
+        );
+        assert_eq!(small_avatar("https://x/y.jpg"), "https://x/y.jpg");
     }
 
     #[test]

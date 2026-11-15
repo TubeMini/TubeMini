@@ -41,6 +41,65 @@ pub struct Page {
     pub continuation: Option<String>,
 }
 
+/// A channel (search result or channel page header). Unknown numbers are 0.
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize)]
+pub struct Channel {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    /// Small JPEG avatar (`=s88`), absolute https URL; empty when unknown.
+    pub avatar: String,
+    pub subscribers: u64,
+    pub videos: u64,
+}
+
+/// A playlist as listed on a channel or in search.
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize)]
+pub struct Playlist {
+    pub id: String,
+    pub title: String,
+    pub author: String,
+    pub author_id: String,
+    pub count: u64,
+    /// Id of a video whose thumbnail represents the playlist (empty when unknown).
+    pub thumb_video: String,
+}
+
+/// A top-level comment.
+#[derive(Debug, Clone, Default, PartialEq, serde::Serialize)]
+pub struct Comment {
+    pub id: String,
+    pub author: String,
+    pub author_id: String,
+    pub text: String,
+    /// Unix seconds (approximate, YouTube gives "3 years ago"); 0 = unknown.
+    pub published: i64,
+    pub likes: u64,
+    pub replies: u64,
+}
+
+impl Comment {
+    pub fn published_iso(&self) -> String {
+        parse::iso8601(self.published.max(0))
+    }
+}
+
+/// A page of non-video items plus the token for the next page.
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct Listing<T> {
+    pub items: Vec<T>,
+    pub continuation: Option<String>,
+}
+
+impl<T> Default for Listing<T> {
+    fn default() -> Self {
+        Self {
+            items: Vec::new(),
+            continuation: None,
+        }
+    }
+}
+
 /// Search options mapped from GData query parameters.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
 pub struct SearchFilter {
@@ -149,6 +208,41 @@ pub trait MetadataProvider: Send + Sync {
         continuation: Option<&'a str>,
     ) -> BoxFut<'a, Page>;
     fn popular(&self, category: Category) -> BoxFut<'_, Page>;
+    /// Channel page header (name, avatar, subscribers, description).
+    fn channel<'a>(&'a self, channel_id: &'a str) -> BoxFut<'a, Channel>;
+    fn search_channels<'a>(
+        &'a self,
+        query: &'a str,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Listing<Channel>>;
+    fn channel_playlists<'a>(
+        &'a self,
+        channel_id: &'a str,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Listing<Playlist>>;
+    fn search_playlists<'a>(
+        &'a self,
+        query: &'a str,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Listing<Playlist>>;
+    /// Videos of a playlist (`PL…`, `UU…`, `OLAK…`).
+    fn playlist<'a>(
+        &'a self,
+        playlist_id: &'a str,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Page>;
+    fn comments<'a>(
+        &'a self,
+        id: &'a VideoId,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Listing<Comment>>;
+}
+
+/// Is this a plausible playlist id?
+pub fn is_playlist_id(s: &str) -> bool {
+    (2..=64).contains(&s.len())
+        && s.bytes()
+            .all(|b| b.is_ascii_alphanumeric() || b == b'_' || b == b'-')
 }
 
 /// Is this a plausible channel id (`UC` + 22 chars)?

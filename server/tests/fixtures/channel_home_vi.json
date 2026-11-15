@@ -1,0 +1,1139 @@
+{
+ "header": {
+  "pageHeaderRenderer": {
+   "content": {
+    "pageHeaderViewModel": {
+     "title": {
+      "dynamicTextViewModel": {
+       "text": {
+        "content": "Blender",
+        "styleRuns": [
+         {
+          "startIndex": 7,
+          "styleRunExtensions": {
+           "styleRunColorMapExtension": {
+            "colorMap": [
+             {
+              "key": "USER_INTERFACE_THEME_LIGHT",
+              "value": 4279440147
+             },
+             {
+              "key": "USER_INTERFACE_THEME_DARK",
+              "value": 4294967295
+             }
+            ]
+           }
+          }
+         }
+        ],
+        "attachmentRuns": [
+         {
+          "startIndex": 7,
+          "length": 0,
+          "element": {
+           "type": {
+            "imageType": {
+             "image": {
+              "sources": [
+               {
+                "clientResource": {
+                 "imageName": "CHECK_CIRCLE_FILLED"
+                },
+                "width": 24,
+                "height": 24
+               }
+              ]
+             }
+            }
+           },
+           "properties": {
+            "layoutProperties": {
+             "height": {
+              "value": 24,
+              "unit": "DIMENSION_UNIT_POINT"
+             },
+             "width": {
+              "value": 24,
+              "unit": "DIMENSION_UNIT_POINT"
+             },
+             "margin": {
+              "left": {
+               "value": 8,
+               "unit": "DIMENSION_UNIT_POINT"
+              }
+             }
+            }
+           }
+          },
+          "alignment": "ALIGNMENT_VERTICAL_CENTER"
+         }
+        ]
+       },
+       "maxLines": 2,
+       "rendererContext": {
+        "loggingContext": {
+         "loggingDirectives": {
+          "trackingParams": "CCMQj-QKIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+          "visibility": {
+           "types": "12"
+          }
+         }
+        },
+        "accessibilityContext": {
+         "label": "Kênh Blender, Đã xác minh"
+        }
+       }
+      }
+     },
+     "image": {
+      "decoratedAvatarViewModel": {
+       "avatar": {
+        "avatarViewModel": {
+         "image": {
+          "sources": [
+           {
+            "url": "https://yt3.googleusercontent.com/ytc/AIdro_nqhez5E1j4YzrCvzTAAB6z_KDFFZznqWv0x-vfY2gsXdY=s72-c-k-c0x00ffffff-no-rj",
+            "width": 72,
+            "height": 72
+           },
+           {
+            "url": "https://yt3.googleusercontent.com/ytc/AIdro_nqhez5E1j4YzrCvzTAAB6z_KDFFZznqWv0x-vfY2gsXdY=s120-c-k-c0x00ffffff-no-rj",
+            "width": 120,
+            "height": 120
+           },
+           {
+            "url": "https://yt3.googleusercontent.com/ytc/AIdro_nqhez5E1j4YzrCvzTAAB6z_KDFFZznqWv0x-vfY2gsXdY=s160-c-k-c0x00ffffff-no-rj",
+            "width": 160,
+            "height": 160
+           }
+          ],
+          "processor": {
+           "borderImageProcessor": {
+            "circular": true
+           }
+          }
+         },
+         "avatarImageSize": "AVATAR_SIZE_XL",
+         "loggingDirectives": {
+          "trackingParams": "CCIQ6OENIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+          "visibility": {
+           "types": "12"
+          }
+         }
+        }
+       }
+      }
+     },
+     "metadata": {
+      "contentMetadataViewModel": {
+       "metadataRows": [
+        {
+         "metadataParts": [
+          {
+           "text": {
+            "content": "@BlenderOfficial",
+            "styleRuns": [
+             {
+              "weightLabel": "FONT_WEIGHT_MEDIUM",
+              "styleRunExtensions": {
+               "styleRunColorMapExtension": {
+                "colorMap": [
+                 {
+                  "key": "USER_INTERFACE_THEME_LIGHT",
+                  "value": 4279440147
+                 },
+                 {
+                  "key": "USER_INTERFACE_THEME_DARK",
+                  "value": 4294967295
+                 }
+                ]
+               }
+              }
+             }
+            ]
+           },
+           "enableTruncation": true
+          }
+         ]
+        },
+        {
+         "metadataParts": [
+          {
+           "text": {
+            "content": "1,26 Tr người đăng ký"
+           },
+           "accessibilityLabel": "1,26 triệu người đăng ký"
+          },
+          {
+           "text": {
+            "content": "1,5 N video",
+            "styleRuns": [
+             {
+              "startIndex": 0,
+              "length": 11
+             }
+            ]
+           }
+          }
+         ]
+        }
+       ],
+       "delimiter": "•",
+       "rendererContext": {
+        "loggingContext": {
+         "loggingDirectives": {
+          "trackingParams": "CCEQ9eQKIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+          "visibility": {
+           "types": "12"
+          }
+         }
+        }
+       }
+      }
+     },
+     "actions": {
+      "flexibleActionsViewModel": {
+       "actionsRows": [
+        {
+         "actions": [
+          {
+           "buttonViewModel": {
+            "title": "Đăng ký",
+            "onTap": {
+             "innertubeCommand": {
+              "clickTrackingParams": "CBIQot8KIhMI1_iQiPOImAMV3ZNWAR2FNgdUygEE3xzLRw==",
+              "commandMetadata": {
+               "webCommandMetadata": {
+                "ignoreNavigation": true
+               }
+              },
+              "modalEndpoint": {
+               "modal": {
+                "modalWithTitleAndButtonRenderer": {
+                 "title": {
+                  "simpleText": "Bạn muốn đăng ký kênh này?"
+                 },
+                 "content": {
+                  "simpleText": "Đăng nhập để đăng ký kênh này."
+                 },
+                 "button": {
+                  "buttonRenderer": {
+                   "style": "STYLE_MONO_FILLED",
+                   "size": "SIZE_DEFAULT",
+                   "isDisabled": false,
+                   "text": {
+                    "simpleText": "Đăng nhập"
+                   },
+                   "navigationEndpoint": {
+                    "clickTrackingParams": "CCAQ_YYEIhMI1_iQiPOImAMV3ZNWAR2FNgdUMglzdWJzY3JpYmXKAQTfHMtH",
+                    "commandMetadata": {
+                     "webCommandMetadata": {
+                      "url": "https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Dvi%26next%3D%252F%2540BlenderOfficial%26continue_action%3DQUlxb01IWUxOU2tmUmpabHZjSTBJTWFuS0pvbnxBQnJ0NjlrX2EwUGdBYk83Mkg4dkhiV1lsRV9xeXhWZzhqeHZOTlhpLVRYM2tJaldEMEhkUTJqVnJPNDF1a3dPVlFSdW1Yc19jOFdTbkFTUUJWTmpVbmZRLU5TR3EwU0dBNm9SdDJZYXF0VDZMQ1pjMFhHOVhfZWUyZ0RoS1JKeHRrWDluNlgxaVJyUkFSOHJWNV9SQU1MYXUzQXNQYjM3NnIwSG9OUFdMNEYwajJlenVzbk5WNHJIb0pn&hl=vi&ec=66429",
+                      "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+                      "rootVe": 83769
+                     }
+                    },
+                    "signInEndpoint": {
+                     "nextEndpoint": {
+                      "clickTrackingParams": "CCAQ_YYEIhMI1_iQiPOImAMV3ZNWAR2FNgdUygEE3xzLRw==",
+                      "commandMetadata": {
+                       "webCommandMetadata": {
+                        "url": "/@BlenderOfficial",
+                        "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                        "rootVe": 3611,
+                        "apiUrl": "/youtubei/v1/browse"
+                       }
+                      },
+                      "browseEndpoint": {
+                       "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+                       "params": "EgA%3D",
+                       "canonicalBaseUrl": "/@BlenderOfficial"
+                      }
+                     },
+                     "continueAction": "QUlxb01IWUxOU2tmUmpabHZjSTBJTWFuS0pvbnxBQnJ0NjlrX2EwUGdBYk83Mkg4dkhiV1lsRV9xeXhWZzhqeHZOTlhpLVRYM2tJaldEMEhkUTJqVnJPNDF1a3dPVlFSdW1Yc19jOFdTbkFTUUJWTmpVbmZRLU5TR3EwU0dBNm9SdDJZYXF0VDZMQ1pjMFhHOVhfZWUyZ0RoS1JKeHRrWDluNlgxaVJyUkFSOHJWNV9SQU1MYXUzQXNQYjM3NnIwSG9OUFdMNEYwajJlenVzbk5WNHJIb0pn",
+                     "idamTag": "66429"
+                    }
+                   },
+                   "trackingParams": "CCAQ_YYEIhMI1_iQiPOImAMV3ZNWAR2FNgdU"
+                  }
+                 }
+                }
+               }
+              }
+             }
+            },
+            "accessibilityText": "Đăng ký",
+            "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+            "trackingParams": "CBIQot8KIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+            "isFullWidth": false,
+            "type": "BUTTON_VIEW_MODEL_TYPE_FILLED",
+            "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+            "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+           }
+          }
+         ]
+        }
+       ],
+       "justifyContent": "FLEXIBLE_ACTIONS_JUSTIFY_CONTENT_START",
+       "minimumRowHeight": 44,
+       "rendererContext": {
+        "loggingContext": {
+         "loggingDirectives": {
+          "trackingParams": "CBIQot8KIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+          "visibility": {
+           "types": "12"
+          },
+          "clientVeSpec": {
+           "uiType": 184974,
+           "veCounter": 631028876
+          }
+         }
+        }
+       }
+      }
+     },
+     "description": {
+      "descriptionPreviewViewModel": {
+       "description": {
+        "content": "Official YouTube channel for Blender, the Free and Open Source 3D Creation Suite. "
+       },
+       "maxLines": 2,
+       "truncationText": {
+        "content": "...xem thêm",
+        "styleRuns": [
+         {
+          "startIndex": 0,
+          "length": 11,
+          "weight": 500
+         }
+        ]
+       },
+       "alwaysShowTruncationText": true,
+       "rendererContext": {
+        "loggingContext": {
+         "loggingDirectives": {
+          "trackingParams": "CBsQr_4KIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+          "visibility": {
+           "types": "12"
+          }
+         }
+        },
+        "accessibilityContext": {
+         "label": "Nội dung mô tả. Official YouTube channel for Blender, the Free and Open Sour...nhấn để xem thêm."
+        },
+        "commandContext": {
+         "onTap": {
+          "innertubeCommand": {
+           "clickTrackingParams": "CBsQr_4KIhMI1_iQiPOImAMV3ZNWAR2FNgdUygEE3xzLRw==",
+           "showEngagementPanelEndpoint": {
+            "engagementPanel": {
+             "engagementPanelSectionListRenderer": {
+              "header": {
+               "engagementPanelTitleHeaderRenderer": {
+                "title": {
+                 "simpleText": "Blender"
+                },
+                "visibilityButton": {
+                 "buttonRenderer": {
+                  "style": "STYLE_DEFAULT",
+                  "size": "SIZE_DEFAULT",
+                  "isDisabled": false,
+                  "icon": {
+                   "iconType": "CLOSE"
+                  },
+                  "accessibility": {
+                   "label": "Đóng"
+                  },
+                  "trackingParams": "CB8Q8FsiEwjX-JCI84iYAxXdk1YBHYU2B1Q=",
+                  "accessibilityData": {
+                   "accessibilityData": {
+                    "label": "Đóng"
+                   }
+                  },
+                  "command": {
+                   "clickTrackingParams": "CB8Q8FsiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+                   "changeEngagementPanelVisibilityAction": {
+                    "targetId": "6c4ca9d9-0000-2685-8eac-582429ae3760",
+                    "visibility": "ENGAGEMENT_PANEL_VISIBILITY_HIDDEN"
+                   }
+                  }
+                 }
+                },
+                "trackingParams": "CBwQ040EIhMI1_iQiPOImAMV3ZNWAR2FNgdU"
+               }
+              },
+              "content": {
+               "sectionListRenderer": {
+                "contents": [
+                 {
+                  "itemSectionRenderer": {
+                   "contents": [
+                    {
+                     "continuationItemRenderer": {
+                      "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+                      "continuationEndpoint": {
+                       "clickTrackingParams": "CB4Quy8YACITCNf4kIjziJgDFd2TVgEdhTYHVMoBBN8cy0c=",
+                       "commandMetadata": {
+                        "webCommandMetadata": {
+                         "sendPost": true,
+                         "apiUrl": "/youtubei/v1/browse"
+                        }
+                       },
+                       "continuationCommand": {
+                        "token": "4qmFsgJgEhhVQ1NNT1FlQkoyUkFudUZ1bmduUU94TGcaRDhnWXJHaW1hQVNZS0pEWmpOR05oT1dSaExUQXdNREF0TWpZNE5TMDRaV0ZqTFRVNE1qUXlPV0ZsTXpjMk1BJTNEJTNE",
+                        "request": "CONTINUATION_REQUEST_TYPE_BROWSE"
+                       }
+                      }
+                     }
+                    }
+                   ],
+                   "trackingParams": "CB4Quy8YACITCNf4kIjziJgDFd2TVgEdhTYHVA==",
+                   "sectionIdentifier": "6c4ca9da-0000-2685-8eac-582429ae3760",
+                   "targetId": "6c4ca9da-0000-2685-8eac-582429ae3760"
+                  }
+                 }
+                ],
+                "trackingParams": "CB0Qui8iEwjX-JCI84iYAxXdk1YBHYU2B1Q=",
+                "scrollPaneStyle": {
+                 "scrollable": true
+                }
+               }
+              },
+              "targetId": "6c4ca9d9-0000-2685-8eac-582429ae3760",
+              "identifier": {
+               "surface": "ENGAGEMENT_PANEL_SURFACE_BROWSE",
+               "tag": "6c4ca9d9-0000-2685-8eac-582429ae3760"
+              }
+             }
+            },
+            "identifier": {
+             "surface": "ENGAGEMENT_PANEL_SURFACE_BROWSE",
+             "tag": "6c4ca9d9-0000-2685-8eac-582429ae3760"
+            },
+            "engagementPanelPresentationConfigs": {
+             "engagementPanelPopupPresentationConfig": {
+              "popupType": "PANEL_POPUP_TYPE_DIALOG"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     },
+     "attribution": {
+      "attributionViewModel": {
+       "text": {
+        "content": " fund.blender.org",
+        "commandRuns": [
+         {
+          "startIndex": 0,
+          "length": 17,
+          "onTap": {
+           "innertubeCommand": {
+            "clickTrackingParams": "CBoQmokLGAIiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+            "commandMetadata": {
+             "webCommandMetadata": {
+              "url": "https://www.youtube.com/redirect?event=channel_header&redir_token=QUlxb01IWVZ6a3ZuY0VqUG8wMmJWdEYtZ1AzX3xBQnJ0NjluUjE3RjFpakZGbjNnejR2emRmVGxOdWt5a3VweGhHVzU1NW5EV1M4Qy1OTXpJM0RXZ19tU0Jab2ZUSFFtYjlYaXJiU2hqRU83d0I1VTkwdVpqQkxTVEI1ZC11YnJy&q=https%3A%2F%2Ffund.blender.org",
+              "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+              "rootVe": 83769
+             }
+            },
+            "urlEndpoint": {
+             "url": "https://www.youtube.com/redirect?event=channel_header&redir_token=QUlxb01IWVZ6a3ZuY0VqUG8wMmJWdEYtZ1AzX3xBQnJ0NjluUjE3RjFpakZGbjNnejR2emRmVGxOdWt5a3VweGhHVzU1NW5EV1M4Qy1OTXpJM0RXZ19tU0Jab2ZUSFFtYjlYaXJiU2hqRU83d0I1VTkwdVpqQkxTVEI1ZC11YnJy&q=https%3A%2F%2Ffund.blender.org",
+             "target": "TARGET_NEW_WINDOW"
+            }
+           }
+          },
+          "loggingDirectives": {
+           "trackingParams": "CBoQmokLGAIiEwjX-JCI84iYAxXdk1YBHYU2B1Q=",
+           "visibility": {
+            "types": "12"
+           }
+          }
+         }
+        ],
+        "styleRuns": [
+         {
+          "weightLabel": "FONT_WEIGHT_NORMAL",
+          "styleRunExtensions": {
+           "styleRunColorMapExtension": {
+            "colorMap": [
+             {
+              "key": "USER_INTERFACE_THEME_DARK",
+              "value": 4282296063
+             },
+             {
+              "key": "USER_INTERFACE_THEME_LIGHT",
+              "value": 4278607828
+             }
+            ]
+           }
+          }
+         }
+        ],
+        "attachmentRuns": [
+         {
+          "startIndex": 0,
+          "length": 0,
+          "element": {
+           "type": {
+            "imageType": {
+             "image": {
+              "sources": [
+               {
+                "customImageSource": {
+                 "youtubeIconSource": {
+                  "clientResource": {
+                   "icon": "YTICON_OUTLINE_LINK_S24"
+                  }
+                 }
+                }
+               }
+              ]
+             }
+            }
+           },
+           "properties": {
+            "layoutProperties": {
+             "height": {
+              "value": 14,
+              "unit": "DIMENSION_UNIT_POINT"
+             },
+             "width": {
+              "value": 14,
+              "unit": "DIMENSION_UNIT_POINT"
+             }
+            }
+           }
+          },
+          "alignment": "ALIGNMENT_VERTICAL_CENTER"
+         }
+        ]
+       },
+       "suffix": {
+        "content": "và 7 đường liên kết khác",
+        "commandRuns": [
+         {
+          "startIndex": 0,
+          "length": 24,
+          "onTap": {
+           "innertubeCommand": {
+            "clickTrackingParams": "CBUQmIkLGAAiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+            "showEngagementPanelEndpoint": {
+             "engagementPanel": {
+              "engagementPanelSectionListRenderer": {
+               "header": {
+                "engagementPanelTitleHeaderRenderer": {
+                 "title": {
+                  "simpleText": "Blender"
+                 },
+                 "visibilityButton": {
+                  "buttonRenderer": {
+                   "style": "STYLE_DEFAULT",
+                   "size": "SIZE_DEFAULT",
+                   "isDisabled": false,
+                   "icon": {
+                    "iconType": "CLOSE"
+                   },
+                   "accessibility": {
+                    "label": "Đóng"
+                   },
+                   "trackingParams": "CBkQ8FsiEwjX-JCI84iYAxXdk1YBHYU2B1Q=",
+                   "accessibilityData": {
+                    "accessibilityData": {
+                     "label": "Đóng"
+                    }
+                   },
+                   "command": {
+                    "clickTrackingParams": "CBkQ8FsiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+                    "changeEngagementPanelVisibilityAction": {
+                     "targetId": "6c4ca9db-0000-2685-8eac-582429ae3760",
+                     "visibility": "ENGAGEMENT_PANEL_VISIBILITY_HIDDEN"
+                    }
+                   }
+                  }
+                 },
+                 "trackingParams": "CBYQ040EIhMI1_iQiPOImAMV3ZNWAR2FNgdU"
+                }
+               },
+               "content": {
+                "sectionListRenderer": {
+                 "contents": [
+                  {
+                   "itemSectionRenderer": {
+                    "contents": [
+                     {
+                      "continuationItemRenderer": {
+                       "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+                       "continuationEndpoint": {
+                        "clickTrackingParams": "CBgQuy8YACITCNf4kIjziJgDFd2TVgEdhTYHVMoBBN8cy0c=",
+                        "commandMetadata": {
+                         "webCommandMetadata": {
+                          "sendPost": true,
+                          "apiUrl": "/youtubei/v1/browse"
+                         }
+                        },
+                        "continuationCommand": {
+                         "token": "4qmFsgJgEhhVQ1NNT1FlQkoyUkFudUZ1bmduUU94TGcaRDhnWXJHaW1hQVNZS0pEWmpOR05oT1dSakxUQXdNREF0TWpZNE5TMDRaV0ZqTFRVNE1qUXlPV0ZsTXpjMk1BJTNEJTNE",
+                         "request": "CONTINUATION_REQUEST_TYPE_BROWSE"
+                        }
+                       }
+                      }
+                     }
+                    ],
+                    "trackingParams": "CBgQuy8YACITCNf4kIjziJgDFd2TVgEdhTYHVA==",
+                    "sectionIdentifier": "6c4ca9dc-0000-2685-8eac-582429ae3760",
+                    "targetId": "6c4ca9dc-0000-2685-8eac-582429ae3760"
+                   }
+                  }
+                 ],
+                 "trackingParams": "CBcQui8iEwjX-JCI84iYAxXdk1YBHYU2B1Q=",
+                 "scrollPaneStyle": {
+                  "scrollable": true
+                 }
+                }
+               },
+               "targetId": "6c4ca9db-0000-2685-8eac-582429ae3760",
+               "identifier": {
+                "surface": "ENGAGEMENT_PANEL_SURFACE_BROWSE",
+                "tag": "6c4ca9db-0000-2685-8eac-582429ae3760"
+               }
+              }
+             },
+             "identifier": {
+              "surface": "ENGAGEMENT_PANEL_SURFACE_BROWSE",
+              "tag": "6c4ca9db-0000-2685-8eac-582429ae3760"
+             },
+             "engagementPanelPresentationConfigs": {
+              "engagementPanelPopupPresentationConfig": {
+               "popupType": "PANEL_POPUP_TYPE_DIALOG"
+              }
+             }
+            }
+           }
+          },
+          "loggingDirectives": {
+           "trackingParams": "CBUQmIkLGAAiEwjX-JCI84iYAxXdk1YBHYU2B1Q=",
+           "visibility": {
+            "types": "12"
+           }
+          }
+         }
+        ],
+        "styleRuns": [
+         {
+          "fontName": "",
+          "fontSize": 0,
+          "weightLabel": "FONT_WEIGHT_MEDIUM"
+         }
+        ]
+       },
+       "rendererContext": {
+        "loggingContext": {
+         "loggingDirectives": {
+          "trackingParams": "CBQQjaULIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+          "visibility": {
+           "types": "12"
+          }
+         }
+        }
+       }
+      }
+     },
+     "banner": {
+      "imageBannerViewModel": {
+       "image": {
+        "sources": [
+         {
+          "url": "https://yt3.googleusercontent.com/6pYvl5Jl7MszRRlhjlRuEfil7B1sgt3u4WbCCl7yHPv1LbsSVAcaoGfs3gyrJUM201DQnzrUOA=w1060-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+          "width": 1060,
+          "height": 175
+         },
+         {
+          "url": "https://yt3.googleusercontent.com/6pYvl5Jl7MszRRlhjlRuEfil7B1sgt3u4WbCCl7yHPv1LbsSVAcaoGfs3gyrJUM201DQnzrUOA=w1138-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+          "width": 1138,
+          "height": 188
+         },
+         {
+          "url": "https://yt3.googleusercontent.com/6pYvl5Jl7MszRRlhjlRuEfil7B1sgt3u4WbCCl7yHPv1LbsSVAcaoGfs3gyrJUM201DQnzrUOA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+          "width": 1707,
+          "height": 283
+         },
+         {
+          "url": "https://yt3.googleusercontent.com/6pYvl5Jl7MszRRlhjlRuEfil7B1sgt3u4WbCCl7yHPv1LbsSVAcaoGfs3gyrJUM201DQnzrUOA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+          "width": 2120,
+          "height": 351
+         },
+         {
+          "url": "https://yt3.googleusercontent.com/6pYvl5Jl7MszRRlhjlRuEfil7B1sgt3u4WbCCl7yHPv1LbsSVAcaoGfs3gyrJUM201DQnzrUOA=w2276-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+          "width": 2276,
+          "height": 377
+         },
+         {
+          "url": "https://yt3.googleusercontent.com/6pYvl5Jl7MszRRlhjlRuEfil7B1sgt3u4WbCCl7yHPv1LbsSVAcaoGfs3gyrJUM201DQnzrUOA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+          "width": 2560,
+          "height": 424
+         }
+        ]
+       },
+       "style": "IMAGE_BANNER_STYLE_INSET",
+       "rendererContext": {
+        "loggingContext": {
+         "loggingDirectives": {
+          "trackingParams": "CBMQnfILIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+          "visibility": {
+           "types": "12"
+          }
+         }
+        }
+       }
+      }
+     },
+     "rendererContext": {
+      "loggingContext": {
+       "loggingDirectives": {
+        "trackingParams": "CBIQot8KIhMI1_iQiPOImAMV3ZNWAR2FNgdU",
+        "visibility": {
+         "types": "12"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "metadata": {
+  "channelMetadataRenderer": {
+   "title": "Blender",
+   "description": "Official YouTube channel for Blender, the Free and Open Source 3D Creation Suite.\n\nThe Freedom to Create\n",
+   "rssUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCSMOQeBJ2RAnuFungnQOxLg",
+   "externalId": "UCSMOQeBJ2RAnuFungnQOxLg",
+   "keywords": "blender \"Blender Foundation\" 3d \"free software\" \"Creative Commons\" tutorials \"blender conference\" sintel \"cosmos laundromat\" caminandes \"tears of steel\" \"elephants dream\" \"big buck bunny\"",
+   "ownerUrls": [
+    "http://www.youtube.com/@BlenderOfficial"
+   ],
+   "avatar": {
+    "thumbnails": [
+     {
+      "url": "https://yt3.googleusercontent.com/ytc/AIdro_nqhez5E1j4YzrCvzTAAB6z_KDFFZznqWv0x-vfY2gsXdY=s900-c-k-c0x00ffffff-no-rj",
+      "width": 900,
+      "height": 900
+     }
+    ]
+   },
+   "channelUrl": "https://www.youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg",
+   "isFamilySafe": true,
+   "availableCountryCodes": [
+    "CF",
+    "TW",
+    "IL",
+    "BR",
+    "MM",
+    "PS",
+    "RO",
+    "GW",
+    "BV",
+    "PE",
+    "LB",
+    "MO",
+    "LV",
+    "WF",
+    "FJ",
+    "AF",
+    "BY",
+    "GH",
+    "AI",
+    "NE",
+    "SR",
+    "CG",
+    "LR",
+    "EH",
+    "BO",
+    "PW",
+    "RS",
+    "BB",
+    "SH",
+    "ZA",
+    "AO",
+    "NZ",
+    "VN",
+    "LK",
+    "IE",
+    "AG",
+    "DK",
+    "KN",
+    "IR",
+    "LC",
+    "CW",
+    "PA",
+    "MS",
+    "SL",
+    "SI",
+    "MH",
+    "BJ",
+    "MP",
+    "MG",
+    "SE",
+    "SJ",
+    "ST",
+    "AW",
+    "PK",
+    "SN",
+    "TL",
+    "TM",
+    "TT",
+    "LU",
+    "SZ",
+    "AD",
+    "MF",
+    "BI",
+    "ML",
+    "BW",
+    "CR",
+    "NA",
+    "IO",
+    "ET",
+    "FR",
+    "KI",
+    "DE",
+    "SG",
+    "LY",
+    "LS",
+    "SA",
+    "KW",
+    "AS",
+    "UZ",
+    "LA",
+    "TO",
+    "CY",
+    "NI",
+    "BA",
+    "NP",
+    "WS",
+    "GG",
+    "AT",
+    "SO",
+    "BE",
+    "LT",
+    "JE",
+    "TF",
+    "HK",
+    "KR",
+    "MK",
+    "MU",
+    "BH",
+    "HR",
+    "BT",
+    "PL",
+    "BL",
+    "SC",
+    "EG",
+    "NO",
+    "BF",
+    "BG",
+    "VI",
+    "EC",
+    "CM",
+    "TN",
+    "JP",
+    "UM",
+    "GN",
+    "GT",
+    "PR",
+    "DM",
+    "TH",
+    "AQ",
+    "NL",
+    "PH",
+    "BM",
+    "TV",
+    "ES",
+    "VC",
+    "CI",
+    "MN",
+    "GS",
+    "TC",
+    "FO",
+    "SV",
+    "GB",
+    "IQ",
+    "KP",
+    "KZ",
+    "MD",
+    "MT",
+    "AM",
+    "LI",
+    "VE",
+    "SX",
+    "GM",
+    "IS",
+    "TR",
+    "GY",
+    "GI",
+    "ID",
+    "MV",
+    "CZ",
+    "AZ",
+    "KE",
+    "DO",
+    "GE",
+    "UY",
+    "CX",
+    "BD",
+    "GA",
+    "QA",
+    "AE",
+    "HM",
+    "TK",
+    "NU",
+    "GR",
+    "GD",
+    "HU",
+    "ZW",
+    "MQ",
+    "OM",
+    "BS",
+    "DJ",
+    "PF",
+    "CO",
+    "GF",
+    "PG",
+    "RU",
+    "PY",
+    "RW",
+    "GU",
+    "BZ",
+    "SD",
+    "VU",
+    "CA",
+    "NF",
+    "TJ",
+    "CC",
+    "AR",
+    "EE",
+    "KY",
+    "CK",
+    "MW",
+    "TG",
+    "GP",
+    "MC",
+    "HN",
+    "HT",
+    "FM",
+    "NR",
+    "VA",
+    "BN",
+    "NC",
+    "IN",
+    "BQ",
+    "MZ",
+    "AU",
+    "PT",
+    "DZ",
+    "FK",
+    "VG",
+    "AL",
+    "SK",
+    "SM",
+    "MY",
+    "SB",
+    "PM",
+    "PN",
+    "GL",
+    "KG",
+    "RE",
+    "IM",
+    "UG",
+    "CN",
+    "JM",
+    "CU",
+    "TZ",
+    "JO",
+    "MR",
+    "AX",
+    "US",
+    "SY",
+    "NG",
+    "SS",
+    "YT",
+    "IT",
+    "CD",
+    "CL",
+    "FI",
+    "ER",
+    "KH",
+    "MA",
+    "CV",
+    "GQ",
+    "ME",
+    "CH",
+    "YE",
+    "UA",
+    "MX",
+    "KM",
+    "TD",
+    "ZM"
+   ],
+   "androidDeepLink": "android-app://com.google.android.youtube/http/www.youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg",
+   "androidAppindexingLink": "android-app://com.google.android.youtube/http/www.youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg",
+   "iosAppindexingLink": "ios-app://544007664/vnd.youtube/www.youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg",
+   "vanityChannelUrl": "http://www.youtube.com/@BlenderOfficial"
+  }
+ },
+ "contents": {
+  "twoColumnBrowseResultsRenderer": {
+   "tabs": [
+    {
+     "tabRenderer": {
+      "title": "Trang chủ",
+      "endpoint": {
+       "clickTrackingParams": "CCoQ8JMBGAYiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@BlenderOfficial/featured",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+        "params": "EghmZWF0dXJlZPIGBAoCMgA%3D",
+        "canonicalBaseUrl": "/@BlenderOfficial"
+       }
+      }
+     }
+    },
+    {
+     "tabRenderer": {
+      "title": "Video",
+      "endpoint": {
+       "clickTrackingParams": "CCkQ8JMBGAciEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@BlenderOfficial/videos",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+        "params": "EgZ2aWRlb3PyBgQKAjoA",
+        "canonicalBaseUrl": "/@BlenderOfficial"
+       }
+      }
+     }
+    },
+    {
+     "tabRenderer": {
+      "title": "Shorts",
+      "endpoint": {
+       "clickTrackingParams": "CCgQ8JMBGAgiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@BlenderOfficial/shorts",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+        "params": "EgZzaG9ydHPyBgUKA5oBAA%3D%3D",
+        "canonicalBaseUrl": "/@BlenderOfficial"
+       }
+      }
+     }
+    },
+    {
+     "tabRenderer": {
+      "title": "Video phát trực tiếp",
+      "endpoint": {
+       "clickTrackingParams": "CCcQ8JMBGAkiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@BlenderOfficial/streams",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+        "params": "EgdzdHJlYW1z8gYECgJ6AA%3D%3D",
+        "canonicalBaseUrl": "/@BlenderOfficial"
+       }
+      }
+     }
+    },
+    {
+     "tabRenderer": {
+      "title": "Podcast",
+      "endpoint": {
+       "clickTrackingParams": "CCYQ8JMBGAoiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@BlenderOfficial/podcasts",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+        "params": "Eghwb2RjYXN0c_IGBQoDugEA",
+        "canonicalBaseUrl": "/@BlenderOfficial"
+       }
+      }
+     }
+    },
+    {
+     "tabRenderer": {
+      "title": "Danh sách phát",
+      "endpoint": {
+       "clickTrackingParams": "CCUQ8JMBGAsiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@BlenderOfficial/playlists",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+        "params": "EglwbGF5bGlzdHPyBgoKCEIGCgIQaCIA",
+        "canonicalBaseUrl": "/@BlenderOfficial"
+       }
+      }
+     }
+    },
+    {
+     "tabRenderer": {
+      "title": "Bài đăng",
+      "endpoint": {
+       "clickTrackingParams": "CCQQ8JMBGAwiEwjX-JCI84iYAxXdk1YBHYU2B1TKAQTfHMtH",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@BlenderOfficial/posts",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UCSMOQeBJ2RAnuFungnQOxLg",
+        "params": "EgVwb3N0c_IGBAoCSgA%3D",
+        "canonicalBaseUrl": "/@BlenderOfficial"
+       }
+      }
+     }
+    }
+   ]
+  }
+ }
+}

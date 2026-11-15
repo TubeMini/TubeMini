@@ -1,0 +1,565 @@
+{
+ "onResponseReceivedEndpoints": [
+  {
+   "reloadContinuationItemsCommand": {
+    "continuationItems": []
+   }
+  },
+  {
+   "reloadContinuationItemsCommand": {
+    "continuationItems": [
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "contents": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "CMoBEL51IhMIz7GgifOImAMVpvFMAh0sdSfSygEEGl3yhg==",
+             "commandMetadata": {
+              "webCommandMetadata": {
+               "sendPost": true,
+               "apiUrl": "/youtubei/v1/next"
+              }
+             },
+             "continuationCommand": {
+              "token": "Eg0SC2Fxei1LRS1icEtRGAYygwEaUBIaVWd6VTZWRjFnaHlPLXVUb3pFeDRBYUFCQWciAggAKhhVQ1NNT1FlQkoyUkFudUZ1bmduUU94TGcyC2Fxei1LRS1icEtRQAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZw%3D%3D",
+              "request": "CONTINUATION_REQUEST_TYPE_WATCH_NEXT"
+             }
+            }
+           }
+          }
+         ],
+         "trackingParams": "CMoBEL51IhMIz7GgifOImAMVpvFMAh0sdSfS",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "12 phản hồi"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "CMwBEKLABCITCM-xoInziJgDFabxTAIdLHUn0g==",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "12 phản hồi"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "CMsBENvNBCITCM-xoInziJgDFabxTAIdLHUn0g==",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgzU6VF1ghyO-uTozEx4AaABAg"
+        }
+       },
+       "trackingParams": "CMgBEMJ1GMsBIhMIz7GgifOImAMVpvFMAh0sdSfS",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgzU6VF1ghyO-uTozEx4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": {
+            "trackingParams": "CMkBELZ1IhMIz7GgifOImAMVpvFMAh0sdSfS",
+            "visibility": {
+             "types": "12"
+            },
+            "attentionLogging": "ATTENTION_LOGGING_BASIC"
+           }
+          }
+         }
+        }
+       },
+       "loggingDirectives": {
+        "trackingParams": "CMgBEMJ1GMsBIhMIz7GgifOImAMVpvFMAh0sdSfS",
+        "visibility": {
+         "types": "12"
+        }
+       }
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "contents": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "CMUBEL51IhMIz7GgifOImAMVpvFMAh0sdSfSygEEGl3yhg==",
+             "commandMetadata": {
+              "webCommandMetadata": {
+               "sendPost": true,
+               "apiUrl": "/youtubei/v1/next"
+              }
+             },
+             "continuationCommand": {
+              "token": "Eg0SC2Fxei1LRS1icEtRGAYygwEaUBIaVWd6clh6MThSOGptZUk1aS1lbDRBYUFCQWciAggAKhhVQ1NNT1FlQkoyUkFudUZ1bmduUU94TGcyC2Fxei1LRS1icEtRQAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZw%3D%3D",
+              "request": "CONTINUATION_REQUEST_TYPE_WATCH_NEXT"
+             }
+            }
+           }
+          }
+         ],
+         "trackingParams": "CMUBEL51IhMIz7GgifOImAMVpvFMAh0sdSfS",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "21 phản hồi"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "CMcBEKLABCITCM-xoInziJgDFabxTAIdLHUn0g==",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "21 phản hồi"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "CMYBENvNBCITCM-xoInziJgDFabxTAIdLHUn0g==",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-UgzrXz18R8jmeI5i-el4AaABAg"
+        }
+       },
+       "trackingParams": "CMMBEMJ1GMwBIhMIz7GgifOImAMVpvFMAh0sdSfS",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "UgzrXz18R8jmeI5i-el4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": {
+            "trackingParams": "CMQBELZ1IhMIz7GgifOImAMVpvFMAh0sdSfS",
+            "visibility": {
+             "types": "12"
+            },
+            "attentionLogging": "ATTENTION_LOGGING_BASIC"
+           }
+          }
+         }
+        }
+       },
+       "loggingDirectives": {
+        "trackingParams": "CMMBEMJ1GMwBIhMIz7GgifOImAMVpvFMAh0sdSfS",
+        "visibility": {
+         "types": "12"
+        }
+       }
+      }
+     },
+     {
+      "commentThreadRenderer": {
+       "replies": {
+        "commentRepliesRenderer": {
+         "contents": [
+          {
+           "continuationItemRenderer": {
+            "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+            "continuationEndpoint": {
+             "clickTrackingParams": "CMABEL51IhMIz7GgifOImAMVpvFMAh0sdSfSygEEGl3yhg==",
+             "commandMetadata": {
+              "webCommandMetadata": {
+               "sendPost": true,
+               "apiUrl": "/youtubei/v1/next"
+              }
+             },
+             "continuationCommand": {
+              "token": "Eg0SC2Fxei1LRS1icEtRGAYygwEaUBIaVWd5eTJHNXhkUklTRWhDUW1OWjRBYUFCQWciAggAKhhVQ1NNT1FlQkoyUkFudUZ1bmduUU94TGcyC2Fxei1LRS1icEtRQAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZw%3D%3D",
+              "request": "CONTINUATION_REQUEST_TYPE_WATCH_NEXT"
+             }
+            }
+           }
+          }
+         ],
+         "trackingParams": "CMABEL51IhMIz7GgifOImAMVpvFMAh0sdSfS",
+         "viewReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "14 phản hồi"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "EXPAND"
+           },
+           "trackingParams": "CMIBEKLABCITCM-xoInziJgDFabxTAIdLHUn0g==",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "hideReplies": {
+          "buttonRenderer": {
+           "text": {
+            "runs": [
+             {
+              "text": "14 phản hồi"
+             }
+            ]
+           },
+           "icon": {
+            "iconType": "COLLAPSE"
+           },
+           "trackingParams": "CMEBENvNBCITCM-xoInziJgDFabxTAIdLHUn0g==",
+           "iconPosition": "BUTTON_ICON_POSITION_TYPE_LEFT_OF_TEXT"
+          }
+         },
+         "targetId": "comment-replies-item-Ugyy2G5xdRISEhCQmNZ4AaABAg"
+        }
+       },
+       "trackingParams": "CL4BEMJ1GM0BIhMIz7GgifOImAMVpvFMAh0sdSfS",
+       "renderingPriority": "RENDERING_PRIORITY_UNKNOWN",
+       "isModeratedElqComment": false,
+       "commentViewModel": {
+        "commentViewModel": {
+         "commentKey": "EhpVZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZyAoKAE%3D",
+         "sharedKey": "EgAgKygB",
+         "toolbarStateKey": "EhpVZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZyAsKAE%3D",
+         "toolbarSurfaceKey": "Eh1VZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZy8xMiBGKAE%3D",
+         "commentId": "Ugyy2G5xdRISEhCQmNZ4AaABAg",
+         "commentSurfaceKey": "Eh1VZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZy8xMiBPKAE%3D",
+         "sharedSurfaceKey": "EhVWSUVXSU5HX0NPTlRFWFRfV0FUQ0gg9AIoAQ%3D%3D",
+         "inlineRepliesKey": "empty_inline_replies",
+         "rendererContext": {
+          "loggingContext": {
+           "loggingDirectives": {
+            "trackingParams": "CL8BELZ1IhMIz7GgifOImAMVpvFMAh0sdSfS",
+            "visibility": {
+             "types": "12"
+            },
+            "attentionLogging": "ATTENTION_LOGGING_BASIC"
+           }
+          }
+         }
+        }
+       },
+       "loggingDirectives": {
+        "trackingParams": "CL4BEMJ1GM0BIhMIz7GgifOImAMVpvFMAh0sdSfS",
+        "visibility": {
+         "types": "12"
+        }
+       }
+      }
+     },
+     {
+      "continuationItemRenderer": {
+       "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+       "continuationEndpoint": {
+        "clickTrackingParams": "CAAQg2ciEwjPsaCJ84iYAxWm8UwCHSx1J9LKAQQaXfKG",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true,
+          "apiUrl": "/youtubei/v1/next"
+         }
+        },
+        "continuationCommand": {
+         "token": "Eg0SC2Fxei1LRS1icEtRGAYy_gIK1AJnZXRfcmFua2VkX3N0cmVhbXMtLUNxWUJDSUFFRlJlMzBUZ2Ftd0VLbGdFSTJGOFFnQVFZQnlLTEFadHhvOExKZ1RVV1h3b21QaDdqTlVvRmxodmJWQ1pQU2pxRHNnWVg0azJfUmltd19sWDZtQTN2a0tkNkRVWDVzNzROQXljSlFycWpWRG5TbF9aSU95YzZCTXlxaV9PNlpadURMUEtOcHVrNUJ0Z2JsQkY3TU9KYllJV0hLVFVvU0lISGJIRUIweXNQOUh0RmhEX0pZSW9PYkNFRUhGRmlzYmdqVDBzZnl3bGhmczF5NGwwa2ZfV3lHQ2NRRkJJRkNLZ2dHQUFTQlFpSklCZ0FFZ1VJaHlBWUFCSUZDSWdnR0FBU0JRaUdJQmdBRWdVSXdDQVlBQklIQ0lRZ0VCUVlBUklGQ0xzZ0dBQVNCd2lGSUJBRUdBRlFBRmdCIhEiC2Fxei1LRS1icEtRMAB4ASgUQhBjb21tZW50cy1zZWN0aW9u",
+         "request": "CONTINUATION_REQUEST_TYPE_WATCH_NEXT"
+        }
+       }
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "frameworkUpdates": {
+  "entityBatchUpdate": {
+   "mutations": [
+    {
+     "entityKey": "EhpVZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgzU6VF1ghyO-uTozEx4AaABAg",
+        "content": {
+         "content": "Wait,is that..............BIG CHUNGUS?!"
+        },
+        "publishedTime": "7 năm trước",
+        "replyLevel": 0,
+        "authorButtonA11y": "@Zanderbolt-js4fv",
+        "toolbarStateKey": "EhpVZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3pVNlZGMWdoeU8tdVRvekV4NEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UC2mKN60lvo0o-8Imm7v88Kg",
+        "displayName": "@Zanderbolt-js4fv",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/ytc/AIdro_nCJ3E0dAHfOG0RUOmbmLskUNWyWkyXj-cBNc-OsJkUuUo=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CGUQtnUiEwjPsaCJ84iYAxWm8UwCHSx1J9LKAQQaXfKG",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/@Zanderbolt-js4fv",
+            "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+            "rootVe": 3611,
+            "apiUrl": "/youtubei/v1/browse"
+           }
+          },
+          "browseEndpoint": {
+           "browseId": "UC2mKN60lvo0o-8Imm7v88Kg",
+           "canonicalBaseUrl": "/@Zanderbolt-js4fv"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "757",
+        "likeCountNotliked": "756",
+        "replyCount": "12",
+        "likeButtonA11y": "Thích bình luận này cùng với 756 người khác",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "756 lượt thích",
+        "replyCountA11y": "12 phản hồi",
+        "likeInactiveTooltip": "Thích",
+        "likeActiveTooltip": "Bỏ thích",
+        "dislikeInactiveTooltip": "Không thích",
+        "dislikeActiveTooltip": "Xóa lượt không thích",
+        "heartActiveTooltip": "❤ từ @BlenderOfficial"
+       },
+       "readMoreLogging": {
+        "trackingParams": "CGYQr7QGIhMIz7GgifOImAMVpvFMAh0sdSfS",
+        "loggingDirectives": {
+         "trackingParams": "CGYQr7QGIhMIz7GgifOImAMVpvFMAh0sdSfS",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "loggingDirectives": {
+        "trackingParams": "CGUQtnUiEwjPsaCJ84iYAxWm8UwCHSx1J9I=",
+        "visibility": {
+         "types": "12"
+        },
+        "clientVeSpec": {
+         "uiType": 15030,
+         "veCounter": 989841988
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "UgzrXz18R8jmeI5i-el4AaABAg",
+        "content": {
+         "content": "Comments\n90% - Big Chungus\n9% - Remembering this as a kid\n1% - This short was made using free software"
+        },
+        "publishedTime": "7 năm trước",
+        "replyLevel": 0,
+        "authorButtonA11y": "@BergsArt",
+        "toolbarStateKey": "EhpVZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3pyWHoxOFI4am1lSTVpLWVsNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCK40BkhHK2_YfdRZHuqJaqQ",
+        "displayName": "@BergsArt",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/gA_SNJ4jZVwl3Z37tajx18quPy7qCS-djBKkoI32F4WEqIcOUJ4B_H3EPj5YdLNP94Z7CuNYTw=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": false,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CF4QtnUiEwjPsaCJ84iYAxWm8UwCHSx1J9LKAQQaXfKG",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/@BergsArt",
+            "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+            "rootVe": 3611,
+            "apiUrl": "/youtubei/v1/browse"
+           }
+          },
+          "browseEndpoint": {
+           "browseId": "UCK40BkhHK2_YfdRZHuqJaqQ",
+           "canonicalBaseUrl": "/@BergsArt"
+          }
+         }
+        },
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "2,7 N",
+        "likeCountNotliked": "2,7 N",
+        "replyCount": "21",
+        "likeButtonA11y": "Thích bình luận này cùng với 2,7 N người khác",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "2,7 N lượt thích",
+        "replyCountA11y": "21 phản hồi",
+        "likeInactiveTooltip": "Thích",
+        "likeActiveTooltip": "Bỏ thích",
+        "dislikeInactiveTooltip": "Không thích",
+        "dislikeActiveTooltip": "Xóa lượt không thích",
+        "heartActiveTooltip": "❤ từ @BlenderOfficial"
+       },
+       "readMoreLogging": {
+        "trackingParams": "CF8Qr7QGIhMIz7GgifOImAMVpvFMAh0sdSfS",
+        "loggingDirectives": {
+         "trackingParams": "CF8Qr7QGIhMIz7GgifOImAMVpvFMAh0sdSfS",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "loggingDirectives": {
+        "trackingParams": "CF4QtnUiEwjPsaCJ84iYAxWm8UwCHSx1J9I=",
+        "visibility": {
+         "types": "12"
+        },
+        "clientVeSpec": {
+         "uiType": 15030,
+         "veCounter": 989841987
+        }
+       }
+      }
+     }
+    },
+    {
+     "entityKey": "EhpVZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZyAoKAE%3D",
+     "type": "ENTITY_MUTATION_TYPE_REPLACE",
+     "payload": {
+      "commentEntityPayload": {
+       "key": "EhpVZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZyAoKAE%3D",
+       "properties": {
+        "commentId": "Ugyy2G5xdRISEhCQmNZ4AaABAg",
+        "content": {
+         "content": "Ah.. The classic test video"
+        },
+        "publishedTime": "2 năm trước",
+        "replyLevel": 0,
+        "authorButtonA11y": "",
+        "toolbarStateKey": "EhpVZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZyAsKAE%3D",
+        "translateButtonEntityKey": "EhpVZ3l5Mkc1eGRSSVNFaENRbU5aNEFhQUJBZyD_ASgB"
+       },
+       "author": {
+        "channelId": "UCP2mYGClL3KjKzSrMgLytfw",
+        "displayName": "",
+        "avatarThumbnailUrl": "https://yt3.ggpht.com/214pm-fb8VSYwK2vJROpizXuDvKpeu3A8D1tP7D7aaTDOamg2dIq2BKGFQ-6N6iKKMZWXxXNDg=s88-c-k-c0x00ffffff-no-rj",
+        "isVerified": true,
+        "isCurrentUser": false,
+        "isCreator": false,
+        "channelCommand": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CFkQtnUiEwjPsaCJ84iYAxWm8UwCHSx1J9LKAQQaXfKG",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/root",
+            "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+            "rootVe": 3611,
+            "apiUrl": "/youtubei/v1/browse"
+           }
+          },
+          "browseEndpoint": {
+           "browseId": "UCP2mYGClL3KjKzSrMgLytfw",
+           "canonicalBaseUrl": "/root"
+          }
+         }
+        },
+        "innerBadgeA11y": ", người dùng đã xác minh",
+        "isArtist": false
+       },
+       "toolbar": {
+        "likeCountLiked": "1,9 N",
+        "likeCountNotliked": "1,9 N",
+        "replyCount": "14",
+        "likeButtonA11y": "Thích bình luận này cùng với 1,9 N người khác",
+        "engagementToolbarStyle": {
+         "value": "ENGAGEMENT_TOOLBAR_STYLE_VALUE_DEFAULT"
+        },
+        "likeCountA11y": "1,9 N lượt thích",
+        "replyCountA11y": "14 phản hồi",
+        "likeInactiveTooltip": "Thích",
+        "likeActiveTooltip": "Bỏ thích",
+        "dislikeInactiveTooltip": "Không thích",
+        "dislikeActiveTooltip": "Xóa lượt không thích",
+        "heartActiveTooltip": "❤ từ @BlenderOfficial"
+       },
+       "readMoreLogging": {
+        "trackingParams": "CFoQr7QGIhMIz7GgifOImAMVpvFMAh0sdSfS",
+        "loggingDirectives": {
+         "trackingParams": "CFoQr7QGIhMIz7GgifOImAMVpvFMAh0sdSfS",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "loggingDirectives": {
+        "trackingParams": "CFkQtnUiEwjPsaCJ84iYAxWm8UwCHSx1J9I=",
+        "visibility": {
+         "types": "12"
+        },
+        "clientVeSpec": {
+         "uiType": 15030,
+         "veCounter": 989841986
+        }
+       }
+      }
+     }
+    }
+   ]
+  }
+ }
+}

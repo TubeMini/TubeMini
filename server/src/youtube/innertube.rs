@@ -12,8 +12,51 @@ use base64::Engine as _;
 use serde_json::{Value, json};
 
 use super::parse::{self, find_first};
-use super::{BoxFut, Category, MetadataProvider, Page, SearchFilter, VideoId};
+use super::{
+    BoxFut, Category, Channel, Comment, Listing, MetadataProvider, Page, Playlist, SearchFilter,
+    VideoId,
+};
 use crate::config::Config;
+
+type Cache<T> = moka::future::Cache<String, T>;
+
+fn new_cache<T: Clone + Send + Sync + 'static>(capacity: u64, ttl: Duration) -> Cache<T> {
+    moka::future::Cache::builder()
+        .max_capacity(capacity)
+        .time_to_live(ttl)
+        .build()
+}
+
+/// Runs `fetch` unless `key` is cached; results failing `keep` (e.g. empty pages) are not cached.
+async fn cached_in<T, F>(cache: &Cache<T>, key: String, keep: fn(&T) -> bool, fetch: F) -> Result<T>
+where
+    T: Clone + Send + Sync + 'static,
+    F: Future<Output = Result<T>>,
+{
+    if let Some(hit) = cache.get(&key).await {
+        return Ok(hit);
+    }
+    let value = fetch.await?;
+    if keep(&value) {
+        cache.insert(key, value.clone()).await;
+    }
+    Ok(value)
+}
+
+/// What one fetch of a channel's home tab gives us.
+#[derive(Clone)]
+struct ChannelPage {
+    channel: Channel,
+    /// `params` of the Playlists tab, read from the response itself (they change over time).
+    playlists_params: Option<String>,
+}
+
+/// Search item types (`SearchFilter::item_type` in rustypipe 0.11.4).
+const ITEM_VIDEO: u64 = 1;
+const ITEM_CHANNEL: u64 = 2;
+const ITEM_PLAYLIST: u64 = 3;
+/// Channel headers change slowly; the old app asks for one per list entry, so keep them longer.
+const CHANNEL_TTL: Duration = Duration::from_secs(60 * 60);
 
 const API_BASE: &str = "https://www.youtube.com/youtubei/v1/";
 /// `INNERTUBE_CLIENTS['web']['INNERTUBE_CONTEXT']['client']['clientVersion']` in yt-dlp 2026.10.26.
@@ -36,7 +79,11 @@ pub struct InnerTube {
     http: reqwest::Client,
     hl: String,
     gl: String,
-    cache: moka::future::Cache<String, Page>,
+    cache: Cache<Page>,
+    channels: Cache<ChannelPage>,
+    channel_lists: Cache<Listing<Channel>>,
+    playlist_lists: Cache<Listing<Playlist>>,
+    comment_lists: Cache<Listing<Comment>>,
 }
 
 impl InnerTube {
@@ -52,10 +99,11 @@ impl InnerTube {
             http: builder.build()?,
             hl: cfg.language.clone(),
             gl: cfg.region.clone(),
-            cache: moka::future::Cache::builder()
-                .max_capacity(500)
-                .time_to_live(CACHE_TTL)
-                .build(),
+            cache: new_cache(500, CACHE_TTL),
+            channels: new_cache(2000, CHANNEL_TTL),
+            channel_lists: new_cache(200, CACHE_TTL),
+            playlist_lists: new_cache(200, CACHE_TTL),
+            comment_lists: new_cache(200, CACHE_TTL),
         })
     }
 
@@ -88,19 +136,27 @@ impl InnerTube {
             .with_context(|| format!("InnerTube {endpoint}: invalid JSON"))
     }
 
-    /// Runs `fetch` unless `key` is cached; empty pages are not cached.
+    /// Video pages; empty pages are not cached.
     async fn cached<F>(&self, key: String, fetch: F) -> Result<Page>
     where
         F: Future<Output = Result<Page>>,
     {
-        if let Some(page) = self.cache.get(&key).await {
-            return Ok(page);
-        }
-        let page = fetch.await?;
-        if !page.videos.is_empty() {
-            self.cache.insert(key, page.clone()).await;
-        }
-        Ok(page)
+        cached_in(&self.cache, key, |p| !p.videos.is_empty(), fetch).await
+    }
+
+    /// `search` with a query (+ encoded filters) or a continuation token.
+    async fn search_raw(
+        &self,
+        query: &str,
+        filter: SearchFilter,
+        item_type: u64,
+        continuation: Option<&str>,
+    ) -> Result<Value> {
+        let body = match continuation {
+            Some(token) => json!({ "continuation": token }),
+            None => json!({ "query": query, "params": search_params(filter, item_type) }),
+        };
+        self.call("search", body).await
     }
 
     async fn search_page(
@@ -109,12 +165,87 @@ impl InnerTube {
         filter: SearchFilter,
         continuation: Option<&str>,
     ) -> Result<Page> {
+        let resp = self
+            .search_raw(query, filter, ITEM_VIDEO, continuation)
+            .await?;
+        Ok(parse::page_in(&resp, parse::now()))
+    }
+
+    async fn channel_page(&self, channel_id: &str) -> Result<ChannelPage> {
+        cached_in(&self.channels, channel_id.to_owned(), |_| true, async {
+            let resp = self
+                .call("browse", json!({ "browseId": channel_id }))
+                .await?;
+            let channel = parse::channel_from_browse(&resp)
+                .with_context(|| format!("no channel header for {channel_id}"))?;
+            Ok(ChannelPage {
+                channel,
+                playlists_params: parse::channel_tab_params(&resp, "/playlists"),
+            })
+        })
+        .await
+    }
+
+    async fn channel_playlists_page(
+        &self,
+        channel_id: &str,
+        continuation: Option<&str>,
+    ) -> Result<Listing<Playlist>> {
+        let cp = self.channel_page(channel_id).await?;
+        let resp = match (continuation, &cp.playlists_params) {
+            (Some(token), _) => {
+                self.call("browse", json!({ "continuation": token }))
+                    .await?
+            }
+            (None, Some(params)) => {
+                self.call(
+                    "browse",
+                    json!({ "browseId": channel_id, "params": params }),
+                )
+                .await?
+            }
+            (None, None) => return Ok(Listing::default()), // channel without a Playlists tab
+        };
+        let mut list = parse::playlists_in(&resp);
+        for p in &mut list.items {
+            if p.author.is_empty() {
+                p.author.clone_from(&cp.channel.name);
+            }
+            if p.author_id.is_empty() {
+                p.author_id = channel_id.to_owned();
+            }
+        }
+        Ok(list)
+    }
+
+    async fn playlist_page(&self, playlist_id: &str, continuation: Option<&str>) -> Result<Page> {
         let body = match continuation {
             Some(token) => json!({ "continuation": token }),
-            None => json!({ "query": query, "params": search_params(filter) }),
+            None => json!({ "browseId": format!("VL{playlist_id}") }),
         };
-        let resp = self.call("search", body).await?;
+        let resp = self.call("browse", body).await?;
         Ok(parse::page_in(&resp, parse::now()))
+    }
+
+    async fn comments_page(
+        &self,
+        id: &VideoId,
+        continuation: Option<&str>,
+    ) -> Result<Listing<Comment>> {
+        let token = match continuation {
+            Some(t) => t.to_owned(),
+            None => {
+                let watch = self
+                    .call("next", json!({ "videoId": id.to_string() }))
+                    .await?;
+                match parse::comments_token(&watch) {
+                    Some(t) => t,
+                    None => return Ok(Listing::default()), // comments disabled
+                }
+            }
+        };
+        let resp = self.call("next", json!({ "continuation": token })).await?;
+        Ok(parse::comments_in(&resp, parse::now()))
     }
 
     /// Details of one video from the `player` endpoint (only `videoDetails` is used; the
@@ -254,6 +385,85 @@ impl MetadataProvider for InnerTube {
         let key = format!("popular|{category:?}");
         Box::pin(self.cached(key, self.popular_page(category)))
     }
+
+    fn channel<'a>(&'a self, channel_id: &'a str) -> BoxFut<'a, Channel> {
+        Box::pin(async move { Ok(self.channel_page(channel_id).await?.channel) })
+    }
+
+    fn search_channels<'a>(
+        &'a self,
+        query: &'a str,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Listing<Channel>> {
+        let key = format!("chsearch|{query}|{}", continuation.unwrap_or(""));
+        Box::pin(cached_in(
+            &self.channel_lists,
+            key,
+            |l| !l.items.is_empty(),
+            async move {
+                let resp = self
+                    .search_raw(query, SearchFilter::default(), ITEM_CHANNEL, continuation)
+                    .await?;
+                Ok(parse::channels_in(&resp))
+            },
+        ))
+    }
+
+    fn channel_playlists<'a>(
+        &'a self,
+        channel_id: &'a str,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Listing<Playlist>> {
+        let key = format!("chpl|{channel_id}|{}", continuation.unwrap_or(""));
+        Box::pin(cached_in(
+            &self.playlist_lists,
+            key,
+            |l| !l.items.is_empty(),
+            self.channel_playlists_page(channel_id, continuation),
+        ))
+    }
+
+    fn search_playlists<'a>(
+        &'a self,
+        query: &'a str,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Listing<Playlist>> {
+        let key = format!("plsearch|{query}|{}", continuation.unwrap_or(""));
+        Box::pin(cached_in(
+            &self.playlist_lists,
+            key,
+            |l| !l.items.is_empty(),
+            async move {
+                let resp = self
+                    .search_raw(query, SearchFilter::default(), ITEM_PLAYLIST, continuation)
+                    .await?;
+                Ok(parse::playlists_in(&resp))
+            },
+        ))
+    }
+
+    fn playlist<'a>(
+        &'a self,
+        playlist_id: &'a str,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Page> {
+        let key = format!("playlist|{playlist_id}|{}", continuation.unwrap_or(""));
+        Box::pin(self.cached(key, self.playlist_page(playlist_id, continuation)))
+    }
+
+    fn comments<'a>(
+        &'a self,
+        id: &'a VideoId,
+        continuation: Option<&'a str>,
+    ) -> BoxFut<'a, Listing<Comment>> {
+        let key = format!("comments|{id}|{}", continuation.unwrap_or(""));
+        Box::pin(cached_in(
+            &self.comment_lists,
+            key,
+            |l| !l.items.is_empty(),
+            self.comments_page(id, continuation),
+        ))
+    }
 }
 
 /// Channel title from a browse response header.
@@ -320,12 +530,12 @@ impl Proto {
 }
 
 /// Search `params` exactly as rustypipe's `SearchFilter::encode` (videos only, plus GData filters).
-pub fn search_params(f: SearchFilter) -> String {
+pub fn search_params(f: SearchFilter, item_type: u64) -> String {
     let mut filters = Proto::default();
     if let Some(date) = f.upload {
         filters.varint(1, date as u64);
     }
-    filters.varint(2, 1); // item type: video
+    filters.varint(2, item_type);
     if let Some(length) = f.length {
         filters.varint(3, length as u64);
     }
@@ -351,7 +561,15 @@ mod tests {
     #[test]
     fn search_params_match_rustypipe() {
         // rustypipe 0.11.4 test case: SearchFilter::new().item_type(ItemType::Video)
-        assert_eq!(search_params(SearchFilter::default()), "EgIQAfABAQ%3D%3D");
+        assert_eq!(
+            search_params(SearchFilter::default(), ITEM_VIDEO),
+            "EgIQAfABAQ%3D%3D"
+        );
+        // rustypipe 0.11.4: ItemType::Channel
+        assert_eq!(
+            search_params(SearchFilter::default(), ITEM_CHANNEL),
+            "EgIQAvABAQ%3D%3D"
+        );
         let all = SearchFilter {
             order: Some(SearchOrder::Views),
             upload: Some(UploadDate::Week),
@@ -360,7 +578,7 @@ mod tests {
         };
         // sort=3, filters{date=3,type=1,length=2,subtitles=1}, 30=1
         let bytes = base64::engine::general_purpose::URL_SAFE
-            .decode(search_params(all).replace("%3D", "="))
+            .decode(search_params(all, ITEM_VIDEO).replace("%3D", "="))
             .unwrap();
         assert_eq!(
             bytes,
