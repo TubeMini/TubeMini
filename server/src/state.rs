@@ -34,6 +34,10 @@ pub struct Inner {
     pub store: Store,
     /// The merged subscription feed ([`crate::feed`]); a single entry.
     pub feed: moka::future::Cache<(), Arc<Vec<Video>>>,
+    /// Signs proxy URLs ([`crate::video::proxy`]); random keys per server start.
+    pub proxy_key: std::collections::hash_map::RandomState,
+    /// Client for the proxy: no overall timeout (videos are long), but connect / read timeouts.
+    pub proxy_http: reqwest::Client,
 }
 
 impl AppState {
@@ -51,8 +55,12 @@ impl AppState {
         ));
         let streams = Box::new(YtDlpResolver::new(ytdlp.clone()));
         let mut http = reqwest::Client::builder().timeout(Duration::from_secs(15));
+        let mut proxy_http = reqwest::Client::builder()
+            .connect_timeout(Duration::from_secs(10))
+            .read_timeout(Duration::from_secs(30));
         if cfg.force_ipv4 {
             http = http.local_address(IpAddr::V4(Ipv4Addr::UNSPECIFIED));
+            proxy_http = proxy_http.local_address(IpAddr::V4(Ipv4Addr::UNSPECIFIED));
         }
         Ok(Self(Arc::new(Inner {
             cfg,
@@ -71,6 +79,8 @@ impl AppState {
                 .max_capacity(1)
                 .time_to_live(crate::feed::FEED_TTL)
                 .build(),
+            proxy_key: std::collections::hash_map::RandomState::new(),
+            proxy_http: proxy_http.build()?,
         })))
     }
 }

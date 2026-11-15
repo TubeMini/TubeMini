@@ -6,6 +6,7 @@ mod debug;
 mod ext;
 mod feed;
 mod gdata;
+mod mdns;
 mod state;
 mod store;
 mod video;
@@ -22,6 +23,7 @@ use axum::{Router, ServiceExt};
 use clap::Parser;
 use tower::Layer;
 use tower_http::compression::CompressionLayer;
+use tower_http::compression::predicate::{DefaultPredicate, NotForContentType, Predicate};
 use tracing_subscriber::EnvFilter;
 
 use crate::config::Config;
@@ -90,6 +92,7 @@ async fn main() -> Result<()> {
     tools.log();
 
     let listen = cfg.listen.clone();
+    let mdns_on = cfg.mdns;
     let state = AppState::new(cfg, tools)?;
     tracing::info!("data: {}", state.cfg.data_dir.join("tubemini.db").display());
     let router = Router::new()
@@ -98,7 +101,16 @@ async fn main() -> Result<()> {
         .merge(video::routes())
         .merge(ext::routes(state.clone()))
         .layer(axum::middleware::from_fn(log_request))
-        .layer(CompressionLayer::new().gzip(true))
+        // Video / audio bytes from the proxy are already compressed and may be byte ranges
+        .layer(
+            CompressionLayer::new().gzip(true).compress_when(
+                DefaultPredicate::new()
+                    .and(NotForContentType::const_new("video/"))
+                    .and(NotForContentType::const_new("audio/"))
+                    // googlevideo labels HLS segments application/octet-stream
+                    .and(NotForContentType::const_new("application/octet-stream")),
+            ),
+        )
         .with_state(state);
     // The resolution prefix must be stripped before routing, so it wraps the whole router
     let app = tower::util::MapRequestLayer::new(gdata::strip_res_prefix).layer(router);
@@ -110,6 +122,9 @@ async fn main() -> Result<()> {
         "tubemini-server {} listening on http://{listen}",
         env!("CARGO_PKG_VERSION")
     );
+    if mdns_on {
+        mdns::spawn(listener.local_addr()?.port(), env!("CARGO_PKG_VERSION"));
+    }
     axum::serve(listener, ServiceExt::<Request>::into_make_service(app))
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;

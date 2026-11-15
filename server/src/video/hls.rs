@@ -130,6 +130,72 @@ pub fn filter_master(master: &str, max_res: u32, max_fps: f64) -> Option<String>
     Some(out)
 }
 
+/// Audio-only master playlist: one variant pointing at YouTube's audio rendition (original
+/// language), AAC-LC 128k (group 234) when present, else HE-AAC (233), else any audio group.
+pub fn audio_master(master: &str) -> Option<String> {
+    if !master.trim_start().starts_with("#EXTM3U") {
+        return None;
+    }
+    let mut groups: Vec<(&str, Vec<&str>)> = Vec::new();
+    for line in master.lines().map(str::trim) {
+        let Some(list) = line.strip_prefix("#EXT-X-MEDIA:") else {
+            continue;
+        };
+        let attrs = attributes(list);
+        if attr(&attrs, "TYPE") != Some("AUDIO") || attr(&attrs, "URI").is_none() {
+            continue;
+        }
+        let group = attr(&attrs, "GROUP-ID").unwrap_or("");
+        match groups.iter_mut().find(|(g, _)| *g == group) {
+            Some((_, lines)) => lines.push(line),
+            None => groups.push((group, vec![line])),
+        }
+    }
+    let (group, lines) = ["234", "233"]
+        .iter()
+        .find_map(|want| groups.iter().find(|(g, _)| g == want))
+        .or_else(|| groups.first())?;
+    let line = pick_audio(lines)?;
+    let attrs = attributes(line.strip_prefix("#EXT-X-MEDIA:").unwrap_or(line));
+    let uri = attr(&attrs, "URI")?;
+    let (bandwidth, codecs) = if *group == "233" {
+        (64_000, "mp4a.40.5")
+    } else {
+        (144_000, "mp4a.40.2")
+    };
+    Some(format!(
+        "#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH={bandwidth},CODECS=\"{codecs}\"\n{uri}\n"
+    ))
+}
+
+/// Rewrites every URI of a playlist with `f`: the URI lines and the `URI="…"` attributes of tags.
+pub fn map_uris(playlist: &str, f: impl Fn(&str) -> String) -> String {
+    let mut out = String::with_capacity(playlist.len() * 2);
+    for line in playlist.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() {
+            continue;
+        }
+        if !trimmed.starts_with('#') {
+            out.push_str(&f(trimmed));
+        } else if let Some(start) = trimmed.find("URI=\"") {
+            let value_start = start + 5;
+            match trimmed[value_start..].find('"') {
+                Some(len) => {
+                    out.push_str(&trimmed[..value_start]);
+                    out.push_str(&f(&trimmed[value_start..value_start + len]));
+                    out.push_str(&trimmed[value_start + len..]);
+                }
+                None => out.push_str(trimmed),
+            }
+        } else {
+            out.push_str(trimmed);
+        }
+        out.push('\n');
+    }
+    out
+}
+
 /// Is this audio rendition YouTube's original-language track (not a dub)?
 fn is_original(line: &str) -> bool {
     let attrs = attributes(line.strip_prefix("#EXT-X-MEDIA:").unwrap_or(line));
@@ -325,6 +391,39 @@ mod tests {
         assert!(media[0].contains("NAME=\"Tiếng Việt - original\""));
         assert!(media[0].contains("DEFAULT=YES") && media[0].contains("AUTOSELECT=YES"));
         assert!(!p.contains("dubbed"));
+    }
+
+    #[test]
+    fn audio_only_master_uses_the_original_aac_lc_track() {
+        let p = audio_master(MASTER_DUBBED).unwrap();
+        let lines: Vec<_> = p.lines().collect();
+        assert_eq!(lines[0], "#EXTM3U");
+        assert_eq!(
+            lines[1],
+            "#EXT-X-STREAM-INF:BANDWIDTH=144000,CODECS=\"mp4a.40.2\""
+        );
+        assert!(
+            lines[2].starts_with("https://manifest.googlevideo.com/")
+                && lines[2].contains("/itag/234/")
+        );
+        assert_eq!(lines.len(), 3);
+        // The Vietnamese original, not the English dub listed first
+        let original = MASTER_DUBBED
+            .lines()
+            .find(|l| l.contains("GROUP-ID=\"234\"") && l.contains("original"))
+            .unwrap();
+        assert!(original.contains(lines[2]));
+        assert!(audio_master("#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1\nx\n").is_none());
+    }
+
+    #[test]
+    fn map_uris_rewrites_lines_and_attributes() {
+        let src = "#EXTM3U\n#EXT-X-MEDIA:TYPE=AUDIO,URI=\"https://a/1.m3u8\",NAME=\"x\"\n#EXT-X-STREAM-INF:BANDWIDTH=1\nhttps://b/2.m3u8\n\n#EXT-X-ENDLIST\n";
+        let out = map_uris(src, |u| format!("P({u})"));
+        assert_eq!(
+            out,
+            "#EXTM3U\n#EXT-X-MEDIA:TYPE=AUDIO,URI=\"P(https://a/1.m3u8)\",NAME=\"x\"\n#EXT-X-STREAM-INF:BANDWIDTH=1\nP(https://b/2.m3u8)\n#EXT-X-ENDLIST\n"
+        );
     }
 
     #[test]

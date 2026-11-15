@@ -11,3 +11,5 @@ home_feed = "popular"        # trang chủ app cũ: "popular" hoặc "subscripti
 log_queries = false          # không ghi từ khóa tìm kiếm vào log
 region = "VN"
 language = "vi"
+proxy_fallback = false       # true = cho phép app phát qua server khi ở ngoài mạng nhà (tốn băng thông của server)
+mdns = true                  # quảng bá server trong mạng nhà để app tự tìm (Bonjour)

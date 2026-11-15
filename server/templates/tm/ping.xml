@@ -1,2 +1,2 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<tm:ping xmlns:tm="urn:tubemini:1" server="{{ server }}" yt_dlp="{{ yt_dlp }}" deno="{{ deno }}" time="{{ time }}" auth="{{ auth }}"/>
+<tm:ping xmlns:tm="urn:tubemini:1" server="{{ server }}" yt_dlp="{{ yt_dlp }}" deno="{{ deno }}" time="{{ time }}" auth="{{ auth }}" proxy="{{ proxy }}"/>

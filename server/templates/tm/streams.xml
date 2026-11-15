@@ -1,6 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<tm:streams xmlns:tm="urn:tubemini:1" video_id="{{ video_id }}" expire="{{ expire }}" available_in="{{ available_in }}">
+<tm:streams xmlns:tm="urn:tubemini:1" video_id="{{ video_id }}" expire="{{ expire }}" available_in="{{ available_in }}"{% if proxy %} proxy="1"{% endif %}>
 {%- for s in streams %}
   <tm:stream quality="{{ s.quality }}" kind="{{ s.kind }}" url="{{ s.url }}"/>
 {%- endfor %}
+{%- if let Some(url) = audio %}
+  <tm:audio url="{{ url }}"/>
+{%- endif %}
+{%- if let Some((url, dubbed)) = download %}
+  <tm:download url="{{ url }}" quality="360" dubbed="{% if dubbed %}1{% else %}0{% endif %}"/>
+{%- endif %}
 </tm:streams>

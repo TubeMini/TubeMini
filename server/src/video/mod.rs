@@ -5,8 +5,12 @@
 //!   (HLS when the video has no such format);
 //! - with a prefix (`/720/getvideo/...`) or `medium_quality = false`: an HLS master playlist,
 //!   filtered for iOS 6 ([`hls::filter_master`]); variant playlists and segments stay on googlevideo.
+//!
+//! `/getaudio/{id}` is the audio-only variant ([`hls::audio_master`]). With `proxy=1` and
+//! `proxy_fallback = true` every googlevideo URL handed out goes through [`proxy`] instead.
 
 pub mod hls;
+pub mod proxy;
 
 use std::sync::Arc;
 use std::time::Duration;
@@ -14,12 +18,12 @@ use std::time::Duration;
 use anyhow::{Context, Result, bail};
 use axum::Router;
 use axum::extract::{Path, Query, State};
-use axum::http::{StatusCode, header};
+use axum::http::{HeaderMap, StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use axum::routing::get;
 use serde::Deserialize;
 
-use crate::gdata::Ctx;
+use crate::gdata::{Ctx, base_url};
 use crate::state::AppState;
 use crate::youtube::VideoId;
 use crate::youtube::streams::StreamInfo;
@@ -61,11 +65,34 @@ pub fn routes() -> Router<AppState> {
         .route("/getvideo/{id}", get(getvideo))
         // `<content src>` of the classic app's feed (TubeRepair's classic templates point here)
         .route("/video/sd/{id}", get(getvideo))
+        .route("/getaudio/{id}", get(getaudio))
+        .route("/proxy/{sig}/{payload}", get(proxy::proxy))
 }
 
 #[derive(Deserialize)]
 struct GetVideoQuery {
     fresh: Option<String>,
+    proxy: Option<String>,
+}
+
+fn flag(value: Option<&str>) -> bool {
+    value.is_some_and(|f| f == "1" || f == "true")
+}
+
+/// Hands googlevideo URLs through the server? Only when the request asks and the config allows.
+fn proxied(st: &AppState, q: &GetVideoQuery) -> bool {
+    st.cfg.proxy_fallback && flag(q.proxy.as_deref())
+}
+
+fn m3u8(body: String) -> Response {
+    (
+        [
+            (header::CONTENT_TYPE, "application/vnd.apple.mpegurl"),
+            (header::CACHE_CONTROL, "no-store"),
+        ],
+        body,
+    )
+        .into_response()
 }
 
 fn redirect(url: &str) -> Response {
@@ -83,13 +110,23 @@ fn no_stream() -> Response {
 async fn getvideo(
     State(st): State<AppState>,
     ctx: Ctx,
+    headers: HeaderMap,
     Path(id): Path<String>,
     Query(q): Query<GetVideoQuery>,
 ) -> Response {
     let Some(id) = VideoId::parse(id.trim_end_matches(".mp4")) else {
         return StatusCode::NOT_FOUND.into_response();
     };
-    let fresh = q.fresh.as_deref().is_some_and(|f| f == "1" || f == "true");
+    let fresh = flag(q.fresh.as_deref());
+    let proxy = proxied(&st, &q);
+    let plain_base = base_url(&headers, None);
+    let link = |url: &str| {
+        if proxy {
+            proxy::url(&st, &plain_base, url)
+        } else {
+            url.to_owned()
+        }
+    };
     let streams = match st.streams.resolve(&id, fresh).await {
         Ok(s) => s,
         Err(e) => {
@@ -104,7 +141,7 @@ async fn getvideo(
         && let Some(url) = &streams.progressive
     {
         wait_until_available(streams.progressive_at).await;
-        return redirect(url);
+        return redirect(&link(url));
     }
     // A dubbed 360p MP4 is replaced by 360p HLS with the original audio track
     let res = match ctx.res {
@@ -116,14 +153,12 @@ async fn getvideo(
     match hls_playlist(&st, &id, &streams, res, fresh).await {
         Ok(playlist) => {
             wait_until_available(streams.hls_at).await;
-            (
-                [
-                    (header::CONTENT_TYPE, "application/vnd.apple.mpegurl"),
-                    (header::CACHE_CONTROL, "no-store"),
-                ],
-                playlist.as_str().to_owned(),
-            )
-                .into_response()
+            match (&streams.hls_manifest, proxy) {
+                (Some(master), true) => {
+                    m3u8(proxy::rewrite_playlist(&st, &plain_base, &playlist, master))
+                }
+                _ => m3u8(playlist.as_str().to_owned()),
+            }
         }
         Err(e) => {
             tracing::warn!("getvideo {id} HLS: {e:#}");
@@ -131,12 +166,86 @@ async fn getvideo(
             match streams.progressive.as_deref() {
                 Some(url) => {
                     wait_until_available(streams.progressive_at).await;
-                    redirect(url)
+                    redirect(&link(url))
                 }
                 None => no_stream(),
             }
         }
     }
+}
+
+/// Audio only: an HLS master with YouTube's original-language audio rendition as the one variant.
+async fn getaudio(
+    State(st): State<AppState>,
+    headers: HeaderMap,
+    Path(id): Path<String>,
+    Query(q): Query<GetVideoQuery>,
+) -> Response {
+    let Some(id) = VideoId::parse(&id) else {
+        return StatusCode::NOT_FOUND.into_response();
+    };
+    let fresh = flag(q.fresh.as_deref());
+    let streams = match st.streams.resolve(&id, fresh).await {
+        Ok(s) => s,
+        Err(e) => {
+            tracing::warn!("getaudio {id}: {e:#}");
+            return no_stream();
+        }
+    };
+    let playlist = match audio_playlist(&st, &id, &streams, fresh).await {
+        Ok(p) => p,
+        Err(e) => {
+            tracing::warn!("getaudio {id}: {e:#}");
+            return no_stream();
+        }
+    };
+    wait_until_available(streams.hls_at).await;
+    match (&streams.hls_manifest, proxied(&st, &q)) {
+        (Some(master), true) => m3u8(proxy::rewrite_playlist(
+            &st,
+            &base_url(&headers, None),
+            &playlist,
+            master,
+        )),
+        _ => m3u8(playlist.as_str().to_owned()),
+    }
+}
+
+/// Key of the audio-only playlist in the playlist cache (video levels are 144–2160).
+const AUDIO_LEVEL: u32 = 0;
+
+async fn audio_playlist(
+    st: &AppState,
+    id: &VideoId,
+    streams: &StreamInfo,
+    fresh: bool,
+) -> Result<Arc<String>> {
+    let key = (id.clone(), AUDIO_LEVEL);
+    if !fresh && let Some(hit) = st.playlists.get(&key).await {
+        return Ok(hit);
+    }
+    let master = fetch_master(st, streams).await?;
+    let playlist = hls::audio_master(&master)
+        .map(Arc::new)
+        .context("no audio rendition in HLS master")?;
+    st.playlists.insert(key, playlist.clone()).await;
+    Ok(playlist)
+}
+
+/// YouTube's HLS master playlist (a few KB).
+async fn fetch_master(st: &AppState, streams: &StreamInfo) -> Result<String> {
+    let Some(url) = &streams.hls_manifest else {
+        bail!("no HLS manifest");
+    };
+    Ok(st
+        .http
+        .get(url)
+        .send()
+        .await
+        .context("fetching HLS master")?
+        .error_for_status()?
+        .text()
+        .await?)
 }
 
 /// Downloads YouTube's master playlist (a few KB) and filters it; cached per (video, res).
@@ -168,19 +277,7 @@ pub(crate) async fn hls_playlists(
             continue;
         }
         if master.is_none() {
-            let Some(url) = &streams.hls_manifest else {
-                bail!("no HLS manifest");
-            };
-            let text = st
-                .http
-                .get(url)
-                .send()
-                .await
-                .context("fetching HLS master")?
-                .error_for_status()?
-                .text()
-                .await?;
-            master = Some(text);
+            master = Some(fetch_master(st, streams).await?);
         }
         let filtered = hls::filter_master(master.as_deref().unwrap_or_default(), res, MAX_FPS)
             .map(Arc::new)

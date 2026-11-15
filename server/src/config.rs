@@ -31,6 +31,10 @@ pub struct Config {
     pub log_queries: bool,
     pub region: String,
     pub language: String,
+    /// Let `?proxy=1` send googlevideo bytes through the server (iPad outside the home network).
+    pub proxy_fallback: bool,
+    /// Announce the server on the local network (mDNS `_tubemini._tcp`).
+    pub mdns: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
@@ -55,6 +59,8 @@ impl Default for Config {
             log_queries: false,
             region: "VN".into(),
             language: "vi".into(),
+            proxy_fallback: false,
+            mdns: true,
         }
     }
 }

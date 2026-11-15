@@ -111,6 +111,7 @@ struct PingXml<'a> {
     deno: &'a str,
     time: i64,
     auth: &'a str,
+    proxy: &'a str,
 }
 
 async fn ping(State(st): State<AppState>) -> Response {
@@ -125,6 +126,7 @@ async fn ping(State(st): State<AppState>) -> Response {
             } else {
                 "on"
             },
+            proxy: if st.cfg.proxy_fallback { "on" } else { "off" },
         }
         .render(),
     )
@@ -145,12 +147,22 @@ struct StreamsXml<'a> {
     video_id: &'a str,
     expire: i64,
     available_in: i64,
+    proxy: bool,
     streams: &'a [StreamItem],
+    /// `/getaudio` link (videos with HLS).
+    audio: Option<String>,
+    /// Progressive MP4 to download, and whether its audio is an AI dub.
+    download: Option<(String, bool)>,
 }
 
 #[derive(Deserialize)]
 struct FreshQuery {
     fresh: Option<String>,
+    proxy: Option<String>,
+}
+
+fn flag(value: Option<&str>) -> bool {
+    value.is_some_and(|f| f == "1" || f == "true")
 }
 
 async fn streams(
@@ -166,7 +178,18 @@ async fn streams(
             "Mã video không hợp lệ.",
         );
     };
-    let fresh = q.fresh.as_deref().is_some_and(|f| f == "1" || f == "true");
+    let fresh = flag(q.fresh.as_deref());
+    // Everything through the server: only when asked and allowed (`proxy_fallback`)
+    let proxy = st.cfg.proxy_fallback && flag(q.proxy.as_deref());
+    let base = base_url(&headers, None);
+    let suffix = if proxy { "?proxy=1" } else { "" };
+    let mp4 = |url: &str| {
+        if proxy {
+            crate::video::proxy::url(&st, &base, url)
+        } else {
+            url.to_owned()
+        }
+    };
     let info = match st.streams.resolve(&id, fresh).await {
         Ok(info) => info,
         Err(e) => {
@@ -183,14 +206,14 @@ async fn streams(
     let hls_item = |res: u32, playlist: &str| StreamItem {
         quality: crate::video::hls::best_height(playlist).unwrap_or(res),
         kind: "hls",
-        url: format!("{}/getvideo/{id}", base_url(&headers, Some(res))),
+        url: format!("{}/getvideo/{id}{suffix}", base_url(&headers, Some(res))),
     };
     // 360p: the MP4, unless its audio is an AI dub — then 360p HLS with the original audio
     match &info.progressive {
         Some(url) if !info.progressive_dubbed => items.push(StreamItem {
             quality: 360,
             kind: "mp4",
-            url: url.clone(),
+            url: mp4(url),
         }),
         _ if info.hls_manifest.is_some() => {
             match crate::video::hls_playlist(&st, &id, &info, 360, fresh).await {
@@ -207,7 +230,7 @@ async fn streams(
         items.push(StreamItem {
             quality: 360,
             kind: "mp4",
-            url: url.clone(),
+            url: mp4(url),
         });
     }
     if info.hls_manifest.is_some() {
@@ -238,7 +261,16 @@ async fn streams(
             video_id: &id.to_string(),
             expire: info.expire,
             available_in: (ready_at - parse::now()).max(0),
+            proxy,
             streams: &items,
+            audio: info
+                .hls_manifest
+                .as_ref()
+                .map(|_| format!("{base}/getaudio/{id}{suffix}")),
+            download: info
+                .progressive
+                .as_deref()
+                .map(|url| (mp4(url), info.progressive_dubbed)),
         }
         .render(),
     )
@@ -439,7 +471,13 @@ mod tests {
             video_id: "aqz-KE-bpKQ",
             expire: 1_794_730_000,
             available_in: 4,
+            proxy: false,
             streams: &items,
+            audio: Some("http://192.168.1.192:8080/getaudio/aqz-KE-bpKQ".into()),
+            download: Some((
+                "https://rr1.googlevideo.com/videoplayback?a=1&b=2".into(),
+                true,
+            )),
         }
         .render()
         .unwrap();

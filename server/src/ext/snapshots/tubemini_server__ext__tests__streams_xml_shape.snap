@@ -6,4 +6,6 @@ expression: xml
 <tm:streams xmlns:tm="urn:tubemini:1" video_id="aqz-KE-bpKQ" expire="1794730000" available_in="4">
   <tm:stream quality="360" kind="mp4" url="https://rr1.googlevideo.com/videoplayback?a=1&#38;b=2"/>
   <tm:stream quality="480" kind="hls" url="http://192.168.1.192:8080/720/getvideo/aqz-KE-bpKQ"/>
+  <tm:audio url="http://192.168.1.192:8080/getaudio/aqz-KE-bpKQ"/>
+  <tm:download url="https://rr1.googlevideo.com/videoplayback?a=1&#38;b=2" quality="360" dubbed="1"/>
 </tm:streams>
