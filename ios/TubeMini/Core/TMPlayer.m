@@ -65,6 +65,13 @@
     }
 }
 
+/// View that rotates with the interface. On iOS 6 views added straight to the UIWindow stay in
+/// portrait (only the root view controller's view is rotated), so the HUD goes on that view.
+- (UIView *)hostFor:(UIViewController *)presenter {
+    UIView *root = presenter.view.window.rootViewController.view;
+    return root ?: presenter.view;
+}
+
 - (void)hideHUD {
     [_countdown invalidate];
     _countdown = nil;
@@ -90,7 +97,7 @@
     _quality = quality;
     _presenter = presenter;
     _retried = NO;
-    [self showHUD:@"Đang lấy link phát…\n(có thể mất 5–10 giây)" on:presenter.view.window ?: presenter.view];
+    [self showHUD:@"Đang lấy link phát…\n(có thể mất 5–10 giây)" on:[self hostFor:presenter]];
     [self fetchStreams:NO];
 }
 
@@ -130,7 +137,7 @@
         return;
     }
     // Shown on top of the player too when this is a retry
-    UIView *host = _playerVC ? _playerVC.view : (_presenter.view.window ?: _presenter.view);
+    UIView *host = _playerVC ? _playerVC.view : [self hostFor:_presenter];
     [self showHUD:[NSString stringWithFormat:@"Video có quảng cáo: YouTube cho phát sau %ld giây…\n(chạm để huỷ)",
                                              (long)_remaining]
                on:host];
