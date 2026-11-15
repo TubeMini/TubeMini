@@ -1,0 +1,20 @@
+# Rust
+/server/target/
+/target/
+
+# Runtime data and local config (may contain token)
+/server/data/
+/data/
+/server/config.toml
+
+# Reference IPAs (Google binaries, not ours to distribute)
+/ipa tham khao/
+
+# Theos build output
+.theos/
+/ios/**/packages/
+*.deb
+
+# OS junk
+.DS_Store
+Thumbs.db
