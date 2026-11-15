@@ -73,5 +73,33 @@ cat /var/mobile/Documents/TubeMini.log
 
 Danh sách lệnh nằm ở đầu `ios/TubeMini/Debug/TMDebug.h`. Ảnh chụp lưu trong `/var/mobile/Documents/TubeMini-shots/`.
 
+Chụp màn hình bất kỳ app nào, kể cả khung hình video: build `ios/tools/tmshot` (`cd ios/tools/tmshot && THEOS=~/theos make`), chép
+`.theos/obj/debug/tmshot` vào `/usr/bin/` của iPad, rồi chạy `tmshot /var/root/shot.png`.
+
 Công cụ đã cài sẵn trên iPad thử nghiệm (từ dự án ConBangTV_Legacy): `cblaunch status|wake|launch <bundle id>`,
 `cbsymcheck` (đầu vào lấy từ `symlist.py`, kiểm tra binary có dùng ký hiệu nào iOS 6 không có), `cbnettest <url>…`.
+
+## 5. App YouTube cũ + tweak TubeRepair trên iPad (iOS 6)
+
+Các gói, theo thứ tự cài, đều là `.deb` lấy từ repo gốc. Dòng SHA-256 rút gọn là checksum đã đối chiếu với file `Packages` của repo:
+
+| Gói | Bản | Nguồn | SHA-256 |
+| --- | --- | --- | --- |
+| Cydia Substrate (`mobilesubstrate`) | 0.9.6301 | `https://apt.saurik.com/debs/mobilesubstrate_0.9.6301_iphoneos-arm.deb` | `8dc91a06…` |
+| Substrate Safe Mode | 0.9.6001 | `https://apt.saurik.com/debs/com.saurik.substrate.safemode_0.9.6001_iphoneos-arm.deb` | `86515cb9…` |
+| PreferenceLoader | 2.2.6 | `http://apt.thebigboss.org/repofiles/cydia/debs2.0/preferenceloader_2.2.6.deb` | `335fff25…` |
+| TubeRepair (`bag.xml.tuberepair`) | 1.2-Beta-1 | `https://cydia.skyglow.es/debs/bag.xml.tuberepair_1.2-Beta-1_iphoneos-arm.deb` | `cad60e92…` |
+| AppSync Unified | 116.0 | GitHub release `akemin-dayo/AppSync` 116.0 | `0036f28f…` |
+| IPA Installer Console (`ipainstaller`) | 3.4.1-1 | `http://apt.thebigboss.org/repofiles/cydia/debs2.0/ipainstallerconsole_3.4.1-1.deb` | `8ab3065a…` |
+
+- Substrate phải dùng **0.9.6301**: bản 0.9.6000–0.9.6300 có lỗi không nạp tweak trên iOS 6 (theo changelog của saurik).
+- Các bước:
+  1. `dpkg -i` cả 6 gói.
+  2. **Khởi động lại máy một lần** (`/sbin/reboot`) để AppSync có hiệu lực.
+  3. `ipainstaller YouTube-v1.3.0.5707.ipa`. Lưu ý: **không** thêm `-i`, vì `-i` chỉ để xem thông tin.
+- Đặt Custom URL bằng một trong hai cách:
+  - trong Cài đặt → TubeRepair → Custom URL;
+  - hoặc ghi file `/var/mobile/Library/Preferences/bag.xml.tuberepairpreference.plist`, khóa `URLEndpoint` = `http://<IP PC>:8080`
+    (có `http://`, không có `/` ở cuối; thêm `/720` nếu muốn HLS), chủ sở hữu `mobile`.
+- Tweak chỉ đọc cài đặt lúc app khởi động, nên đổi xong thì tắt hẳn app (`killall -9 YouTube`).
+- Mở app từ SSH: `cblaunch launch com.google.ios.youtube`. Mở một video: `uiopen 'vnd.youtube://<id>'`.

@@ -96,3 +96,72 @@ Mỗi mục ghi: quyết định, lý do, bằng chứng (nếu có). Mới nh�
   iOS 6), `cbnettest` (tải bằng NSURLConnection).
 - Giới hạn: `UIGetScreenImage` không chụp được lớp video của MPMoviePlayer (ra màn đen), nên lệnh `frame` lấy khung hình qua
   `thumbnailImageAtTime:`. Cách này chạy với MP4 progressive, không chạy với HLS.
+
+## D11. Metadata: tự viết client InnerTube nhỏ, bỏ rustypipe — 15/11/2026
+
+Spike rustypipe 0.11.4 (chạy thật, vùng VN):
+
+| Chức năng | Kết quả |
+| --- | --- |
+| Tìm kiếm + trang 2, chi tiết video, bình luận, tìm kênh, `channel_info` | chạy |
+| Video liên quan, tab Videos của kênh | **chỉ có ID và tiêu đề**, mất thời lượng, lượt xem, ngày (YouTube chuyển sang `lockupViewModel`, rustypipe chưa đọc) |
+| Số người đăng ký khi đặt `lang = vi` | sai (1.500 thay vì 1,26 triệu) |
+| `trending` | hỏng (YouTube đã bỏ trang Trending; `FEtrending` trả 400) |
+| `channel_rss`, `channel_playlists` | hỏng (RSS 404, playlist trả rỗng) |
+
+- rustypipe gần như ngừng bảo trì: bản cuối ra 23/04/2025, sau đó chỉ có vài commit nhỏ.
+- **Quyết định:** tự viết `src/youtube/innertube.rs`, khoảng 300 dòng, dùng client WEB.
+  - Endpoint `search`, `next`, `browse`, `player`.
+  - Phiên bản client `2.20260708.00.00` lấy từ yt-dlp 2026.10.26.
+  - `params` của tab Videos và cách mã hóa bộ lọc tìm kiếm chép từ rustypipe.
+  - Không tự bịa endpoint hay tham số nào.
+- Cách đọc: dò sâu (deep scan) tìm `videoRenderer` / `lockupViewModel` ở bất kỳ đâu trong JSON, nên ít vỡ khi YouTube xếp lại bố cục.
+- Ngôn ngữ: đọc được chuỗi tiếng Việt ("164.638 lượt xem", "6,9 Tr", "4 ngày trước") và tiếng Anh.
+- Khi YouTube đổi: sửa `parse.rs`. Fixture trong `server/tests/fixtures/` là phản hồi thật đã rút gọn; test `#[ignore]` gọi YouTube thật.
+- Bản dự phòng lấy metadata bằng yt-dlp (mục 4.1 của tài liệu dự án): **chưa làm**, để sang Giai đoạn 2.
+
+## D12. Trang chủ "phổ biến" lấy từ các trang chủ đề của YouTube — 15/11/2026
+
+- YouTube đã bỏ Trending. Thay vào đó dùng các kênh chủ đề ("Explore") với `gl=VN`: Âm nhạc (`UC-9-kyTW8ZkZNDHQJ6FgpwQ`), Tin tức
+  (`UCYfdidRxbB8Qhf0Nx7ioOYw`), Thể thao (`UCEgdi0XIXXZ-qJOFPf4JSKw`), Trò chơi (`UCOpNcN46UbXVtpKMrmU4Abg`).
+- `most_popular` trộn xen kẽ Âm nhạc, Tin tức, Thể thao (khoảng 25 video). Các feed `most_popular_<Danh mục>` lấy đúng trang chủ đề
+  tương ứng.
+- Nếu trang chủ đề trống (Trò chơi ở VN đang trống, Phim không có trang riêng) thì tìm kiếm "phổ biến trong tuần" theo từ khóa.
+- `categories.cat` thêm News và Sports so với bản của TubeRepair.
+
+## D13. RSS kênh của YouTube đang hỏng (404) — 15/11/2026
+
+- `https://www.youtube.com/feeds/videos.xml?channel_id=...` trả 404 (đã thử nhiều lần, nhiều kênh).
+- Giai đoạn 4 (feed kênh đã theo dõi) **không dựa vào RSS được** như tài liệu dự án dự tính. Thay bằng tab Videos qua InnerTube (đã có:
+  `channel_uploads`), có cache.
+
+## D14. Spike xin link (cùng IP) — 15/11/2026
+
+`yt-dlp --force-ipv4 -J --extractor-args youtube:player_client=<X>`, thử với 2 video:
+
+| player_client | format 18 | HLS | Thời gian |
+| --- | --- | --- | --- |
+| mặc định (link ghi `c=TVHTML5`) | có | có | khoảng 4 giây |
+| `web_embedded` | có | có | khoảng 4 giây |
+| `android_vr`, `mweb`, `tv_simply` | có | không | 2,5–4 giây |
+| `web`, `web_safari`, `ios` | không có định dạng nào (cần PO token) | — | — |
+| `tv` (một mình) | lỗi "The page needs to be reloaded" | — | — |
+
+- **Chọn mặc định của yt-dlp:** có cả 360p lẫn HLS, và yt-dlp tự cập nhật thứ tự client khi YouTube đổi.
+- **Chưa thử khác IP.** PC không có IPv6 để thử theo cách IPv4/IPv6. Thử qua proxy Shadowsocks bị hệ thống chặn, cần anh cho phép rõ
+  ràng. Còn lại là phép thử 4G trên iPad.
+
+## D15. App YouTube 1.3.0 chạy được với tweak TubeRepair và server của mình — 15/11/2026
+
+- Đã cài trên iPad: Cydia Substrate 0.9.6301 + Safe Mode, PreferenceLoader 2.2.6, TubeRepair 1.2-Beta-1 (repo cydia.skyglow.es),
+  AppSync Unified 116.0, IPA Installer Console 3.4.1, rồi YouTube 1.3.0 (nguồn và checksum ở `docs/SETUP.md` mục 5).
+- Hướng dẫn chính thức của TubeRepair chỉ hỗ trợ 1.0.0–1.2.1, nhưng 1.3.0 vẫn chạy với server này:
+  - trang chủ, trang video, danh sách liên quan, phát 360p đều chạy (có ảnh chụp);
+  - lý do: 1.3.0 gọi thêm `/feeds/player/videos/{id}` khi mở video, route mà TubeRepair không có.
+- iPhone 5 (iOS 6.1.4) đang có YouTube **1.4.0**, không phải 1.2.1.
+- App gọi `/feeds/api/channels/{id}` cho từng kênh (để lấy avatar) và `/api/videos/{id}/comments`. Hai route này thuộc Giai đoạn 2.
+
+## D16. Công cụ chụp màn hình qua SSH: `tmshot` — 15/11/2026
+
+- `ios/tools/tmshot` (cài vào `/usr/bin` của iPad) gọi `CARenderServerRenderDisplay` + IOSurface, tra bằng `dlsym`. Cách này chụp
+  được mọi app đang ở trước, **kể cả khung hình video**, không như `UIGetScreenImage` trong app (D10).
