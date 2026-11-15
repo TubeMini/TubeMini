@@ -448,3 +448,18 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
   - Lỗi tìm ra khi thử: mỗi lần build để lại một image trung gian khoảng 1,6 GB. Nay hai tầng của Dockerfile mang nhãn
     `org.tubemini.image`, và script dọn image cũ mang nhãn đó sau mỗi lần build và khi gỡ.
   - Sau khi thử, đã xoá mọi image Podman của root trên máy build (trước đó trống); image của dự án khác không đụng tới.
+
+## D31. Lên GitHub: repo công khai TubeMini/TubeMini, bỏ thông tin cá nhân, bundle id vn.tubemini.io — 15/11/2026
+
+- Anh tạo tổ chức GitHub `TubeMini`. Một repo chung (server + app + tài liệu), công khai, giấy phép GPL-3.0; trang giới thiệu ở
+  repo riêng `TubeMini/TubeMini.github.io`.
+- **Trước khi đẩy, viết lại toàn bộ lịch sử** (repo chưa từng đẩy đi đâu) để bỏ thông tin cá nhân:
+  - IP công cộng của nhà trong các phản hồi YouTube dùng làm dữ liệu test → `203.0.113.7` (dải dành cho tài liệu);
+  - IP mạng nội bộ `10.10.10.x` / `10.10.16.x` → `192.168.1.x` / `192.168.2.x`, cả dạng viết tách số trong test mDNS;
+  - tên người dùng máy build, tên máy PC trong test mDNS, dòng Maintainer / Author của gói `.deb` → tên chung.
+- Đã quét lại toàn bộ lịch sử mới:
+  - không có mật khẩu nào của 4 thiết bị (so trực tiếp, không in ra);
+  - không có chuỗi nào trong file thông tin thiết bị ngoài các từ thông dụng;
+  - không có email, số điện thoại hay đường dẫn máy tính. Tác giả commit dùng email ẩn danh của GitHub.
+- **Bundle id** đổi từ `vn.qmv.tubemini` sang `vn.tubemini.io` (anh chọn). Trên iPad: chép file cài đặt sang tên mới, gỡ gói cũ
+  (hai gói cùng cài vào `/Applications/TubeMini.app`), cài gói mới. Bản tải về và lịch sử vẫn còn.
