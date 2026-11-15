@@ -1,0 +1,62 @@
+	<entry gd:etag='W/&quot;YDwqeyM.&quot;'>
+		<id>tag:youtube.com,2008:video:{{ v.id }}</id>
+		<published>{{ v.published_iso() }}</published>
+		<updated>{{ v.published_iso() }}</updated>
+		<category scheme='http://schemas.google.com/g/2005#kind' term='{{ base }}/schemas/2007#video'/>
+		<category scheme='{{ base }}/schemas/2007/categories.cat' term='Howto' label='Howto &amp; Style'/>
+		<title>{{ v.title }}</title>
+		<content type='application/x-shockwave-flash' src='https://www.youtube.com/v/{{ v.id }}?version=3&amp;f=playlists&amp;app=youtube_gdata'/>
+		<link rel='alternate' type='text/html' href='https://www.youtube.com/watch?v={{ v.id }}&amp;feature=youtube_gdata'/>
+		<link rel='http://gdata.youtube.com/schemas/2007#video.related' type='application/atom+xml' href='{{ base }}/feeds/api/videos/{{ v.id }}/related'/>
+		<link rel='{{ base }}/schemas/2007#video.related' type='application/atom+xml' href='{{ base }}/feeds/api/videos/{{ v.id }}/related'/>
+		<link rel='http://gdata.youtube.com/schemas/2007#mobile' type='text/html' href='https://m.youtube.com/details?v={{ v.id }}'/>
+		<link rel='http://gdata.youtube.com/schemas/2007#uploader' type='application/atom+xml' href='{{ base }}/feeds/api/users/{{ v.author_id }}?v=2'/>
+		<link rel='related' type='application/atom+xml' href='{{ base }}/feeds/api/videos/{{ v.id }}?v=2'/>
+		<link rel='self' type='application/atom+xml' href='{{ base }}/feeds/api/videos/{{ v.id }}?v=2'/>
+		<author>
+			<name>{{ v.author }}</name>
+			<uri>{{ base }}/feeds/api/users/{{ v.author_id }}</uri>
+			<yt:userId>{{ v.author_id }}</yt:userId>
+		</author>
+		<yt:accessControl action='comment' permission='allowed'/>
+		<yt:accessControl action='commentVote' permission='allowed'/>
+		<yt:accessControl action='videoRespond' permission='moderated'/>
+		<yt:accessControl action='rate' permission='allowed'/>
+		<yt:accessControl action='embed' permission='allowed'/>
+		<yt:accessControl action='list' permission='allowed'/>
+		<yt:accessControl action='autoPlay' permission='allowed'/>
+		<yt:accessControl action='syndicate' permission='allowed'/>
+		<gd:comments>
+			<gd:feedLink rel='http://gdata.youtube.com/schemas/2007#comments' href='{{ base }}/api/videos/{{ v.id }}/comments?v=2' countHint='5'/>
+		</gd:comments>
+		<media:group>
+			<media:category label='Howto &amp; Style' scheme='http://gdata.youtube.com/schemas/2007/categories.cat'>Howto</media:category>
+			<media:content url='https://www.youtube.com/v/{{ v.id }}?version=3&amp;f=playlists&amp;app=youtube_gdata' type='application/x-shockwave-flash' medium='video' isDefault='true' expression='full' duration='{{ v.duration }}' yt:format='5'/>
+			<media:content url='{{ base }}/getvideo/{{ v.id }}' type='video/3gpp' medium='video' expression='full' duration='{{ v.duration }}' yt:format='1'/>
+			<media:content url='{{ base }}/getvideo/{{ v.id }}' type='video/3gpp' medium='video' expression='full' duration='{{ v.duration }}' yt:format='6'/>
+			<media:credit role='uploader' scheme='urn:youtube' yt:display='{{ v.author }}' yt:type='partner'>{{ v.author_id }}</media:credit>
+			<media:description type='plain'>{{ v.description }}</media:description>
+			<media:keywords/>
+			<media:license type='text/html' href='https://www.youtube.com/t/terms'>youtube</media:license>
+			<media:player url='https://www.youtube.com/watch?v={{ v.id }}&amp;feature=youtube_gdata_player'/>
+			<media:thumbnail url='https://i.ytimg.com/vi/{{ v.id }}/default.jpg' height='90' width='120' time='00:00:00.000' yt:name='default'/>
+			<media:thumbnail url='https://i.ytimg.com/vi/{{ v.id }}/mqdefault.jpg' height='180' width='320' yt:name='mqdefault'/>
+			<media:thumbnail url='https://i.ytimg.com/vi/{{ v.id }}/hqdefault.jpg' height='360' width='480' yt:name='hqdefault'/>
+			<media:thumbnail url='https://i.ytimg.com/vi/{{ v.id }}/default.jpg' height='90' width='120' time='00:00:00.000' yt:name='start'/>
+			<media:thumbnail url='https://i.ytimg.com/vi/{{ v.id }}/default.jpg' height='90' width='120' time='00:00:00.000' yt:name='middle'/>
+			<media:thumbnail url='https://i.ytimg.com/vi/{{ v.id }}/default.jpg' height='90' width='120' time='00:00:00.000' yt:name='end'/>
+			<media:content url='{{ base }}/getvideo/{{ v.id }}' type='video/mp4' medium='video' isDefault='true' expression='full' duration='{{ v.duration }}' yt:format='3'/>
+			<media:content url='{{ base }}/getvideo/{{ v.id }}' type='video/3gpp' medium='video' expression='full' duration='{{ v.duration }}' yt:format='2'/>
+			<media:content url='{{ base }}/getvideo/{{ v.id }}' type='video/mp4' medium='video' expression='full' duration='{{ v.duration }}' yt:format='8'/>
+			<media:content url='{{ base }}/getvideo/{{ v.id }}' type='video/3gpp' medium='video' expression='full' duration='{{ v.duration }}' yt:format='9'/>
+			<media:title type='plain'>{{ v.title }}</media:title>
+			<yt:duration seconds='{{ v.duration }}'/>
+			<yt:uploaded>{{ v.published_iso() }}</yt:uploaded>
+			<yt:uploaderId>{{ v.author_id }}</yt:uploaderId>
+			<yt:videoid>{{ v.id }}</yt:videoid>
+		</media:group>
+		<gd:rating average='0' max='0' min='0' numRaters='0' rel='http://schemas.google.com/g/2005#overall'/>
+		<yt:recorded>1970-08-22</yt:recorded>
+		<yt:statistics favoriteCount='0' viewCount='{{ v.views }}'/>
+		<yt:rating numDislikes='0' numLikes='0'/>
+	</entry>

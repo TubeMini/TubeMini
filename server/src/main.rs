@@ -3,14 +3,22 @@
 
 mod config;
 mod debug;
+mod gdata;
 mod state;
+mod video;
 mod youtube;
 
 use std::path::PathBuf;
+use std::time::Instant;
 
 use anyhow::{Context, Result};
-use axum::Router;
+use axum::extract::Request;
+use axum::middleware::Next;
+use axum::response::Response;
+use axum::{Router, ServiceExt};
 use clap::Parser;
+use tower::Layer;
+use tower_http::compression::CompressionLayer;
 use tracing_subscriber::EnvFilter;
 
 use crate::config::Config;
@@ -23,6 +31,26 @@ struct Cli {
     /// Path to config.toml (default: next to the executable).
     #[arg(long)]
     config: Option<PathBuf>,
+}
+
+/// One log line per request: method, path, status, time. Query strings (search terms) are not logged.
+async fn log_request(req: Request, next: Next) -> Response {
+    let method = req.method().clone();
+    let path = req.uri().path().to_owned();
+    let res = req
+        .extensions()
+        .get::<gdata::ResPrefix>()
+        .and_then(|r| r.0)
+        .map(|r| format!("/{r}"))
+        .unwrap_or_default();
+    let t0 = Instant::now();
+    let resp = next.run(req).await;
+    tracing::info!(
+        "{method} {res}{path} → {} ({} ms)",
+        resp.status().as_u16(),
+        t0.elapsed().as_millis()
+    );
+    resp
 }
 
 #[tokio::main]
@@ -44,9 +72,15 @@ async fn main() -> Result<()> {
     tools.log();
 
     let listen = cfg.listen.clone();
-    let app = Router::new()
+    let router = Router::new()
         .merge(debug::routes())
-        .with_state(AppState::new(cfg, tools));
+        .merge(gdata::routes())
+        .merge(video::routes())
+        .layer(axum::middleware::from_fn(log_request))
+        .layer(CompressionLayer::new().gzip(true))
+        .with_state(AppState::new(cfg, tools)?);
+    // The resolution prefix must be stripped before routing, so it wraps the whole router
+    let app = tower::util::MapRequestLayer::new(gdata::strip_res_prefix).layer(router);
 
     let listener = tokio::net::TcpListener::bind(&listen)
         .await
@@ -55,7 +89,7 @@ async fn main() -> Result<()> {
         "tubemini-server {} listening on http://{listen}",
         env!("CARGO_PKG_VERSION")
     );
-    axum::serve(listener, app)
+    axum::serve(listener, ServiceExt::<Request>::into_make_service(app))
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;
             tracing::info!("shutting down");
