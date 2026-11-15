@@ -22,6 +22,9 @@ find "$WORK" -mindepth 1 -maxdepth 1 ! -name .git ! -name cydia ! -name update.j
 find "$WORK/cydia" -mindepth 1 -maxdepth 1 ! -name debs -exec rm -rf {} + 2>/dev/null || true
 cp -R "$ROOT/site/." "$WORK/"
 touch "$WORK/.nojekyll" # serve files as they are (no Jekyll)
+# Pages lets browsers cache CSS for 10 minutes: stamp the link so a new style.css is fetched at once
+CSS_V="$(sha1sum "$WORK/style.css" | cut -c1-8)"
+sed -i "s|href=\"style.css\"|href=\"style.css?v=$CSS_V\"|" "$WORK/index.html"
 echo "==> Cydia repository"
 python "$ROOT/scripts/make-cydia-repo.py" "$WORK" "$@"
 cd "$WORK"
