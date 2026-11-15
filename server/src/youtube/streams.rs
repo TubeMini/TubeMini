@@ -17,8 +17,14 @@ const CACHE_TTL: Duration = Duration::from_secs(5 * 60);
 pub struct StreamInfo {
     /// Progressive MP4 with H.264 + AAC, height ≤ 360 (normally itag 18).
     pub progressive: Option<String>,
+    /// Unix seconds from which `progressive` answers (0 = now). YouTube refuses the links with
+    /// 403 until a pre-roll ad would have ended or become skippable; yt-dlp reports that moment
+    /// as `available_at` (see `_get_available_at_timestamp` in yt-dlp's YouTube extractor).
+    pub progressive_at: i64,
     /// HLS master manifest (googlevideo); filtered by the server before the iPad sees it.
     pub hls_manifest: Option<String>,
+    /// Like `progressive_at`, for the HLS formats.
+    pub hls_at: i64,
     /// Unix seconds when the links expire (from the `expire` parameter), 0 = unknown.
     pub expire: i64,
 }
@@ -58,12 +64,14 @@ impl YtDlpResolver {
 impl StreamResolver for YtDlpResolver {
     fn resolve<'a>(&'a self, id: &'a VideoId, fresh: bool) -> BoxFut<'a, Arc<StreamInfo>> {
         Box::pin(async move {
-            if !fresh && let Some(hit) = self.cache.get(id).await {
-                return Ok(hit);
+            if fresh {
+                self.cache.invalidate(id).await;
             }
-            let info = self.fetch(id).await?;
-            self.cache.insert(id.clone(), info.clone()).await;
-            Ok(info)
+            // Concurrent requests for the same video (prefetch + /getvideo) share one yt-dlp run
+            self.cache
+                .try_get_with_by_ref(id, self.fetch(id))
+                .await
+                .map_err(|e| anyhow::anyhow!("{e:#}"))
         })
     }
 }
@@ -82,8 +90,10 @@ pub fn streams_from_info(info: &Value) -> StreamInfo {
             .to_owned()
     };
 
+    let at = |f: &Value| f.get("available_at").and_then(Value::as_i64).unwrap_or(0);
+
     // Same as the selector b[ext=mp4][vcodec^=avc1][acodec^=mp4a][height<=360], best first
-    let progressive = formats
+    let progressive_fmt = formats
         .iter()
         .filter(|f| {
             s(f, "ext") == "mp4"
@@ -94,14 +104,13 @@ pub fn streams_from_info(info: &Value) -> StreamInfo {
                     .and_then(Value::as_u64)
                     .is_some_and(|h| h <= 360)
         })
-        .max_by_key(|f| f.get("height").and_then(Value::as_u64).unwrap_or(0))
-        .map(|f| s(f, "url"));
+        .max_by_key(|f| f.get("height").and_then(Value::as_u64).unwrap_or(0));
+    let progressive = progressive_fmt.map(|f| s(f, "url"));
 
-    let hls_manifest = formats
+    let hls_fmt = formats
         .iter()
-        .filter(|f| s(f, "protocol").starts_with("m3u8"))
-        .find_map(|f| f.get("manifest_url").and_then(Value::as_str))
-        .map(str::to_owned);
+        .find(|f| s(f, "protocol").starts_with("m3u8") && f.get("manifest_url").is_some());
+    let hls_manifest = hls_fmt.map(|f| s(f, "manifest_url"));
 
     let expire = progressive
         .as_deref()
@@ -110,7 +119,9 @@ pub fn streams_from_info(info: &Value) -> StreamInfo {
         .unwrap_or(0);
     StreamInfo {
         progressive,
+        progressive_at: progressive_fmt.map_or(0, at),
         hls_manifest,
+        hls_at: hls_fmt.map_or(0, at),
         expire,
     }
 }
@@ -135,7 +146,7 @@ mod tests {
             { "format_id": "233", "protocol": "m3u8_native", "ext": "mp4", "vcodec": "none", "acodec": "mp4a.40.5",
               "url": "https://x/233", "manifest_url": "https://manifest.googlevideo.com/api/manifest/hls_variant/expire/1794726404/ei/x" },
             { "format_id": "160", "protocol": "https", "ext": "mp4", "vcodec": "avc1.4d400c", "acodec": "none", "height": 144, "url": "https://x/160" },
-            { "format_id": "18", "protocol": "https", "ext": "mp4", "vcodec": "avc1.42001E", "acodec": "mp4a.40.2", "height": 360,
+            { "format_id": "18", "protocol": "https", "ext": "mp4", "vcodec": "avc1.42001E", "acodec": "mp4a.40.2", "height": 360, "available_at": 1794709267,
               "url": "https://rr1---sn.googlevideo.com/videoplayback?expire=1794725568&itag=18" },
             { "format_id": "22", "protocol": "https", "ext": "mp4", "vcodec": "avc1.64001F", "acodec": "mp4a.40.2", "height": 720, "url": "https://x/22" },
         ]});
@@ -146,6 +157,8 @@ mod tests {
         );
         assert!(s.hls_manifest.unwrap().contains("hls_variant"));
         assert_eq!(s.expire, 1_794_725_568);
+        assert_eq!(s.progressive_at, 1_794_709_267);
+        assert_eq!(s.hls_at, 0);
     }
 
     #[test]
