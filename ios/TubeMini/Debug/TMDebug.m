@@ -1,5 +1,11 @@
 #import "TMDebug.h"
 #import "TMAppDelegate.h"
+#import "TMAPIClient.h"
+#import "TMListViewController.h"
+#import "TMPlayer.h"
+#import "TMSearchViewController.h"
+#import "TMSettingsViewController.h"
+#import "TMVideoViewController.h"
 #import "TMLog.h"
 #import <AVFoundation/AVFoundation.h>
 #import <MediaPlayer/MediaPlayer.h>
@@ -88,16 +94,117 @@ static AVPlayer *gAVPlayer;
         [gAVPlayer pause];
         gAVPlayer = nil;
     } else if ([verb isEqualToString:@"seek"]) {
-        gPlayerVC.moviePlayer.currentPlaybackTime = [arg doubleValue];
+        [self activePlayer].currentPlaybackTime = [arg doubleValue];
     } else if ([verb isEqualToString:@"stop"]) {
         [gPlayerVC.moviePlayer stop];
         [[self nav] dismissMoviePlayerViewControllerAnimated];
         gPlayerVC = nil;
+    } else if ([verb isEqualToString:@"server"]) {
+        [TMAPIClient shared].serverURL = arg;
+        [self reloadSettingsScreen];
+        TMLog(@"[debug] server = %@", [TMAPIClient shared].serverURL);
+    } else if ([verb isEqualToString:@"quality"]) {
+        [TMAPIClient shared].preferredQuality = [arg integerValue];
+        [self reloadSettingsScreen];
+    } else if ([verb isEqualToString:@"tab"]) {
+        [self app].tabs.selectedIndex = (NSUInteger)[arg integerValue];
+    } else if ([verb isEqualToString:@"search"]) {
+        // "search <query>" for videos, "search ch:<query>" for channels
+        TMAppDelegate *app = [self app];
+        app.tabs.selectedIndex = 1;
+        UINavigationController *nav = [app nav];
+        [nav popToRootViewControllerAnimated:NO];
+        TMSearchViewController *search = (TMSearchViewController *)nav.viewControllers[0];
+        BOOL channels = [arg hasPrefix:@"ch:"];
+        [search runSearch:channels ? [arg substringFromIndex:3] : arg scope:channels ? 1 : 0];
+    } else if ([verb isEqualToString:@"open"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMListViewController class]]) [(TMListViewController *)top selectRow:[arg integerValue]];
+    } else if ([verb isEqualToString:@"playbtn"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top play];
+    } else if ([verb isEqualToString:@"section"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top showSection:[arg integerValue]];
+    } else if ([verb isEqualToString:@"scrollend"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[UITableViewController class]]) {
+            UITableView *tv = ((UITableViewController *)top).tableView;
+            [tv setContentOffset:CGPointMake(0, MAX(0, tv.contentSize.height - tv.bounds.size.height)) animated:NO];
+        }
+    } else if ([verb isEqualToString:@"back"]) {
+        [[self nav] popViewControllerAnimated:NO];
+    } else if ([verb isEqualToString:@"pingtest"]) {
+        TMAppDelegate *app = [self app];
+        app.tabs.selectedIndex = 2;
+        UIViewController *root = [app nav].viewControllers[0];
+        if ([root isKindOfClass:[TMSettingsViewController class]]) [(TMSettingsViewController *)root testConnection];
+    } else if ([verb isEqualToString:@"dismissalert"]) {
+        [self dismissAlerts];
+    } else if ([verb isEqualToString:@"ui"]) {
+        [self logUI];
     } else if ([verb isEqualToString:@"mark"]) {
         TMLog(@"[debug] ==== %@", arg);
     } else {
         TMLog(@"[debug] lệnh lạ: %@", verb);
     }
+}
+
+/// The settings screen keeps its own text fields: refresh them after changing settings here.
++ (void)reloadSettingsScreen {
+    for (UIViewController *vc in [self app].tabs.viewControllers) {
+        UIViewController *root = [vc isKindOfClass:[UINavigationController class]] ? ((UINavigationController *)vc).viewControllers[0] : vc;
+        if ([root isKindOfClass:[TMSettingsViewController class]] && root.isViewLoaded) {
+            [(TMSettingsViewController *)root reloadFields];
+        }
+    }
+}
+
++ (TMAppDelegate *)app {
+    return (TMAppDelegate *)[UIApplication sharedApplication].delegate;
+}
+
+/// The app's player when one is on screen, otherwise the debug `play` player.
++ (MPMoviePlayerController *)activePlayer {
+    return [TMPlayer shared].moviePlayer ?: gPlayerVC.moviePlayer;
+}
+
++ (void)dismissAlerts {
+    for (UIWindow *w in [UIApplication sharedApplication].windows) {
+        for (UIView *v in w.subviews) {
+            [self dismissAlertsIn:v];
+        }
+    }
+}
+
++ (void)dismissAlertsIn:(UIView *)v {
+    if ([v isKindOfClass:[UIAlertView class]]) {
+        UIAlertView *a = (UIAlertView *)v;
+        TMLog(@"[debug] alert: %@ — %@", a.title, a.message);
+        [a dismissWithClickedButtonIndex:a.cancelButtonIndex animated:NO];
+        return;
+    }
+    for (UIView *s in v.subviews) [self dismissAlertsIn:s];
+}
+
+/// One line describing where the app is: tab, top screen, rows, footer text, visible alerts.
++ (void)logUI {
+    TMAppDelegate *app = [self app];
+    UIViewController *top = [app nav].topViewController;
+    NSMutableString *line = [NSMutableString stringWithFormat:@"[ui] tab=%lu top=%@ title=%@", (unsigned long)app.tabs.selectedIndex,
+                                                              NSStringFromClass([top class]), top.title];
+    if ([top isKindOfClass:[TMListViewController class]]) {
+        TMListViewController *list = (TMListViewController *)top;
+        [line appendFormat:@" rows=%lu", (unsigned long)list.items.count];
+        if (list.items.count) {
+            id first = list.items[0];
+            if ([first respondsToSelector:@selector(title)]) [line appendFormat:@" first=\"%@\"", [first valueForKey:@"title"]];
+            else if ([first respondsToSelector:@selector(name)]) [line appendFormat:@" first=\"%@\"", [first valueForKey:@"name"]];
+            else if ([first respondsToSelector:@selector(text)]) [line appendFormat:@" first=\"%@\"", [first valueForKey:@"text"]];
+        }
+    }
+    if (top.presentedViewController) [line appendFormat:@" presented=%@", NSStringFromClass([top.presentedViewController class])];
+    TMLog(@"%@", line);
 }
 
 + (UINavigationController *)nav {
@@ -188,7 +295,8 @@ static AVPlayer *gAVPlayer;
 }
 
 + (void)status {
-    MPMoviePlayerController *p = gPlayerVC.moviePlayer;
+    MPMoviePlayerController *p = [self activePlayer];
+    if ([TMPlayer shared].playingLabel) TMLog(@"[status] app player: %@", [TMPlayer shared].playingLabel);
     if (!p) {
         TMLog(@"[status] không có trình phát");
         return;
@@ -229,7 +337,7 @@ static AVPlayer *gAVPlayer;
 
 /// Decoded video frame at the current position (UIGetScreenImage cannot see MPMoviePlayer's video layer)
 + (void)frame:(NSString *)name {
-    MPMoviePlayerController *p = gPlayerVC.moviePlayer;
+    MPMoviePlayerController *p = [self activePlayer];
     if (!p) {
         TMLog(@"[frame] không có trình phát");
         return;

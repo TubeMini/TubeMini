@@ -234,3 +234,20 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
 - Tốc độ yt-dlp trên máy này ngang PC (D18).
 - App YouTube cũ trên iPad mini (Custom URL `http://192.168.1.192:8080/720`) đã phát được video có quảng cáo ở 720p qua máy này.
 - Server TubeRepair làm mốc cũng ở máy này (cổng 4000, D7).
+
+## D22. App TubeMini (Giai đoạn 3): cách làm chính — 15/11/2026
+
+- **Dùng lại lớp GData:** mọi danh sách (phổ biến, tìm video, tìm kênh, liên quan, bình luận, video của kênh) đọc XML GData của
+  server bằng một bộ đọc duy nhất `TMAtomParser`, kiểu SAX trên NSXMLParser. Loại entry nhận theo `category` kind. Thẻ nào thiếu thì
+  giữ giá trị mặc định; XML hỏng giữa chừng thì trả các entry đã đọc được.
+- **Phát:** gọi `/tm/v1/videos/{id}/streams` ngay trước khi phát.
+  - `available_in` > 0 thì hiện đếm ngược "Video có quảng cáo: YouTube cho phát sau N giây…" (chạm để huỷ).
+  - Lỗi phát lần đầu thì gọi lại với `fresh=1` ngay trong trình phát đang mở. Lỗi lần nữa thì hỏi "Thử 360p?".
+  - App tự xử lý sự kiện kết thúc: bỏ observer mặc định của MPMoviePlayerViewController, vốn tự đóng trình phát cả khi lỗi.
+- **Ảnh:** NSCache 150 ảnh / 8 MB (xoá khi máy báo thiếu bộ nhớ) cùng cache đĩa `Library/Caches/TMImages`, dọn ảnh quá 7 ngày. Ảnh
+  được giải nén ở luồng nền theo đúng cỡ hiển thị. URL gắn vào từng image view để cell tái sử dụng không bị nhảy ảnh.
+- **Bẫy iOS 6 đã gặp:** `keyboardDismissMode` chỉ có từ iOS 7; kiểu lỗi này qua được bước link (`cbsymcheck`) nhưng crash khi chạy.
+  Trước mỗi lần build phải grep danh sách API iOS 7+ (xem PROGRESS).
+- **Tự thử trên máy thật:** bản debug nhận lệnh điều khiển giao diện qua `Documents/TubeMini-cmd.txt` (`server`, `search`, `open`,
+  `playbtn`, `section`, `scrollend`, `pingtest`, `ui`… — xem `TMDebug.h`). Kết hợp với `tmshot` để chụp màn hình, em tự đi được luồng
+  tìm → mở → phát → tua.

@@ -140,3 +140,47 @@
 - Video có quảng cáo phải chờ khoảng 7–8 giây trước khi phát (giới hạn của YouTube, D17/D18).
 - 720p60 bị bỏ (giống TubeRepair). Có thể thử bật sau nếu A5 chạy mượt.
 - Phép thử khác IP / 4G: anh làm sau.
+
+## Giai đoạn 3 — App TubeMini MVP (15/11/2026)
+
+### Đã làm
+
+- [x] Server: `/tm/v1/ping`, `/tm/v1/videos/{id}/streams` (có `available_in`), token `X-Auth-Token`, lỗi `tm:error` tiếng Việt
+  (API.md). Server lên 0.3.0.
+- [x] Server chính chuyển lên máy LXC 192.168.1.192 (systemd, tự cập nhật yt-dlp mỗi ngày, D21). App YouTube cũ trên iPad cũng trỏ về
+  đó.
+- [x] App TubeMini 0.3.0:
+  - `TMAPIClient`, `TMAtomParser`, `TMExtParser`, `TMImageLoader`, `TMPlayer`;
+  - các tab Trang chủ (phổ biến), Tìm kiếm (Video / Kênh, cuộn vô hạn), Cài đặt (máy chủ, mã truy cập, chất lượng mặc định, kiểm
+    tra kết nối);
+  - màn Chi tiết video: ảnh lớn, nút phát, chọn chất lượng, video của kênh, mô tả, video liên quan / bình luận;
+  - mở kênh: danh sách video của kênh.
+- [x] Debug: lệnh điều khiển giao diện cho thử nghiệm tự động (D22).
+
+### Kết quả nghiệm thu trên iPad mini 1 (iOS 6.1.3)
+
+| Tiêu chí | Kết quả |
+| --- | --- |
+| Lần đầu mở app | Vào tab Cài đặt kèm lời chào. "Kiểm tra kết nối": "Kết nối tốt — Máy chủ TubeMini 0.3.0, yt-dlp 2026.10.26, Deno: có" |
+| Tìm kiếm | "nhạc trẻ" ra 20 video, cuộn tới cuối tải tiếp: 40, rồi 58 (ảnh chụp: ảnh, thời lượng, kênh · lượt xem · ngày) |
+| Mở video → phát | Bấm Phát: phát 360p sau khoảng 0,4 giây (link đã có trong cache), toàn màn hình |
+| Tua | Tua tới giây 150; video chạy tiếp tới giây 168 (theo log) |
+| Không crash | Không có báo cáo crash trong `CrashReporter` |
+| Cuộn danh sách không giật | Ảnh giải nén ở luồng nền và cache theo cỡ hiển thị. Độ mượt cần anh cảm nhận trực tiếp |
+
+### Anh kiểm tra bằng cách nào
+
+1. Mở **TubeMini** trên iPad. App đã trỏ về `http://192.168.1.192:8080`. Nếu cài mới thì vào Cài đặt nhập địa chỉ và bấm "Kiểm tra
+   kết nối".
+2. Tìm thử, cuộn nhanh danh sách, mở video, bấm Phát, tua. Đổi "Chất lượng" sang 720p rồi phát lại (video có quảng cáo sẽ hiện đếm
+   ngược).
+3. Trên màn video: chuyển sang "Bình luận", bấm "Video của kênh". Ở tab Tìm kiếm chọn "Kênh" rồi tìm thử một kênh.
+4. Xoay ngang / dọc ở các màn.
+
+### Còn tồn
+
+- Trình phát dùng MPMoviePlayerViewController toàn màn hình, chưa có trình phát nhúng trong trang.
+- Chưa có lịch sử / xem tiếp, theo dõi kênh, trang kênh đầy đủ (Giai đoạn 4).
+- Kiểm tra API iOS 7+ trước khi build đang làm bằng grep tay. Danh sách đang grep: `containsString`, `firstObject`, `separatorInset`,
+  `estimatedRowHeight`, `keyboardDismissMode`, `sizeWithAttributes`, `boundingRectWithSize`, `NSURLSession`, `UIAlertController`,
+  `barTintColor`, `tintColor` (trên UIView), `stringByAddingPercentEncoding`, `NSURLComponents`, `automaticallyAdjustsScrollViewInsets`.
