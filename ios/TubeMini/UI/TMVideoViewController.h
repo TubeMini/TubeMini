@@ -1,7 +1,8 @@
 #import "TMListViewController.h"
 
-/// Video page: big thumbnail with play button, title, channel, views, description, Play / quality /
-/// channel buttons, and below it the related videos or the comments (segmented control).
+/// Video page: big thumbnail with play button, title, channel, views, description, Play (or "Xem tiếp"
+/// from the watch history) / quality / channel / subscribe buttons, and below it the related videos or
+/// the comments (segmented control).
 @interface TMVideoViewController : TMListViewController <UIActionSheetDelegate>
 - (instancetype)initWithVideo:(TMVideo *)video;
 @property (nonatomic, readonly) TMVideo *video;
@@ -9,4 +10,6 @@
 - (void)play;
 /// 0 = related, 1 = comments.
 - (void)showSection:(NSInteger)section;
+/// Same as tapping Subscribe / Unsubscribe (debug commands).
+- (void)toggleSubscribe;
 @end

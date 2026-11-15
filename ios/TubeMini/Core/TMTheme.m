@@ -69,6 +69,20 @@ static UIColor *rgb(int r, int g, int b) {
     [b setTitleColor:self.secondaryText forState:UIControlStateHighlighted];
 }
 
+- (void)styleSubscribeButton:(UIButton *)b subscribed:(BOOL)subscribed busy:(BOOL)busy {
+    [self styleButton:b];
+    if (!subscribed) {
+        b.backgroundColor = rgb(204, 24, 30);
+        b.layer.borderColor = rgb(170, 16, 22).CGColor;
+        [b setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [b setTitleColor:[UIColor colorWithWhite:1 alpha:0.6] forState:UIControlStateHighlighted];
+    } else {
+        [b setTitleColor:self.secondaryText forState:UIControlStateNormal];
+    }
+    NSString *title = busy ? @"…" : (subscribed ? @"✓ Đã theo dõi" : @"+ Theo dõi");
+    [b setTitle:title forState:UIControlStateNormal];
+}
+
 - (void)styleTableView:(UITableView *)tv {
     tv.backgroundView = nil; // grouped tables on iOS 6 iPad draw their own background otherwise
     tv.backgroundColor = self.background;

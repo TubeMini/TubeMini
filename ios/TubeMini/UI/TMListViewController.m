@@ -1,5 +1,6 @@
 #import "TMListViewController.h"
 #import "TMCells.h"
+#import "TMChannelViewController.h"
 #import "TMTheme.h"
 #import "TMVideoViewController.h"
 
@@ -19,6 +20,7 @@ static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", 
         _firstPage = [firstPage copy];
         _items = [NSMutableArray array];
         _emptyMessage = @"Không có gì ở đây.";
+        _deleteTitle = @"Xoá";
     }
     return self;
 }
@@ -33,7 +35,7 @@ static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", 
     [self.tableView registerClass:[TMChannelCell class] forCellReuseIdentifier:kChannelCell];
     [self.tableView registerClass:[TMCommentCell class] forCellReuseIdentifier:kCommentCell];
     self.refreshControl = [[UIRefreshControl alloc] init];
-    [self.refreshControl addTarget:self action:@selector(reload) forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl addTarget:self action:@selector(pulled) forControlEvents:UIControlEventValueChanged];
     _footer = [[TMListFooter alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 70)];
     __weak TMListViewController *weakSelf = self;
     _footer.onTap = ^{ [weakSelf retry]; };
@@ -76,6 +78,11 @@ static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", 
 }
 
 #pragma mark - Loading
+
+- (void)pulled {
+    if (self.willRefresh) self.willRefresh();
+    [self reload];
+}
 
 - (void)showIdleMessage:(NSString *)message {
     _generation++;
@@ -173,7 +180,32 @@ static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", 
     }
     TMVideoCell *cell = [tableView dequeueReusableCellWithIdentifier:kVideoCell forIndexPath:indexPath];
     if ([item isKindOfClass:[TMVideo class]]) [cell configureWithVideo:item];
+    if ([item isKindOfClass:[TMPlaylist class]]) [cell configureWithPlaylist:item];
     return cell;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return self.onDelete != nil;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return self.deleteTitle;
+}
+
+- (void)tableView:(UITableView *)tableView
+    commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+     forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) [self deleteRow:indexPath.row];
+}
+
+- (void)deleteRow:(NSInteger)row {
+    if (!self.onDelete || row < 0 || row >= (NSInteger)_items.count) return;
+    id item = _items[(NSUInteger)row];
+    [_items removeObjectAtIndex:(NSUInteger)row];
+    [self.tableView deleteRowsAtIndexPaths:@[ [NSIndexPath indexPathForRow:row inSection:0] ]
+                          withRowAnimation:UITableViewRowAnimationAutomatic];
+    if (!_items.count && _ended) [_footer showMessage:self.emptyMessage];
+    self.onDelete(item);
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -191,12 +223,14 @@ static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", 
     if ([item isKindOfClass:[TMVideo class]]) {
         [self.navigationController pushViewController:[[TMVideoViewController alloc] initWithVideo:item] animated:YES];
     } else if ([item isKindOfClass:[TMChannel class]]) {
-        TMChannel *c = item;
-        TMListViewController *uploads =
-            [[TMListViewController alloc] initWithTitle:c.name
-                                              firstPage:^(TMFeedBlock done) { [[TMAPIClient shared] uploads:c.channelID completion:done]; }];
-        uploads.emptyMessage = @"Kênh chưa có video.";
-        [self.navigationController pushViewController:uploads animated:YES];
+        [self.navigationController pushViewController:[[TMChannelViewController alloc] initWithChannel:item] animated:YES];
+    } else if ([item isKindOfClass:[TMPlaylist class]]) {
+        NSString *pid = [item playlistID];
+        TMListViewController *videos =
+            [[TMListViewController alloc] initWithTitle:[item title]
+                                              firstPage:^(TMFeedBlock done) { [[TMAPIClient shared] playlistVideos:pid completion:done]; }];
+        videos.emptyMessage = @"Playlist trống.";
+        [self.navigationController pushViewController:videos animated:YES];
     }
 }
 

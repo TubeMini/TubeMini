@@ -8,6 +8,8 @@
 #import "TMPlayer.h"
 #import "TMSearchViewController.h"
 #import "TMSettingsViewController.h"
+#import "TMChannelViewController.h"
+#import "TMSubscriptionsViewController.h"
 #import "TMVideoViewController.h"
 #import "TMLog.h"
 #import <AVFoundation/AVFoundation.h>
@@ -101,6 +103,15 @@ static AVPlayer *gAVPlayer;
     } else if ([verb isEqualToString:@"seek"]) {
         [self activePlayer].currentPlaybackTime = [arg doubleValue];
     } else if ([verb isEqualToString:@"stop"]) {
+        MPMoviePlayerController *app = [TMPlayer shared].moviePlayer;
+        if (app) {
+            // Same notification the Done button sends: TMPlayer saves the position and closes
+            [[NSNotificationCenter defaultCenter]
+                postNotificationName:MPMoviePlayerPlaybackDidFinishNotification
+                              object:app
+                            userInfo:@{MPMoviePlayerPlaybackDidFinishReasonUserInfoKey : @(MPMovieFinishReasonUserExited)}];
+            return;
+        }
         [gPlayerVC.moviePlayer stop];
         [[self nav] dismissMoviePlayerViewControllerAnimated];
         gPlayerVC = nil;
@@ -132,12 +143,40 @@ static AVPlayer *gAVPlayer;
         UINavigationController *homeNav = (UINavigationController *)[self app].tabs.viewControllers[0];
         UIViewController *home = homeNav.viewControllers[0];
         if ([home isKindOfClass:[TMHomeViewController class]]) [(TMHomeViewController *)home setGridMode:[arg isEqualToString:@"grid"]];
+    } else if ([verb isEqualToString:@"homesource"]) {
+        UINavigationController *homeNav = (UINavigationController *)[self app].tabs.viewControllers[0];
+        UIViewController *home = homeNav.viewControllers[0];
+        if ([home isKindOfClass:[TMHomeViewController class]]) {
+            [(TMHomeViewController *)home setSubscriptionsSource:[arg isEqualToString:@"subs"]];
+        }
+    } else if ([verb isEqualToString:@"refresh"]) {
+        // Home: the refresh button; any other list: pull to refresh
+        UIViewController *top = [self nav].topViewController;
+        SEL pulled = NSSelectorFromString(@"pulled");
+        if ([top isKindOfClass:[TMHomeViewController class]]) {
+            [(TMHomeViewController *)top refresh];
+        } else if ([top respondsToSelector:pulled]) {
+            ((void (*)(id, SEL))objc_msgSend)(top, pulled);
+        }
     } else if ([verb isEqualToString:@"playbtn"]) {
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top play];
     } else if ([verb isEqualToString:@"section"]) {
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top showSection:[arg integerValue]];
+        if ([top isKindOfClass:[TMChannelViewController class]]) [(TMChannelViewController *)top showSection:[arg integerValue]];
+    } else if ([verb isEqualToString:@"subbtn"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top toggleSubscribe];
+        if ([top isKindOfClass:[TMChannelViewController class]]) [(TMChannelViewController *)top toggleSubscribe];
+    } else if ([verb isEqualToString:@"channel"]) {
+        [[self nav] pushViewController:[[TMChannelViewController alloc] initWithChannelID:arg name:@""] animated:NO];
+    } else if ([verb isEqualToString:@"delrow"]) {
+        UIViewController *top = [self topScreen];
+        if ([top isKindOfClass:[TMListViewController class]]) [(TMListViewController *)top deleteRow:[arg integerValue]];
+    } else if ([verb isEqualToString:@"clearhistory"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMHistoryViewController class]]) [(TMHistoryViewController *)top clearAll];
     } else if ([verb isEqualToString:@"scrollend"]) {
         UIViewController *top = [self topScreen];
         UIScrollView *sv = nil;
@@ -148,7 +187,7 @@ static AVPlayer *gAVPlayer;
         [[self nav] popViewControllerAnimated:NO];
     } else if ([verb isEqualToString:@"pingtest"]) {
         TMAppDelegate *app = [self app];
-        app.tabs.selectedIndex = 2;
+        app.tabs.selectedIndex = app.tabs.viewControllers.count - 1;
         UIViewController *root = [app nav].viewControllers[0];
         if ([root isKindOfClass:[TMSettingsViewController class]]) [(TMSettingsViewController *)root testConnection];
     } else if ([verb isEqualToString:@"dismissalert"]) {

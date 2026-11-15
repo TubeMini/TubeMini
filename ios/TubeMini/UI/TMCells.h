@@ -1,10 +1,13 @@
 #import <UIKit/UIKit.h>
 #import "TMModels.h"
 
-/// Thumbnail 160×90 with a duration badge, two-line title, "channel · views · age".
+/// Thumbnail 160×90 with a duration badge, two-line title, "channel · views · age". History entries
+/// get a red progress bar under the thumbnail and "Đã xem …" instead of views / age.
 @interface TMVideoCell : UITableViewCell
 + (CGFloat)height;
 - (void)configureWithVideo:(TMVideo *)video;
+/// Playlist row: first video's thumbnail, title, "N video".
+- (void)configureWithPlaylist:(TMPlaylist *)playlist;
 @end
 
 /// Avatar, channel name, "subscribers · videos".

@@ -10,6 +10,9 @@
 @property (nonatomic, assign) NSInteger duration;
 @property (nonatomic, assign) long long views;
 @property (nonatomic, strong) NSDate *published;
+/// History entries only (`/tm/v1/history`): seconds watched and when; 0 / nil elsewhere.
+@property (nonatomic, assign) NSInteger position;
+@property (nonatomic, strong) NSDate *watched;
 /// 320×180 JPEG on i.ytimg.com.
 - (NSURL *)thumbnailURL;
 @end

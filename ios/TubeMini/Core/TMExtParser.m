@@ -60,6 +60,13 @@
     return nil;
 }
 
++ (NSDictionary *)attributesOf:(NSString *)name in:(NSData *)data {
+    for (NSArray *el in [self elementsIn:data]) {
+        if ([el[0] isEqualToString:name]) return el[1];
+    }
+    return nil;
+}
+
 + (NSString *)errorMessageIn:(NSData *)data {
     for (NSArray *el in [self elementsIn:data]) {
         if ([el[0] isEqualToString:@"tm:error"]) {

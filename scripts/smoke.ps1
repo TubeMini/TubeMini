@@ -51,5 +51,13 @@ Check "classic app home"    "/feeds/api/standardfeeds/US/recently_featured"  200
 Check "getvideo 360p"       "/getvideo/aqz-KE-bpKQ"                          307
 Check "getvideo HLS 720"    "/720/getvideo/6C6xOz-6ET4"                      200 "#EXT-X-STREAM-INF"
 Check "getvideo bad id"     "/getvideo/xyz"                                  404
+# /tm/v1 (server without auth_token); read-only, the POST is rejected before anything is written
+Check "tm ping"             "/tm/v1/ping"                                    200 "<tm:ping"
+Check "tm streams"          "/tm/v1/videos/aqz-KE-bpKQ/streams"              200 "<tm:stream "
+Check "tm subscriptions"    "/tm/v1/subscriptions"                           200 "#channel"
+Check "tm feed"             "/tm/v1/feed"                                    200 "tm:feed"
+Check "tm history"          "/tm/v1/history"                                 200 "xmlns:tm="
+Check "tm history entry"    "/tm/v1/history/aqz-KE-bpKQ"                     200 "<tm:history"
+Check "tm history bad POST" "/tm/v1/history"                                 400 "" "POST"
 
 if ($failed -gt 0) { "`n$failed check(s) failed"; exit 1 } else { "`nall checks passed" }

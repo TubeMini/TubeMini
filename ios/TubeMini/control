@@ -1,6 +1,6 @@
 Package: vn.tubemini.io
 Name: TubeMini
-Version: 0.3.0
+Version: 0.4.0
 Architecture: iphoneos-arm
 Description: Ứng dụng YouTube cho iPad iOS 6, dùng server tubemini-server trong mạng nhà.
 Maintainer: TubeMini <https://github.com/TubeMini>

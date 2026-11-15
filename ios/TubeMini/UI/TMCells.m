@@ -34,6 +34,8 @@ static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
 @implementation TMVideoCell {
     UIImageView *_thumb;
     UILabel *_duration, *_title, *_meta;
+    UIView *_progress;
+    CGFloat _fraction; // watched part of the video, 0 = no bar
 }
 
 + (CGFloat)height {
@@ -50,6 +52,9 @@ static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
         _duration.backgroundColor = [UIColor colorWithWhite:0 alpha:0.75];
         _duration.textAlignment = NSTextAlignmentCenter;
         [_thumb addSubview:_duration];
+        _progress = [[UIView alloc] init];
+        _progress.backgroundColor = [UIColor colorWithRed:0.9 green:0.1 blue:0.1 alpha:1];
+        [_thumb addSubview:_progress];
         _title = makeLabel([UIFont boldSystemFontOfSize:16], [UIColor blackColor], 2);
         [self.contentView addSubview:_title];
         _meta = makeLabel([UIFont systemFontOfSize:13], [UIColor darkGrayColor], 2);
@@ -68,17 +73,45 @@ static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
     CGSize d = [_duration.text sizeWithFont:_duration.font];
     _duration.hidden = _duration.text.length == 0;
     _duration.frame = CGRectMake(kThumbW - d.width - 10, kThumbH - 20, d.width + 8, 17);
+    _progress.hidden = _fraction <= 0;
+    _progress.frame = CGRectMake(0, kThumbH - 4, floor(kThumbW * _fraction), 4);
 }
 
 - (void)configureWithVideo:(TMVideo *)v {
     themeCell(self);
     _title.textColor = [TMTheme current].text;
     _meta.textColor = [TMTheme current].secondaryText;
-    _title.text = v.title;
-    _meta.text = [TMFormat join:@[ v.author ?: @"", [TMFormat views:v.views], [TMFormat relativeDate:v.published] ]];
+    _title.text = v.title.length ? v.title : v.videoID;
+    if (v.watched) {
+        NSString *seen = v.position > 0 && v.duration > 0
+                             ? [NSString stringWithFormat:@"Đã xem %@ / %@", [TMFormat duration:v.position], [TMFormat duration:v.duration]]
+                             : @"Đã xem";
+        _meta.text = [TMFormat join:@[ v.author ?: @"", seen, [TMFormat relativeDate:v.watched] ]];
+    } else {
+        _meta.text = [TMFormat join:@[ v.author ?: @"", [TMFormat views:v.views], [TMFormat relativeDate:v.published] ]];
+    }
+    _fraction = v.duration > 0 ? MIN(1, (CGFloat)v.position / v.duration) : 0;
     _duration.text = [TMFormat duration:v.duration];
     CGSize size = CGSizeMake(kThumbW, kThumbH);
     [[TMImageLoader shared] setImageURL:v.thumbnailURL
+                            onImageView:_thumb
+                            placeholder:[TMImageLoader placeholderOfSize:size]
+                                   size:size];
+    [self setNeedsLayout];
+}
+
+- (void)configureWithPlaylist:(TMPlaylist *)p {
+    themeCell(self);
+    _title.textColor = [TMTheme current].text;
+    _meta.textColor = [TMTheme current].secondaryText;
+    _title.text = p.title;
+    _meta.text = [TMFormat join:@[ p.count > 0 ? [NSString stringWithFormat:@"%ld video", (long)p.count] : @"", p.author ?: @"" ]];
+    _duration.text = @"";
+    _fraction = 0;
+    // The feed lists the 120×90 "default" first: the 320×180 one fits the cell better
+    NSString *url = [p.thumbnailURL stringByReplacingOccurrencesOfString:@"/default.jpg" withString:@"/mqdefault.jpg"];
+    CGSize size = CGSizeMake(kThumbW, kThumbH);
+    [[TMImageLoader shared] setImageURL:[NSURL URLWithString:url]
                             onImageView:_thumb
                             placeholder:[TMImageLoader placeholderOfSize:size]
                                    size:size];

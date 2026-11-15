@@ -118,6 +118,19 @@ static const NSTimeInterval kTimeout = 20;
 }
 
 - (void)getURL:(NSString *)url completion:(TMDataBlock)done {
+    [self requestURL:url method:@"GET" form:nil completion:done];
+}
+
++ (NSData *)formBody:(NSDictionary *)form {
+    NSMutableArray *pairs = [NSMutableArray array];
+    for (NSString *key in [[form allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
+        NSString *value = [NSString stringWithFormat:@"%@", form[key]];
+        [pairs addObject:[NSString stringWithFormat:@"%@=%@", [self escape:key], [self escape:value]]];
+    }
+    return [[pairs componentsJoinedByString:@"&"] dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+- (void)requestURL:(NSString *)url method:(NSString *)method form:(NSDictionary *)form completion:(TMDataBlock)done {
     if (!self.isConfigured) {
         dispatch_async(dispatch_get_main_queue(), ^{ done(nil, @"Chưa nhập địa chỉ máy chủ. Vào Cài đặt để nhập."); });
         return;
@@ -130,6 +143,11 @@ static const NSTimeInterval kTimeout = 20;
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:u
                                                        cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                    timeoutInterval:kTimeout];
+    req.HTTPMethod = method;
+    if (form) {
+        req.HTTPBody = [TMAPIClient formBody:form];
+        [req setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    }
     NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
     [req setValue:[NSString stringWithFormat:@"TubeMini/%@ (iPad; iOS %@)", version, [UIDevice currentDevice].systemVersion]
         forHTTPHeaderField:@"User-Agent"];
@@ -146,7 +164,7 @@ static const NSTimeInterval kTimeout = 20;
                                } else if (status >= 400) {
                                    message = [self messageForStatus:status data:data];
                                }
-                               if (message) TMLog(@"[api] %@ → %@", u.path, message);
+                               if (message) TMLog(@"[api] %@ %@ → %@", method, u.path, message);
                                dispatch_async(dispatch_get_main_queue(), ^{ done(message ? nil : data, message); });
                            }];
 }
@@ -198,6 +216,85 @@ static const NSTimeInterval kTimeout = 20;
 - (void)uploads:(NSString *)channelID completion:(TMFeedBlock)done {
     [self feedAtPath:[NSString stringWithFormat:@"/feeds/api/users/%@/uploads?max-results=25", channelID]
           completion:done];
+}
+
+- (void)channel:(NSString *)channelID completion:(void (^)(TMChannel *, NSString *))done {
+    [self feedAtPath:[NSString stringWithFormat:@"/feeds/api/channels/%@", channelID]
+          completion:^(TMFeed *feed, NSString *error) {
+              TMChannel *c = feed.entries.count ? feed.entries[0] : nil;
+              done([c isKindOfClass:[TMChannel class]] ? c : nil, error ?: (c ? nil : @"Không đọc được thông tin kênh."));
+          }];
+}
+
+- (void)channelPlaylists:(NSString *)channelID completion:(TMFeedBlock)done {
+    [self feedAtPath:[NSString stringWithFormat:@"/feeds/api/users/%@/playlists?max-results=25", channelID]
+          completion:done];
+}
+
+- (void)playlistVideos:(NSString *)playlistID completion:(TMFeedBlock)done {
+    [self feedAtPath:[NSString stringWithFormat:@"/feeds/api/playlists/%@?max-results=25", playlistID]
+          completion:done];
+}
+
+- (void)subscriptions:(TMFeedBlock)done {
+    [self feedAtPath:@"/tm/v1/subscriptions" completion:done];
+}
+
+- (void)setSubscribed:(BOOL)subscribed channel:(NSString *)channelID completion:(void (^)(NSString *))done {
+    NSString *url = subscribed ? [self.serverURL stringByAppendingString:@"/tm/v1/subscriptions"]
+                               : [NSString stringWithFormat:@"%@/tm/v1/subscriptions/%@", self.serverURL,
+                                                            [TMAPIClient escape:channelID]];
+    [self requestURL:url
+              method:subscribed ? @"POST" : @"DELETE"
+                form:subscribed ? @{ @"channel_id" : channelID ?: @"" } : nil
+          completion:^(NSData *data, NSString *error) {
+              if (done) done(error);
+          }];
+}
+
+- (void)subscriptionFeed:(BOOL)fresh completion:(TMFeedBlock)done {
+    [self feedAtPath:fresh ? @"/tm/v1/feed?max-results=25&fresh=1" : @"/tm/v1/feed?max-results=25" completion:done];
+}
+
+- (void)history:(TMFeedBlock)done {
+    [self feedAtPath:@"/tm/v1/history?max-results=25" completion:done];
+}
+
+- (void)positionOf:(NSString *)videoID completion:(void (^)(NSInteger, NSInteger))done {
+    [self getURL:[NSString stringWithFormat:@"%@/tm/v1/history/%@", self.serverURL, videoID]
+        completion:^(NSData *data, NSString *error) {
+            NSDictionary *a = error ? nil : [TMExtParser attributesOf:@"tm:history" in:data];
+            done([a[@"position"] integerValue], [a[@"duration"] integerValue]);
+        }];
+}
+
+- (void)savePosition:(NSInteger)position duration:(NSInteger)duration video:(TMVideo *)video {
+    if (!video.videoID.length) return;
+    NSDictionary *form = @{
+        @"video_id" : video.videoID,
+        @"position" : @(MAX(position, 0)),
+        @"duration" : @(MAX(duration, 0)),
+        @"title" : video.title ?: @"",
+        @"author" : video.author ?: @"",
+        @"author_id" : video.authorID ?: @"",
+    };
+    [self requestURL:[self.serverURL stringByAppendingString:@"/tm/v1/history"]
+              method:@"POST"
+                form:form
+          completion:^(NSData *data, NSString *error) {
+              // Fire and forget: a lost position is not worth an alert
+          }];
+}
+
+- (void)forgetHistory:(NSString *)videoID completion:(void (^)(NSString *))done {
+    NSString *url = videoID.length ? [NSString stringWithFormat:@"%@/tm/v1/history/%@", self.serverURL, videoID]
+                                   : [self.serverURL stringByAppendingString:@"/tm/v1/history"];
+    [self requestURL:url
+              method:@"DELETE"
+                form:nil
+          completion:^(NSData *data, NSString *error) {
+              if (done) done(error);
+          }];
 }
 
 - (void)video:(NSString *)videoID completion:(void (^)(TMVideo *, NSString *))done {

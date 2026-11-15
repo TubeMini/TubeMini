@@ -1,6 +1,8 @@
 #import "TMVideoViewController.h"
 #import "TMFormat.h"
+#import "TMChannelViewController.h"
 #import "TMImageLoader.h"
+#import "TMLibrary.h"
 #import "TMPlayer.h"
 #import "TMTheme.h"
 
@@ -8,11 +10,12 @@
     TMVideo *_video;
     UIView *_header;
     UIImageView *_thumb;
-    UIButton *_playOverlay, *_playButton, *_qualityButton, *_channelButton;
+    UIButton *_playOverlay, *_playButton, *_qualityButton, *_channelButton, *_subscribeButton;
     UILabel *_title, *_meta, *_desc;
     UISegmentedControl *_segment;
-    BOOL _descExpanded;
+    BOOL _descExpanded, _subBusy;
     NSInteger _quality;
+    NSInteger _resumeAt; // seconds, from the watch history; 0 = from the start
     CGFloat _laidOutWidth;
 }
 
@@ -99,10 +102,12 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
 
     _playButton = makeButton(@"▶ Phát", self, @selector(play));
     _qualityButton = makeButton(@"", self, @selector(chooseQuality));
-    _channelButton = makeButton(@"Video của kênh", self, @selector(openChannel));
+    _channelButton = makeButton(@"Kênh", self, @selector(openChannel));
+    _subscribeButton = makeButton(@"", self, @selector(toggleSubscribe));
     [_header addSubview:_playButton];
     [_header addSubview:_qualityButton];
     [_header addSubview:_channelButton];
+    [_header addSubview:_subscribeButton];
 
     _desc = [[UILabel alloc] init];
     _desc.font = [UIFont systemFontOfSize:14];
@@ -131,6 +136,17 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
         if ([b isKindOfClass:[UIButton class]]) [t styleButton:b];
     }
     _segment.tintColor = t.dark ? [UIColor colorWithWhite:0.28 alpha:1] : [UIColor colorWithRed:0.62 green:0.08 blue:0.08 alpha:1];
+    [self styleSubscribe];
+}
+
+- (void)styleSubscribe {
+    if (!_subscribeButton) return;
+    [[TMTheme current] styleSubscribeButton:_subscribeButton subscribed:[[TMLibrary shared] isSubscribed:_video.authorID] busy:_subBusy];
+}
+
+- (void)updatePlayTitle {
+    NSString *title = _resumeAt > 0 ? [NSString stringWithFormat:@"▶ Xem tiếp %@", [TMFormat duration:_resumeAt]] : @"▶ Phát";
+    [_playButton setTitle:title forState:UIControlStateNormal];
 }
 
 - (void)fillHeader {
@@ -140,6 +156,9 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     _desc.numberOfLines = _descExpanded ? 0 : 4;
     [_qualityButton setTitle:[NSString stringWithFormat:@"Chất lượng: %ldp", (long)_quality] forState:UIControlStateNormal];
     _channelButton.hidden = _video.authorID.length == 0;
+    _subscribeButton.hidden = _channelButton.hidden;
+    [self styleSubscribe];
+    [self updatePlayTitle];
     NSURL *hq = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", _video.videoID]];
     [[TMImageLoader shared] setImageURL:hq onImageView:_thumb placeholder:nil size:CGSizeMake(480, 360)];
     [self layoutHeaderForce:YES];
@@ -161,10 +180,11 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     CGSize ms = [_meta.text sizeWithFont:_meta.font constrainedToSize:CGSizeMake(inner, 40) lineBreakMode:NSLineBreakByWordWrapping];
     _meta.frame = CGRectMake(pad, y, inner, ms.height);
     y += ms.height + 10;
-    CGFloat bw = MIN(220, (inner - 20) / 3);
+    CGFloat bw = floor(MIN(200, (inner - 30) / 4));
     _playButton.frame = CGRectMake(pad, y, bw, 40);
     _qualityButton.frame = CGRectMake(pad + bw + 10, y, bw, 40);
     _channelButton.frame = CGRectMake(pad + 2 * (bw + 10), y, bw, 40);
+    _subscribeButton.frame = CGRectMake(pad + 3 * (bw + 10), y, bw, 40);
     y += 52;
     if (_desc.text.length) {
         CGFloat maxH = _descExpanded ? 2000 : 4 * _desc.font.lineHeight + 2;
@@ -186,6 +206,14 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     [super viewDidLoad];
     [self buildHeader];
     [self fillHeader];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(styleSubscribe)
+                                                 name:TMSubscriptionsDidChangeNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(historyChanged:)
+                                                 name:TMHistoryDidChangeNotification
+                                               object:nil];
     // List entries (related videos) have no description: fetch the full entry once
     [[TMAPIClient shared] video:_video.videoID
                      completion:^(TMVideo *full, NSString *error) {
@@ -193,6 +221,18 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
                          self->_video = full;
                          [self fillHeader];
                      }];
+    [[TMAPIClient shared] positionOf:_video.videoID
+                          completion:^(NSInteger position, NSInteger duration) {
+                              self->_resumeAt = [TMLibrary resumePositionFor:position duration:duration];
+                              [self updatePlayTitle];
+                          }];
+}
+
+/// The player saved a position for this video: "Xem tiếp" follows it without asking the server.
+- (void)historyChanged:(NSNotification *)n {
+    if (![n.userInfo[@"videoID"] isEqualToString:_video.videoID]) return;
+    _resumeAt = [TMLibrary resumePositionFor:[n.userInfo[@"position"] integerValue] duration:[n.userInfo[@"duration"] integerValue]];
+    [self updatePlayTitle];
 }
 
 - (void)viewWillLayoutSubviews {
@@ -203,7 +243,7 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
 #pragma mark - Actions
 
 - (void)play {
-    [[TMPlayer shared] playVideo:_video quality:_quality from:self];
+    [[TMPlayer shared] playVideo:_video quality:_quality startAt:_resumeAt from:self];
 }
 
 - (void)chooseQuality {
@@ -223,12 +263,30 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
 }
 
 - (void)openChannel {
+    if (!_video.authorID.length) return;
+    [self.navigationController pushViewController:[[TMChannelViewController alloc] initWithChannelID:_video.authorID name:_video.author]
+                                         animated:YES];
+}
+
+- (void)toggleSubscribe {
     NSString *cid = _video.authorID;
-    TMListViewController *uploads =
-        [[TMListViewController alloc] initWithTitle:_video.author
-                                          firstPage:^(TMFeedBlock done) { [[TMAPIClient shared] uploads:cid completion:done]; }];
-    uploads.emptyMessage = @"Kênh chưa có video.";
-    [self.navigationController pushViewController:uploads animated:YES];
+    if (_subBusy || !cid.length) return;
+    BOOL subscribe = ![[TMLibrary shared] isSubscribed:cid];
+    _subBusy = YES;
+    [self styleSubscribe];
+    [[TMLibrary shared] setSubscribed:subscribe
+                            channelID:cid
+                           completion:^(NSString *error) {
+                               self->_subBusy = NO;
+                               [self styleSubscribe];
+                               if (error) {
+                                   [[[UIAlertView alloc] initWithTitle:subscribe ? @"Không theo dõi được" : @"Không bỏ theo dõi được"
+                                                               message:error
+                                                              delegate:nil
+                                                     cancelButtonTitle:@"Đóng"
+                                                     otherButtonTitles:nil] show];
+                               }
+                           }];
 }
 
 - (void)toggleDescription {

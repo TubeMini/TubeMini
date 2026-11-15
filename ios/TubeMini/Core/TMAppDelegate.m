@@ -2,10 +2,12 @@
 #import "TMAPIClient.h"
 #import "TMImageLoader.h"
 #import "TMHomeViewController.h"
+#import "TMLibrary.h"
 #import "TMListViewController.h"
 #import "TMLog.h"
 #import "TMSearchViewController.h"
 #import "TMSettingsViewController.h"
+#import "TMSubscriptionsViewController.h"
 #import "TMTheme.h"
 #ifdef TM_DEBUG
 #import "TMDebug.h"
@@ -62,6 +64,25 @@ static UIImage *icon(TMDrawBlock draw) {
         CGContextAddLineToPoint(ctx, 26, 26);
         CGContextStrokePath(ctx);
     });
+    UIImage *subscriptionsIcon = icon(^(CGContextRef ctx) {
+        // A stack of screens with a play triangle cut out of the front one
+        CGContextFillRect(ctx, CGRectMake(10, 3, 10, 2));
+        CGContextFillRect(ctx, CGRectMake(6, 7, 18, 2));
+        CGContextFillRect(ctx, CGRectMake(2, 11, 26, 17));
+        CGContextSetBlendMode(ctx, kCGBlendModeClear);
+        CGContextMoveToPoint(ctx, 12, 14);
+        CGContextAddLineToPoint(ctx, 12, 25);
+        CGContextAddLineToPoint(ctx, 21, 19.5);
+        CGContextFillPath(ctx);
+    });
+    UIImage *historyIcon = icon(^(CGContextRef ctx) {
+        CGContextStrokeEllipseInRect(ctx, CGRectMake(3, 3, 24, 24));
+        CGContextSetLineCap(ctx, kCGLineCapRound);
+        CGContextMoveToPoint(ctx, 15, 8);
+        CGContextAddLineToPoint(ctx, 15, 15);
+        CGContextAddLineToPoint(ctx, 20, 19);
+        CGContextStrokePath(ctx);
+    });
     UIImage *settingsIcon = icon(^(CGContextRef ctx) {
         for (int i = 0; i < 8; i++) {
             CGFloat a = i * M_PI / 4;
@@ -74,6 +95,8 @@ static UIImage *icon(TMDrawBlock draw) {
     self.tabs.viewControllers = @[
         [self wrap:home title:@"Trang chủ" image:homeIcon],
         [self wrap:[[TMSearchViewController alloc] init] title:@"Tìm kiếm" image:searchIcon],
+        [self wrap:[[TMSubscriptionsViewController alloc] init] title:@"Đã theo dõi" image:subscriptionsIcon],
+        [self wrap:[[TMHistoryViewController alloc] init] title:@"Lịch sử" image:historyIcon],
         [self wrap:[[TMSettingsViewController alloc] init] title:@"Cài đặt" image:settingsIcon],
     ];
 
@@ -82,8 +105,9 @@ static UIImage *icon(TMDrawBlock draw) {
     self.window.rootViewController = self.tabs;
     [self.window makeKeyAndVisible];
 
+    [[TMLibrary shared] refresh]; // which channels are subscribed (for the Subscribe buttons)
     if (![TMAPIClient shared].isConfigured) {
-        self.tabs.selectedIndex = 2;
+        self.tabs.selectedIndex = self.tabs.viewControllers.count - 1; // Cài đặt
         [[[UIAlertView alloc] initWithTitle:@"Chào mừng đến TubeMini"
                                     message:@"Nhập địa chỉ máy chủ tubemini-server trong mạng nhà để bắt đầu."
                                    delegate:nil

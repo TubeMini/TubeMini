@@ -1,5 +1,6 @@
 #import "TMPlayer.h"
 #import "TMAPIClient.h"
+#import "TMLibrary.h"
 #import "TMLog.h"
 #import <QuartzCore/QuartzCore.h>
 
@@ -20,13 +21,28 @@
     NSTimer *_countdown;
     NSInteger _remaining;
     NSInteger _generation; // cancels callbacks of a playback the user already left
+    NSInteger _startAt;
+    NSTimer *_saveTimer;
+    NSInteger _lastPosition, _lastDuration; // last known from the player (seconds)
 }
+
+static const NSTimeInterval kSaveInterval = 15;
 
 + (instancetype)shared {
     static TMPlayer *p;
     static dispatch_once_t once;
     dispatch_once(&once, ^{ p = [[TMPlayer alloc] init]; });
     return p;
+}
+
+- (instancetype)init {
+    if ((self = [super init])) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(saveProgress)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+    }
+    return self;
 }
 
 - (MPMoviePlayerController *)moviePlayer {
@@ -92,11 +108,18 @@
 #pragma mark - Flow
 
 - (void)playVideo:(TMVideo *)video quality:(NSInteger)quality from:(UIViewController *)presenter {
+    [self playVideo:video quality:quality startAt:0 from:presenter];
+}
+
+- (void)playVideo:(TMVideo *)video quality:(NSInteger)quality startAt:(NSInteger)seconds from:(UIViewController *)presenter {
     _generation++;
     _video = video;
     _quality = quality;
     _presenter = presenter;
     _retried = NO;
+    _startAt = MAX(seconds, 0);
+    _lastPosition = _startAt;
+    _lastDuration = video.duration;
     [self showHUD:@"Đang lấy link phát…\n(có thể mất 5–10 giây)" on:[self hostFor:presenter]];
     [self fetchStreams:NO];
 }
@@ -158,7 +181,8 @@
     self.playingLabel = [self labelFor:_stream];
     TMLog(@"[player] %@ %@", _video.videoID, self.playingLabel);
     if (_playerVC) {
-        // Retry inside the open player
+        // Retry inside the open player, from where it stopped
+        _playerVC.moviePlayer.initialPlaybackTime = _lastPosition;
         _playerVC.moviePlayer.contentURL = url;
         [_playerVC.moviePlayer play];
         return;
@@ -173,13 +197,50 @@
                                                  name:MPMoviePlayerPlaybackDidFinishNotification
                                                object:_playerVC.moviePlayer];
     _playerVC.moviePlayer.shouldAutoplay = YES;
+    if (_startAt > 0) {
+        TMLog(@"[player] xem tiếp từ %ld giây", (long)_startAt);
+        _playerVC.moviePlayer.initialPlaybackTime = _startAt;
+    }
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     [_presenter presentMoviePlayerViewControllerAnimated:_playerVC];
     [_playerVC.moviePlayer prepareToPlay];
     [_playerVC.moviePlayer play];
+    // Into the history right away, then every few seconds
+    [self storePosition:_startAt];
+    [_saveTimer invalidate];
+    _saveTimer = [NSTimer scheduledTimerWithTimeInterval:kSaveInterval
+                                                  target:self
+                                                selector:@selector(saveProgress)
+                                                userInfo:nil
+                                                 repeats:YES];
+}
+
+#pragma mark - Watch position
+
+/// Reads position / duration from the player (when it knows them) and saves the position.
+- (void)saveProgress {
+    MPMoviePlayerController *p = _playerVC.moviePlayer;
+    if (!p || !_video) return;
+    [self readPlayer];
+    [self storePosition:_lastPosition];
+}
+
+- (void)readPlayer {
+    MPMoviePlayerController *p = _playerVC.moviePlayer;
+    NSTimeInterval t = p.currentPlaybackTime, d = p.duration;
+    if (isfinite(t) && t > 0) _lastPosition = (NSInteger)t;
+    if (isfinite(d) && d > 0) _lastDuration = (NSInteger)d;
+}
+
+- (void)storePosition:(NSInteger)position {
+    if (!_video.videoID.length) return;
+    [[TMAPIClient shared] savePosition:position duration:_lastDuration video:_video];
+    [[TMLibrary shared] historyChangedForVideo:_video.videoID position:position duration:_lastDuration];
 }
 
 - (void)dismissPlayer {
+    [_saveTimer invalidate];
+    _saveTimer = nil;
     if (!_playerVC) return;
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:MPMoviePlayerPlaybackDidFinishNotification
@@ -194,6 +255,9 @@
 - (void)finished:(NSNotification *)n {
     NSInteger reason = [n.userInfo[MPMoviePlayerPlaybackDidFinishReasonUserInfoKey] integerValue];
     if (reason != MPMovieFinishReasonPlaybackError) {
+        [self readPlayer];
+        // Watched to the end: next time starts over (see +[TMLibrary resumePositionFor:duration:])
+        [self storePosition:reason == MPMovieFinishReasonPlaybackEnded && _lastDuration ? _lastDuration : _lastPosition];
         [self dismissPlayer];
         return;
     }
@@ -223,7 +287,7 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == alertView.cancelButtonIndex || !_presenter) return;
-    [self playVideo:_video quality:360 from:_presenter];
+    [self playVideo:_video quality:360 startAt:_lastPosition from:_presenter];
 }
 
 @end

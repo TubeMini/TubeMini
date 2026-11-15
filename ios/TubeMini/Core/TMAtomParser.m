@@ -78,6 +78,8 @@
         _cur[@"subscribers"] = attrs[@"subscriberCount"];
     } else if ([name isEqualToString:@"gd:feedLink"] && attrs[@"countHint"] && !_cur[@"countHint"]) {
         _cur[@"countHint"] = attrs[@"countHint"];
+    } else if ([name isEqualToString:@"tm:position"] && attrs[@"seconds"]) {
+        _cur[@"position"] = attrs[@"seconds"];
     } else if ([name isEqualToString:@"media:thumbnail"] && attrs[@"url"] && !_cur[@"thumb"]) {
         _cur[@"thumb"] = attrs[@"url"];
     }
@@ -126,6 +128,8 @@
         _cur[@"playlistID"] = text;
     } else if ([name isEqualToString:@"yt:countHint"]) {
         _cur[@"countHint"] = text;
+    } else if ([name isEqualToString:@"tm:watched"]) {
+        _cur[@"watched"] = text;
     }
     [_text setString:@""];
 }
@@ -150,6 +154,8 @@ static NSString *str(NSDictionary *d, NSString *key) {
         v.duration = [str(e, @"duration") integerValue];
         v.views = [str(e, @"views") longLongValue];
         v.published = [TMAtomParser dateFromString:str(e, @"published")];
+        v.position = [str(e, @"position") integerValue];
+        v.watched = [TMAtomParser dateFromString:str(e, @"watched")];
         return v;
     }
     if ([kind isEqualToString:@"channel"]) {

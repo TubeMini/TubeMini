@@ -26,6 +26,8 @@ typedef void (^TMFeedBlock)(TMFeed *feed, NSString *error);
 + (NSString *)escape:(NSString *)s;
 
 - (void)getURL:(NSString *)url completion:(TMDataBlock)done;
+/// Any method; `form` (string values) is sent as application/x-www-form-urlencoded.
+- (void)requestURL:(NSString *)url method:(NSString *)method form:(NSDictionary *)form completion:(TMDataBlock)done;
 - (void)feedAtURL:(NSString *)url completion:(TMFeedBlock)done;
 /// `path` relative to the server, e.g. `/feeds/api/videos?q=…`.
 - (void)feedAtPath:(NSString *)path completion:(TMFeedBlock)done;
@@ -36,6 +38,23 @@ typedef void (^TMFeedBlock)(TMFeed *feed, NSString *error);
 - (void)related:(NSString *)videoID completion:(TMFeedBlock)done;
 - (void)comments:(NSString *)videoID completion:(TMFeedBlock)done;
 - (void)uploads:(NSString *)channelID completion:(TMFeedBlock)done;
+- (void)channel:(NSString *)channelID completion:(void (^)(TMChannel *channel, NSString *error))done;
+- (void)channelPlaylists:(NSString *)channelID completion:(TMFeedBlock)done;
+- (void)playlistVideos:(NSString *)playlistID completion:(TMFeedBlock)done;
+
+/// `/tm/v1/subscriptions` (channel feed), subscribe / unsubscribe.
+- (void)subscriptions:(TMFeedBlock)done;
+- (void)setSubscribed:(BOOL)subscribed channel:(NSString *)channelID completion:(void (^)(NSString *error))done;
+/// `/tm/v1/feed`: new videos of the subscribed channels. `fresh` refetches every channel (pull to refresh).
+- (void)subscriptionFeed:(BOOL)fresh completion:(TMFeedBlock)done;
+
+/// `/tm/v1/history` (video feed with position / watched).
+- (void)history:(TMFeedBlock)done;
+/// Saved position of one video (0, 0 when never watched or on error).
+- (void)positionOf:(NSString *)videoID completion:(void (^)(NSInteger position, NSInteger duration))done;
+- (void)savePosition:(NSInteger)position duration:(NSInteger)duration video:(TMVideo *)video;
+/// `videoID` nil = clear the whole history.
+- (void)forgetHistory:(NSString *)videoID completion:(void (^)(NSString *error))done;
 - (void)video:(NSString *)videoID completion:(void (^)(TMVideo *video, NSString *error))done;
 - (void)streams:(NSString *)videoID fresh:(BOOL)fresh completion:(void (^)(TMStreamSet *set, NSString *error))done;
 - (void)ping:(void (^)(TMPing *ping, NSString *error))done;

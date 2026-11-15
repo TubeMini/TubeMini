@@ -31,6 +31,8 @@ extern NSString *const TMThemeDidChangeNotification;
 
 /// Rounded button in theme colours (iOS 6 rounded-rect buttons are always white).
 - (void)styleButton:(UIButton *)button;
+/// Subscribe button: red "+ Theo dõi", or a plain "✓ Đã theo dõi" once subscribed ("…" while busy).
+- (void)styleSubscribeButton:(UIButton *)button subscribed:(BOOL)subscribed busy:(BOOL)busy;
 /// Background / separators / cells of a table view.
 - (void)styleTableView:(UITableView *)tableView;
 @end
