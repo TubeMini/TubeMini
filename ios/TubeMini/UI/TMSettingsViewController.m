@@ -3,6 +3,7 @@
 #import "TMLog.h"
 #import "TMTheme.h"
 #import "TMUpdater.h"
+#import <QuartzCore/QuartzCore.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
@@ -14,9 +15,82 @@ enum {
     kSectionProxy,
     kSectionTheme,
     kSectionUpdate,
+    kSectionTelegram,
     kSectionTest,
     kSectionCount
 };
+
+/// "Nhóm Telegram": QR code + handle. Telegram's servers need newer TLS than iOS 6 has, so a link would not
+/// open on the iPad; the QR code is meant for a phone camera.
+@interface TMTelegramCell : UITableViewCell
+@property (nonatomic, readonly) UILabel *handle, *link, *info;
++ (CGFloat)heightForTableWidth:(CGFloat)width;
+@end
+
+@implementation TMTelegramCell {
+    UIImageView *_qr;
+}
+
+static const CGFloat kQRSize = 145; // 29 modules × 5 pt: crisp at 1x and 2x
+
+- (UILabel *)labelWithFont:(UIFont *)font {
+    UILabel *l = [[UILabel alloc] initWithFrame:CGRectZero];
+    l.backgroundColor = [UIColor clearColor];
+    l.font = font;
+    [self.contentView addSubview:l];
+    return l;
+}
+
+- (instancetype)init {
+    if ((self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil])) {
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        _qr = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"telegram-qr.png"]];
+        _qr.layer.cornerRadius = 6;
+        _qr.layer.masksToBounds = YES;
+        [self.contentView addSubview:_qr];
+        _handle = [self labelWithFont:[UIFont boldSystemFontOfSize:20]];
+        _handle.text = @"@tivikit";
+        _link = [self labelWithFont:[UIFont systemFontOfSize:16]];
+        _link.text = @"t.me/tivikit";
+        _info = [self labelWithFont:[UIFont systemFontOfSize:14]];
+        _info.numberOfLines = 0;
+        _info.text = @"Hỏi cách cài, báo lỗi, góp ý tính năng và nhận tin khi có bản mới. iOS 6 không mở được Telegram: "
+                     @"quét mã này bằng camera điện thoại, hoặc tìm @tivikit trong Telegram.";
+    }
+    return self;
+}
+
+/// Narrow screens (iPhone portrait) put the text under the code.
++ (BOOL)stacked:(CGFloat)width {
+    return width < 440;
+}
+
++ (CGFloat)heightForTableWidth:(CGFloat)width {
+    return [self stacked:width - 20] ? 300 : 170;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CGRect b = self.contentView.bounds;
+    NSArray *labels = @[ _handle, _link, _info ];
+    if ([TMTelegramCell stacked:b.size.width]) {
+        _qr.frame = CGRectMake(floorf((b.size.width - kQRSize) / 2), 12, kQRSize, kQRSize);
+        for (UILabel *l in labels) l.textAlignment = NSTextAlignmentCenter;
+        _handle.frame = CGRectMake(12, 164, b.size.width - 24, 24);
+        _link.frame = CGRectMake(12, 188, b.size.width - 24, 20);
+        _info.frame = CGRectMake(12, 212, b.size.width - 24, b.size.height - 220);
+    } else {
+        _qr.frame = CGRectMake(12, floorf((b.size.height - kQRSize) / 2), kQRSize, kQRSize);
+        CGFloat x = 12 + kQRSize + 18, w = b.size.width - x - 14;
+        for (UILabel *l in labels) l.textAlignment = NSTextAlignmentLeft;
+        _handle.frame = CGRectMake(x, 18, w, 26);
+        _link.frame = CGRectMake(x, 46, w, 22);
+        CGSize fit = [_info sizeThatFits:CGSizeMake(w, CGFLOAT_MAX)];
+        _info.frame = CGRectMake(x, 76, w, MIN(ceilf(fit.height), b.size.height - 76 - 10));
+    }
+}
+
+@end
 
 @implementation TMSettingsViewController {
     UITextField *_server, *_token;
@@ -173,6 +247,13 @@ enum {
     return YES;
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    // Row heights depend on the width (Telegram cell); recompute them without rebuilding the cells
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
+}
+
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     return UIInterfaceOrientationMaskAll;
 }
@@ -208,6 +289,7 @@ enum {
     case kSectionProxy: return @"Ở ngoài mạng nhà";
     case kSectionUpdate: return @"Cập nhật ứng dụng";
     case kSectionTheme: return @"Giao diện";
+    case kSectionTelegram: return @"Nhóm Telegram";
     default: return nil;
     }
 }
@@ -230,7 +312,20 @@ enum {
     }
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == kSectionTelegram) return [TMTelegramCell heightForTableWidth:tableView.bounds.size.width];
+    return tableView.rowHeight;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == kSectionTelegram) {
+        TMTheme *t = [TMTheme current];
+        TMTelegramCell *tg = [[TMTelegramCell alloc] init];
+        tg.handle.textColor = t.text;
+        tg.link.textColor = t.accent;
+        tg.info.textColor = t.secondaryText;
+        return tg;
+    }
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     CGRect inset = CGRectInset(cell.contentView.bounds, 12, 4);
