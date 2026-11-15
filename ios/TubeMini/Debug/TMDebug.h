@@ -25,6 +25,7 @@
 ///   scrollend           scroll the list to the bottom (loads the next page)
 ///   back                pop the current screen          pingtest      run "Kiểm tra kết nối"
 ///   dismissalert        log and close visible alerts    ui            log the current screen
+///   mem                 log the app's resident memory
 @interface TMDebug : NSObject
 + (void)start;
 @end

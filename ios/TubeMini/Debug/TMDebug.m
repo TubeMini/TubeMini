@@ -12,6 +12,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 #include <dlfcn.h>
+#include <mach/mach.h>
 
 static MPMoviePlayerViewController *gPlayerVC;
 /// Headless AVPlayer for `avplay`: reports which tracks (video / audio) are really playing.
@@ -143,6 +144,12 @@ static AVPlayer *gAVPlayer;
         [self dismissAlerts];
     } else if ([verb isEqualToString:@"ui"]) {
         [self logUI];
+    } else if ([verb isEqualToString:@"mem"]) {
+        struct task_basic_info info;
+        mach_msg_type_number_t count = TASK_BASIC_INFO_COUNT;
+        if (task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&info, &count) == KERN_SUCCESS) {
+            TMLog(@"[mem] resident %.1f MB, virtual %.1f MB", info.resident_size / 1048576.0, info.virtual_size / 1048576.0);
+        }
     } else if ([verb isEqualToString:@"mark"]) {
         TMLog(@"[debug] ==== %@", arg);
     } else {

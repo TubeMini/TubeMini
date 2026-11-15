@@ -90,7 +90,7 @@
     _quality = quality;
     _presenter = presenter;
     _retried = NO;
-    [self showHUD:@"Đang lấy link phát…" on:presenter.view.window ?: presenter.view];
+    [self showHUD:@"Đang lấy link phát…\n(có thể mất 5–10 giây)" on:presenter.view.window ?: presenter.view];
     [self fetchStreams:NO];
 }
 

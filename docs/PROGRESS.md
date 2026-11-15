@@ -165,6 +165,10 @@
 | Tìm kiếm | "nhạc trẻ" ra 20 video, cuộn tới cuối tải tiếp: 40, rồi 58 (ảnh chụp: ảnh, thời lượng, kênh · lượt xem · ngày) |
 | Mở video → phát | Bấm Phát: phát 360p sau khoảng 0,4 giây (link đã có trong cache), toàn màn hình |
 | Tua | Tua tới giây 150; video chạy tiếp tới giây 168 (theo log) |
+| Phát 720p (HLS) | Phát biến thể 720p (2,49 Mbps), không khựng. Video có quảng cáo: màn chờ "Đang lấy link phát…" khoảng 7–8 giây rồi phát |
+| Tìm kênh → trang kênh → video | "vtv" ra 20 kênh; mở VTV24 ra 25 video; mở video được |
+| Bình luận | Big Buck Bunny: 20, cuộn tới cuối thành 40; bình luận dài tự xuống dòng |
+| Bộ nhớ | 8,9 MB lúc mở; 14,7 MB sau 97 kết quả tìm kiếm; 16,4 MB sau thêm trang video và 50 mục trang chủ (lệnh `mem`) |
 | Không crash | Không có báo cáo crash trong `CrashReporter` |
 | Cuộn danh sách không giật | Ảnh giải nén ở luồng nền và cache theo cỡ hiển thị. Độ mượt cần anh cảm nhận trực tiếp |
 
