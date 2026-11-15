@@ -12,6 +12,9 @@ Xem YouTube trên iPad mini 1 (iOS 6, đã jailbreak), gồm hai phần:
   (phát nền, thanh nghe nhạc thu nhỏ), tải về 360p / 720p / 1080p để xem offline.
   Kênh theo dõi và lịch sử lưu trên server (SQLite).
 
+- Trang giới thiệu: **https://tubemini.github.io/** · Nguồn Cydia: `https://tubemini.github.io/cydia/` ·
+  Bản phát hành: https://github.com/TubeMini/TubeMini/releases
+
 Tài liệu:
 
 | File | Nội dung |

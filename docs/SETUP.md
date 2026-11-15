@@ -212,3 +212,19 @@ VPS khác (hoặc chỉ có Docker): `docker compose up -d --build`, rồi sửa
   Muốn HTTPS thì cần chứng chỉ nối tới một gốc mà iOS 6 tin (ví dụ GlobalSign Root CA R1, DigiCert Global Root CA). Em chưa thử
   cách này. Cách đơn giản hơn: VPS chạy HTTP + mã truy cập, và iPad vào qua VPN (dựng L2TP/IPsec trên chính VPS).
 - Đã thử cả hai cách trên máy thật (D30): service trên máy LXC .192, Docker bằng Podman trên máy build Ubuntu 26.04.
+
+## 10. Phát hành bản mới (app, server, Cydia, OTA)
+
+1. Tăng phiên bản: `server/Cargo.toml`, `ios/TubeMini/control` (`Version:`), `ios/TubeMini/Resources/Info.plist`
+   (`CFBundleShortVersionString`, `CFBundleVersion`). Commit, đẩy lên GitHub.
+2. Build bản release của app: `TM_BUILD_HOST=<user>@<máy build> scripts/ios-build.sh FINALPACKAGE=1`, được
+   `ios/TubeMini/packages/vn.tubemini.io_<phiên bản>_iphoneos-arm.deb` (không có lệnh debug). Chép vào `dist/`.
+3. Gói server: `bash scripts/make-release.sh`, được `dist/tubemini-server-<phiên bản>.tar.gz`.
+4. GitHub Release: `gh release create v<phiên bản> dist/<file .deb> dist/<file .tar.gz> --repo TubeMini/TubeMini --notes "…"`.
+5. Trang + Cydia + OTA: `bash scripts/publish-site.sh dist/<file .deb> --notes "Có gì mới"`. Script chép `site/` sang repo
+   `TubeMini/TubeMini.github.io`, thêm gói vào `cydia/debs` (giữ các bản cũ), tạo lại `Packages`, `Release` và `update.json`.
+   Vài phút sau, app trên các iPad tự báo có bản mới (mỗi ngày kiểm tra một lần, hoặc bấm Cài đặt → Kiểm tra cập nhật). Bấm
+   Cập nhật: app tải `.deb`, kiểm SHA-256, cài bằng `/usr/libexec/tubemini/tmupdate` rồi respring.
+
+Commit lên GitHub phải dùng email ẩn danh `…@users.noreply.github.com` (repo đã cấu hình sẵn; `publish-site.sh` cũng dùng nó).
+Đừng tạo commit bằng giao diện web hay `gh repo create --add-readme`: GitHub sẽ ghi tên và email thật của tài khoản.

@@ -463,3 +463,29 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
   - không có email, số điện thoại hay đường dẫn máy tính. Tác giả commit dùng email ẩn danh của GitHub.
 - **Bundle id** đổi từ `vn.qmv.tubemini` sang `vn.tubemini.io` (anh chọn). Trên iPad: chép file cài đặt sang tên mới, gỡ gói cũ
   (hai gói cùng cài vào `/Applications/TubeMini.app`), cài gói mới. Bản tải về và lịch sử vẫn còn.
+
+## D32. Repo Cydia, cập nhật OTA trong app, trang tubemini.github.io — 15/11/2026
+
+- **iOS 6 vẫn kết nối HTTPS tới GitHub** (thử bằng NSURLConnection: `github.io`, `github.com`, `raw.githubusercontent.com`, API
+  đều 200), và Cydia 1.1.30 trên máy có phương thức `https` (đã thử tải `Release` / `Packages.bz2` của repo). Vì vậy repo Cydia và
+  file cập nhật đặt thẳng trên GitHub Pages, không cần qua server.
+- **Repo Cydia** `https://tubemini.github.io/cydia/`: `scripts/make-cydia-repo.py` đọc control từ file `.deb` (ar + control.tar.gz,
+  chỉ dùng thư viện chuẩn), sinh `Packages` (+ `.gz`, `.bz2`, có MD5 / SHA1 / SHA256), `Release`, và giữ các bản cũ. Gói có thêm
+  `Homepage`, `Depiction` (trang mô tả trong Cydia), `Icon`. Trên trang có nút "Thêm nguồn vào Cydia"
+  (`cydia://url/https://cydia.saurik.com/api/share#?source=…`).
+- **Cập nhật OTA:**
+  - app đọc `update.json` (phiên bản, URL, SHA-256, kích thước, ghi chú), mỗi ngày một lần lúc mở app, hoặc từ Cài đặt;
+  - có bản mới thì hỏi người dùng, tải `.deb` vào `Documents/TubeMini-Update`, kiểm SHA-256;
+  - gọi `/usr/libexec/tubemini/tmupdate`. Đây là công cụ C nhỏ trong gói, `postinst` đặt setuid root, giống công cụ cài của
+    Cydia. Nó chỉ cài file trong thư mục đó, chỉ khi tên gói đúng là `vn.tubemini.io`; tách khỏi app rồi chạy `dpkg -i`, sau đó
+    `killall SpringBoard` (respring). Log ở `install.log`; cài lỗi (ví dụ Cydia đang mở) thì app báo lỗi.
+  - Lỗi bắt được khi thử: trên iOS `/var` là liên kết tới `/private/var`, nên phải so đường dẫn sau khi `realpath` cả hai phía.
+  - **Đã thử trọn vòng trên iPad:** cài một bản giả 0.4.9, app thấy 0.5.0, tải trong 1,5 giây, kiểm SHA-256, cài đè, respring,
+    mở lại là 0.5.0. Công cụ cài từ chối gói tên khác (thử bằng gói giả `com.example.other`) và file ngoài thư mục.
+- **Trang giới thiệu** (`site/`, xuất bản bằng `scripts/publish-site.sh`): HTML/CSS thuần cho Safari iOS 6. Không JavaScript, không
+  grid / flexbox / biến CSS; bố cục bằng float / inline-block; gradient và bóng có tiền tố `-webkit-`. Đã mở bằng Safari trên iPad
+  mini 1: hiển thị đúng, có khoá HTTPS.
+- **Bản phát hành** v0.5.0 trên GitHub: file `.deb` bản release (203 KB, có `tmupdate`) và gói server (136 KB).
+- **Bài học về danh tính commit:** `gh repo create --add-readme` tạo commit đầu bằng tên và email thật của tài khoản. Đã thay lịch
+  sử repo trang bằng một commit duy nhất (email ẩn danh) và force-push. `publish-site.sh` giờ đặt danh tính commit giống repo chính,
+  vì máy không có danh tính git chung (git đã định dùng tên máy Windows).

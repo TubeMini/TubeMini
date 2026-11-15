@@ -13,6 +13,9 @@ trap 'rm -rf "$WORK"' EXIT
 
 echo "==> clone $PAGES_REPO"
 gh repo clone "$PAGES_REPO" "$WORK" -- -q
+# Same author as the main repository (its GitHub no-reply address), never a guessed user@machine
+git -C "$WORK" config user.name "$(git -C "$ROOT" config user.name)"
+git -C "$WORK" config user.email "$(git -C "$ROOT" config user.email)"
 echo "==> site/ → pages"
 # Everything but the Cydia packages comes from site/ (removed pages files disappear too)
 find "$WORK" -mindepth 1 -maxdepth 1 ! -name .git ! -name cydia -exec rm -rf {} +

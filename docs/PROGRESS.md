@@ -334,6 +334,10 @@
   (94,5 MB), phát từ trong máy (127.0.0.1), tua tới giây 300 có ngay.
 - [x] **Docker image** build thử bằng Podman trên máy build: chạy được; server giờ tắt êm khi nhận SIGTERM (`docker stop` 0,13
   giây thay vì 10 giây).
+- [x] **Lên GitHub** (D31, D32): repo công khai https://github.com/TubeMini/TubeMini (lịch sử đã bỏ thông tin cá nhân),
+  bundle id `vn.tubemini.io`, bản phát hành v0.5.0, trang https://tubemini.github.io/ (đọc được trên Safari iOS 6), nguồn
+  Cydia `https://tubemini.github.io/cydia/`, cập nhật OTA trong app (tải, kiểm SHA-256, cài, respring). Đã thử OTA trọn vòng
+  0.4.9 → 0.5.0 trên iPad.
 - [x] **Cài trên Ubuntu bằng một script** (D30): `install.sh` cho chọn 1) Docker (Docker / Podman) hoặc 2) service systemd, tự khởi
   động cùng máy, tự cập nhật yt-dlp; cập nhật bằng cách chạy lại, có `--status`, `--uninstall [--purge]`. Gói phát hành
   `scripts/make-release.sh` (khoảng 140 KB), `docker-compose.yml` cho Windows / macOS. Đã thử service trên máy .192 (giữ nguyên
