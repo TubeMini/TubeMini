@@ -152,3 +152,6 @@ Script làm các việc sau:
 - tạo user hệ thống `tubemini`, unit systemd `tubemini`, và timer `tubemini-ytdlp-update` chạy `yt-dlp -U` mỗi ngày.
 
 Xem log: `journalctl -u tubemini -f`. Khởi động lại: `systemctl restart tubemini`.
+
+Kênh đã theo dõi và lịch sử xem nằm trong `/opt/tubemini/data/tubemini.db` (SQLite; deploy không đụng tới thư mục `data`). Muốn
+giữ lại thì sao lưu file này. Trên Windows thì file nằm trong thư mục `data` cạnh `config.toml`.

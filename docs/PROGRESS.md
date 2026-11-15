@@ -204,3 +204,61 @@
 - [x] **Chất lượng 1080p** (D25): Cài đặt và nút "Chất lượng" có 360p / 720p / 1080p; `streams` trả thêm mục HLS 1080.
   Đã kiểm trên iPad: bản tin HTV 1920x1080 (avc1.640028, 25 fps) phát mượt, 0 lần giật, 0 khung bị rớt, RAM 13.6 MB.
 
+
+## Giai đoạn 4 — Tính năng mở rộng (15/11/2026)
+
+### Đã làm
+
+- [x] Server 0.4.0 (API.md):
+  - lưu dữ liệu người dùng bằng SQLite (`rusqlite`, bản `bundled`) trong `<data_dir>/tubemini.db`;
+  - `/tm/v1/subscriptions`: xem, theo dõi, bỏ theo dõi kênh;
+  - `/tm/v1/feed`: video mới của các kênh đã theo dõi, lấy từ tab Video của từng kênh rồi gộp lại (RSS đã chết, D26);
+    `fresh=1` tải lại mọi kênh;
+  - `/tm/v1/history`: lịch sử xem và vị trí đang xem, xoá một mục hoặc xoá hết; giữ 500 video gần nhất;
+  - `home_feed = "subscriptions"`: trang chủ app YouTube cũ hiện video từ kênh đã theo dõi.
+- [x] App TubeMini 0.4.0:
+  - **Trang chủ**: công tắc "Đã theo dõi | Phổ biến" (nhớ lựa chọn), dạng danh sách hoặc lưới. Kéo xuống hoặc bấm nút làm mới thì
+    server tải lại mọi kênh.
+  - **Tab "Đã theo dõi"**: danh sách kênh; chạm để mở trang kênh, vuốt sang trái để bỏ theo dõi.
+  - **Tab "Lịch sử"**: video đã xem, kèm "Đã xem 0:38 / 20:28" và thanh tiến độ đỏ; vuốt để xoá một mục, nút "Xoá hết".
+  - **Trang kênh đầy đủ**: avatar, số người đăng ký, số video, mô tả (chạm để mở rộng), nút "+ Theo dõi" / "✓ Đã theo dõi",
+    tab Video / Playlist; chạm playlist để xem video trong đó.
+  - **Trang video**: thêm nút "Kênh" (mở trang kênh) và nút Theo dõi; nút Phát thành "▶ Xem tiếp 12:34" khi đã xem dở.
+  - **Xem tiếp**: trình phát lưu vị trí 15 giây một lần, khi đóng và khi app chuyển nền; lần sau phát từ chỗ cũ (từ giây thứ 10
+    tới 20 giây trước khi hết; ngoài khoảng đó thì phát từ đầu).
+  - Chọn chất lượng 360p / 720p / 1080p (đã làm sau Giai đoạn 3, D25).
+- [x] Test: 64 unit test server (lưu trữ SQLite, gộp feed, các route lịch sử / theo dõi chạy không cần mạng). `smoke.ps1` thêm 7
+  kiểm tra `/tm/v1`: tổng 30, đều qua.
+
+### Kết quả nghiệm thu trên iPad mini 1 (iOS 6.1.3)
+
+| Tiêu chí | Kết quả |
+| --- | --- |
+| Theo dõi kênh | Theo dõi HTV Tin Tức, ANTV, VTV24: mỗi kênh khoảng 0,55 giây (server hỏi YouTube tên và avatar) |
+| Feed trang chủ | 25 video mới của 3 kênh xen kẽ theo thời gian, có trang sau. Lần đầu 0,36 giây, lần sau 3 ms (cache) |
+| Tab "Đã theo dõi" | 3 kênh, kèm avatar và số người đăng ký |
+| Trang kênh | Avatar tròn, "413 N người đăng ký · 96 N video", mô tả; tab Playlist ra danh sách playlist kèm ảnh và số video |
+| Theo dõi / bỏ theo dõi | Nút đổi "✓ Đã theo dõi" ↔ "+ Theo dõi" (đỏ); trang video và trang kênh cập nhật theo nhau |
+| Xem tiếp | Phát 45 giây rồi đóng: nút thành "▶ Xem tiếp 0:38". Bấm: log "xem tiếp từ 38 giây", 15 giây sau ở giây 43,9 (HLS 1080p) |
+| Lịch sử | "Đã xem 0:38 / 20:28 · vừa xong" kèm thanh tiến độ; vuốt xoá thì server cũng hết mục đó |
+| App cũ, `home_feed = "subscriptions"` | YouTube 1.2.1 và app classic nhận feed "Kênh đã theo dõi"; feed Âm nhạc vẫn là phổ biến (thử trên một server phụ cổng 8099) |
+| Giao diện sáng / tối, lưới | Đều đúng màu, kể cả nút Theo dõi |
+| Bộ nhớ | 21 MB sau khi phát 1080p và mở nhiều trang có ảnh |
+| Không crash | Không có báo cáo crash mới |
+
+### Anh kiểm tra bằng cách nào
+
+1. Mở TubeMini. Trang chủ có công tắc "Đã theo dõi | Phổ biến". Em đã theo dõi sẵn 3 kênh tin tức để thử; anh bỏ theo dõi được ở
+   tab "Đã theo dõi" (vuốt sang trái).
+2. Tìm một kênh (Tìm kiếm → Kênh), mở ra, bấm "+ Theo dõi", rồi về Trang chủ: video của kênh đó có trong feed. Kéo xuống để làm mới.
+3. Mở một video, xem một lúc rồi bấm "Xong". Nút Phát thành "▶ Xem tiếp …". Bấm lại: phát tiếp từ chỗ cũ. Tab "Lịch sử" có video
+   đó.
+4. App YouTube cũ: muốn trang chủ hiện kênh đã theo dõi thì sửa `/opt/tubemini/config.toml` trên máy .192 thành
+   `home_feed = "subscriptions"` rồi chạy `systemctl restart tubemini`. Hiện em để `popular` như cũ.
+
+### Còn tồn
+
+- Thứ tự feed giữa các kênh chỉ gần đúng: tab Video của YouTube chỉ ghi "3 giờ trước", không có giờ chính xác (D26).
+- Không có tài khoản: mọi máy dùng chung server thì chung kênh theo dõi và lịch sử.
+- App YouTube cũ chưa tự theo dõi kênh được (nút đăng ký của nó cần đăng nhập Google); chỉ xem được feed.
+- Trình phát vẫn là MPMoviePlayerViewController toàn màn hình.

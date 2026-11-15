@@ -301,3 +301,33 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
 - Với HLS, `naturalSize` của MPMoviePlayerController trên iOS 6 luôn báo 853x480 (cả với biến thể 360p lẫn 720p). Muốn biết đang
   phát biến thể nào thì xem `indicatedBitrate` trong access log rồi so với BANDWIDTH của playlist.
 - App YouTube cũ: tiền tố `/1080/...` đã chạy được từ trước (`res` được kẹp trong 144–2160).
+
+## D26. Theo dõi kênh, feed, lịch sử: lưu trên server, feed lấy từ tab Video — 15/11/2026
+
+- **Lưu trữ:** SQLite (`rusqlite` bản `bundled`, đúng brief) trong `<data_dir>/tubemini.db`, hai bảng `subscriptions` và
+  `history`. Không có tài khoản: server trong nhà, một hai người dùng.
+  - rusqlite chạy đồng bộ, nên mọi lệnh chạy trong `spawn_blocking`, sau một mutex.
+  - Lịch sử giữ 500 video gần nhất.
+  - Danh sách kênh sắp theo tên đã bỏ dấu tiếng Việt, để "Âm nhạc" đứng cạnh chữ "a".
+- **Feed:** brief định dùng RSS của từng kênh, nhưng RSS của YouTube đã ngừng chạy (thử ở Giai đoạn 2). Thay vào đó:
+  - lấy trang đầu tab Video của từng kênh (khoảng 30 video, không gồm Shorts và livestream), 4 kênh cùng lúc;
+  - gộp lại, sắp mới nhất trước, giữ tối đa 300 video;
+  - tab Video chỉ có thời gian tương đối ("3 giờ trước"), nên thứ tự giữa các kênh chỉ gần đúng. Phép sắp xếp ổn định (stable
+    sort), nên trong cùng một kênh vẫn giữ đúng thứ tự của YouTube.
+  - Cache: mỗi kênh 30 phút (cache có sẵn của InnerTube), cả feed đã gộp 10 phút. Theo dõi / bỏ theo dõi thì feed gộp được dựng lại.
+  - `fresh=1` bỏ cache của mọi kênh. Thêm hàm `forget_uploads` vào trait `MetadataProvider`, mặc định không làm gì.
+  - Link "trang sau" bỏ tham số `fresh`, để cuộn tiếp không tải lại mọi kênh.
+- **Lịch sử:** app gửi kèm tiêu đề, kênh và thời lượng. Nếu thiếu tiêu đề thì server tự hỏi YouTube một lần, lúc video mới vào lịch
+  sử.
+- **Xem tiếp:**
+  - trình phát lưu vị trí lúc bắt đầu phát, 15 giây một lần, khi đóng (nút "Xong") và khi app chuyển nền;
+  - xem hết thì lưu bằng thời lượng, nên lần sau phát từ đầu;
+  - xem tiếp khi vị trí từ 10 giây tới 20 giây trước khi hết;
+  - `MPMoviePlayerController.initialPlaybackTime` chạy được với HLS trên iOS 6: thử từ giây 38, phát tiếp đúng chỗ;
+  - khi thử lại sau lỗi phát hoặc chuyển sang 360p, cũng phát tiếp từ vị trí cuối.
+- **App:** `TMLibrary` nhớ ID các kênh đã theo dõi trong NSUserDefaults, để nút Theo dõi hiện đúng ngay, và đồng bộ với server lúc
+  mở app và lúc mở tab "Đã theo dõi".
+  - Hai thông báo `TMSubscriptionsDidChangeNotification` và `TMHistoryDidChangeNotification` giúp các màn tự cập nhật: trang video
+    đổi "Xem tiếp" ngay khi đóng trình phát, không cần hỏi lại server.
+- **App YouTube cũ:** `home_feed = "subscriptions"` áp cho các feed không có hậu tố danh mục (`most_popular`, `recently_featured`…).
+  Chưa theo dõi kênh nào hoặc feed lỗi thì vẫn trả feed phổ biến.
