@@ -17,8 +17,8 @@ gh repo clone "$PAGES_REPO" "$WORK" -- -q
 git -C "$WORK" config user.name "$(git -C "$ROOT" config user.name)"
 git -C "$WORK" config user.email "$(git -C "$ROOT" config user.email)"
 echo "==> site/ → pages"
-# Everything but the Cydia packages comes from site/ (removed pages files disappear too)
-find "$WORK" -mindepth 1 -maxdepth 1 ! -name .git ! -name cydia -exec rm -rf {} +
+# Everything but the Cydia packages and update.json comes from site/ (removed pages files disappear too)
+find "$WORK" -mindepth 1 -maxdepth 1 ! -name .git ! -name cydia ! -name update.json -exec rm -rf {} +
 find "$WORK/cydia" -mindepth 1 -maxdepth 1 ! -name debs -exec rm -rf {} + 2>/dev/null || true
 cp -R "$ROOT/site/." "$WORK/"
 touch "$WORK/.nojekyll" # serve files as they are (no Jekyll)

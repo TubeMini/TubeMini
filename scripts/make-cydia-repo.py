@@ -60,7 +60,7 @@ def version_key(v: str):
 
 def main():
     args = sys.argv[1:]
-    notes = ""
+    notes = None
     if "--notes" in args:
         i = args.index("--notes")
         notes = args[i + 1]
@@ -117,6 +117,13 @@ def main():
     (repo / "Release").write_text("\n".join(release) + "\n", encoding="utf-8")
 
     if newest:
+        if notes is None:
+            # Republishing without --notes keeps the notes of the same version
+            try:
+                old = json.loads((site / "update.json").read_text(encoding="utf-8"))
+                notes = old.get("notes", "") if old.get("package_version") == newest["Version"] else ""
+            except (OSError, ValueError):
+                notes = ""
         feed = {
             "version": newest["Version"].split("-")[0],
             "package_version": newest["Version"],
