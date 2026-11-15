@@ -99,11 +99,20 @@ async fn getvideo(
     };
 
     let want_hls = ctx.res.is_some() || !st.cfg.medium_quality;
-    if !want_hls && let Some(url) = &streams.progressive {
+    if !want_hls
+        && !streams.progressive_dubbed
+        && let Some(url) = &streams.progressive
+    {
         wait_until_available(streams.progressive_at).await;
         return redirect(url);
     }
-    let res = ctx.res.unwrap_or(st.cfg.hls_resolution).clamp(144, 2160);
+    // A dubbed 360p MP4 is replaced by 360p HLS with the original audio track
+    let res = match ctx.res {
+        Some(r) => r,
+        None if want_hls => st.cfg.hls_resolution,
+        None => 360,
+    }
+    .clamp(144, 2160);
     match hls_playlist(&st, &id, &streams, res, fresh).await {
         Ok(playlist) => {
             wait_until_available(streams.hls_at).await;

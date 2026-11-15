@@ -3,8 +3,10 @@
 //! Same rules as the TubeRepair server (`modules/yt.py`, `data_to_hls_url`): keep only H.264 + AAC
 //! variants, at most 30 fps, at most `max_res` (the short side, so vertical videos work), and then
 //! only the highest remaining resolution, so the old player cannot get stuck on a low-quality
-//! variant. Audio renditions are kept only for the groups the remaining variants use; subtitle
-//! renditions are dropped. Variant and segment URLs stay absolute googlevideo URLs.
+//! variant. Audio renditions are kept only for the groups the remaining variants use, and within a
+//! group only **one**: the original-language track (YouTube adds AI-dubbed tracks such as
+//! "American English - dubbed-auto" and the iPad would otherwise pick one of those), forced to
+//! DEFAULT=YES. Subtitle renditions are dropped. Variant and segment URLs stay absolute googlevideo URLs.
 
 /// Splits an HLS attribute list (`A=1,B="x,y",C=z`) into pairs, honouring quotes.
 pub fn attributes(list: &str) -> Vec<(&str, &str)> {
@@ -106,9 +108,16 @@ pub fn filter_master(master: &str, max_res: u32, max_fps: f64) -> Option<String>
         out.push_str(line);
         out.push('\n');
     }
-    for (group, line) in &audio_media {
-        if kept.iter().any(|v| v.audio == Some(*group)) {
-            out.push_str(line);
+    let mut groups: Vec<&str> = kept.iter().filter_map(|v| v.audio).collect();
+    groups.dedup();
+    for group in groups {
+        let candidates: Vec<&str> = audio_media
+            .iter()
+            .filter(|(g, _)| *g == group)
+            .map(|(_, l)| *l)
+            .collect();
+        if let Some(line) = pick_audio(&candidates) {
+            out.push_str(&as_default(line));
             out.push('\n');
         }
     }
@@ -119,6 +128,46 @@ pub fn filter_master(master: &str, max_res: u32, max_fps: f64) -> Option<String>
         out.push('\n');
     }
     Some(out)
+}
+
+/// Is this audio rendition YouTube's original-language track (not a dub)?
+fn is_original(line: &str) -> bool {
+    let attrs = attributes(line.strip_prefix("#EXT-X-MEDIA:").unwrap_or(line));
+    let name = attr(&attrs, "NAME").unwrap_or("").to_lowercase();
+    name.contains("original")
+}
+
+fn is_dubbed(line: &str) -> bool {
+    let attrs = attributes(line.strip_prefix("#EXT-X-MEDIA:").unwrap_or(line));
+    attr(&attrs, "NAME")
+        .unwrap_or("")
+        .to_lowercase()
+        .contains("dubbed")
+}
+
+/// The rendition to keep: the original track, else a non-dubbed one, else DEFAULT=YES, else the first.
+fn pick_audio<'a>(candidates: &[&'a str]) -> Option<&'a str> {
+    candidates
+        .iter()
+        .find(|l| is_original(l))
+        .or_else(|| candidates.iter().find(|l| !is_dubbed(l)))
+        .or_else(|| candidates.iter().find(|l| l.contains("DEFAULT=YES")))
+        .or_else(|| candidates.first())
+        .copied()
+}
+
+/// The single rendition of its group must be the default and auto-selected.
+fn as_default(line: &str) -> String {
+    let mut out = line
+        .replace("DEFAULT=NO", "DEFAULT=YES")
+        .replace("AUTOSELECT=NO", "AUTOSELECT=YES");
+    if !out.contains("DEFAULT=") {
+        out.push_str(",DEFAULT=YES");
+    }
+    if !out.contains("AUTOSELECT=") {
+        out.push_str(",AUTOSELECT=YES");
+    }
+    out
 }
 
 /// Short-side resolution of the best variant in a (filtered) master playlist, e.g. 720.
@@ -248,6 +297,35 @@ mod tests {
 "
             ),
             None
+        );
+    }
+
+    const MASTER_DUBBED: &str = include_str!("../../tests/fixtures/hls_master_dubbed.m3u8");
+
+    #[test]
+    fn keeps_only_the_original_audio_track() {
+        // Vietnamese news with an "American English - dubbed-auto" track listed first
+        let p = filter_master(MASTER_DUBBED, 720, 30.0).unwrap();
+        let media: Vec<_> = p
+            .lines()
+            .filter(|l| l.starts_with("#EXT-X-MEDIA"))
+            .collect();
+        assert_eq!(media.len(), 1, "{media:#?}");
+        assert!(media[0].contains("NAME=\"Tiếng Việt - original\""));
+        assert!(media[0].contains("DEFAULT=YES") && media[0].contains("AUTOSELECT=YES"));
+        assert!(!p.contains("dubbed"));
+    }
+
+    #[test]
+    fn audio_pick_order() {
+        let dub =
+            "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"1\",NAME=\"English - dubbed-auto\",DEFAULT=YES";
+        let plain = "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"1\",NAME=\"Default\",DEFAULT=NO";
+        assert_eq!(pick_audio(&[dub, plain]), Some(plain));
+        assert_eq!(pick_audio(&[dub]), Some(dub));
+        assert_eq!(
+            as_default(plain),
+            "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"1\",NAME=\"Default\",DEFAULT=YES,AUTOSELECT=YES"
         );
     }
 

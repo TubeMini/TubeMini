@@ -155,8 +155,31 @@ async fn streams(
         }
     };
 
-    let mut items = Vec::new();
-    if let Some(url) = &info.progressive {
+    let mut items: Vec<StreamItem> = Vec::new();
+    let hls_item = |res: u32, playlist: &str| StreamItem {
+        quality: crate::video::hls::best_height(playlist).unwrap_or(res),
+        kind: "hls",
+        url: format!("{}/getvideo/{id}", base_url(&headers, Some(res))),
+    };
+    // 360p: the MP4, unless its audio is an AI dub — then 360p HLS with the original audio
+    match &info.progressive {
+        Some(url) if !info.progressive_dubbed => items.push(StreamItem {
+            quality: 360,
+            kind: "mp4",
+            url: url.clone(),
+        }),
+        _ if info.hls_manifest.is_some() => {
+            match crate::video::hls_playlist(&st, &id, &info, 360, fresh).await {
+                Ok(playlist) => items.push(hls_item(360, &playlist)),
+                Err(e) => tracing::warn!("streams {id} HLS 360: {e:#}"),
+            }
+        }
+        _ => {}
+    }
+    if items.is_empty()
+        && let Some(url) = &info.progressive
+    {
+        // Dubbed but nothing better: still playable
         items.push(StreamItem {
             quality: 360,
             kind: "mp4",
@@ -166,11 +189,16 @@ async fn streams(
     let res = st.cfg.hls_resolution.clamp(144, 2160);
     if info.hls_manifest.is_some() {
         match crate::video::hls_playlist(&st, &id, &info, res, fresh).await {
-            Ok(playlist) => items.push(StreamItem {
-                quality: crate::video::hls::best_height(&playlist).unwrap_or(res),
-                kind: "hls",
-                url: format!("{}/getvideo/{id}", base_url(&headers, Some(res))),
-            }),
+            Ok(playlist) => {
+                let item = hls_item(res, &playlist);
+                // Videos without anything above 360p: no second identical entry
+                if !items
+                    .iter()
+                    .any(|i| i.kind == "hls" && i.quality == item.quality)
+                {
+                    items.push(item);
+                }
+            }
             Err(e) => tracing::warn!("streams {id} HLS: {e:#}"),
         }
     }

@@ -117,12 +117,14 @@ Danh mục tĩnh (Film, Music, Games, News, Sports), `application/atomcat+xml`.
 Link phát. Server không chuyển tiếp dữ liệu video.
 
 - Không có tiền tố độ phân giải (và `medium_quality = true`): **307** sang link MP4 progressive ≤ 360p (H.264 + AAC, thường là itag
-  18) trên googlevideo. Video không có định dạng này thì trả HLS như bên dưới.
+  18) trên googlevideo. Video không có định dạng này, **hoặc MP4 mang tiếng lồng tiếng AI** (D23), thì trả HLS 360p đã lọc như
+  bên dưới.
 - Có tiền tố (`/720/getvideo/<id>`) hoặc `medium_quality = false`: **200**, `Content-Type: application/vnd.apple.mpegurl`, là
   playlist HLS master của YouTube **đã lọc cho iOS 6**. Cách lọc giống TubeRepair:
   - chỉ giữ biến thể chỉ gồm avc1 + mp4a, tối đa 30fps, cạnh ngắn ≤ `res`;
   - sau đó chỉ giữ mức độ phân giải cao nhất còn lại;
-  - rendition tiếng giữ nhóm đang được dùng, bỏ phụ đề.
+  - rendition tiếng: mỗi nhóm chỉ giữ **một** track, ưu tiên track tiếng gốc ("original"), đặt `DEFAULT=YES`; bỏ các track lồng
+    tiếng AI ("dubbed-auto") và bỏ phụ đề.
 
   Playlist con và segment vẫn là URL googlevideo. Không có biến thể nào dùng được thì trả 307 sang MP4 progressive. `res` không có
   tiền tố thì lấy `hls_resolution` trong config, và luôn được kẹp trong khoảng 144–2160.
@@ -237,6 +239,8 @@ Các lựa chọn chất lượng, gọi ngay trước khi phát.
 ```
 
 - `kind="mp4"`: link MP4 progressive ≤ 360p (H.264 + AAC), tải thẳng từ googlevideo.
+  - Nếu tiếng của MP4 là bản lồng tiếng AI chứ không phải tiếng gốc (D23), mục 360 được thay bằng `kind="hls"` trỏ tới
+    `<base>/360/getvideo/<id>` (HLS 360p, tiếng gốc). App coi hai kiểu như nhau.
 - `kind="hls"`: playlist HLS đã lọc trên server; segment vẫn tải thẳng từ googlevideo.
   - `quality` là độ phân giải thật của biến thể còn lại sau khi lọc, có thể nhỏ hơn 720. Ví dụ video chỉ có 720p60 thì là 480.
   - Không có HLS dùng được thì không có phần tử này.

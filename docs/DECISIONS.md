@@ -251,3 +251,18 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
 - **Tự thử trên máy thật:** bản debug nhận lệnh điều khiển giao diện qua `Documents/TubeMini-cmd.txt` (`server`, `search`, `open`,
   `playbtn`, `section`, `scrollend`, `pingtest`, `ui`… — xem `TMDebug.h`). Kết hợp với `tmshot` để chụp màn hình, em tự đi được luồng
   tìm → mở → phát → tua.
+
+## D23. Lồng tiếng AI của YouTube: luôn phát tiếng gốc — 15/11/2026
+
+- Anh phát hiện khi thử: video tiếng Việt (bản tin VTV) lại phát ra **tiếng Anh**.
+- Nguyên nhân: YouTube tự lồng tiếng AI cho nhiều video ("American English - dubbed-auto").
+  - Trong HLS, track lồng tiếng đứng đầu nhóm; cả hai track đều `DEFAULT=NO, AUTOSELECT=YES`, nên iPad tự chọn tiếng Anh.
+  - MP4 360p (format 18) trộn sẵn **tiếng Anh** (`language: en`, trong khi video là `vi`): yt-dlp xin link với `hl=en`, nên YouTube
+    chọn bản lồng tiếng.
+- Cách sửa, chỉ phía server:
+  - bộ lọc HLS giữ một track tiếng mỗi nhóm, ưu tiên track gốc (NAME chứa "original"), rồi tới track không phải lồng tiếng, rồi
+    `DEFAULT=YES`, rồi track đầu. Track được giữ bị ép `DEFAULT=YES, AUTOSELECT=YES`;
+  - nếu ngôn ngữ tiếng của MP4 khác ngôn ngữ track gốc (định dạng yt-dlp ghi "original", nếu không có thì lấy `language` của video),
+    thì 360p chuyển sang HLS 360p tiếng gốc: cả `/getvideo` không tiền tố (app cũ) lẫn `streams` (TubeMini).
+- Đã kiểm trên iPad: playlist 360p / 720p của bản tin chỉ còn "Tiếng Việt - original"; AVPlayer báo có track tiếng.
+- Video không có bản lồng tiếng vẫn dùng MP4 360p như trước.

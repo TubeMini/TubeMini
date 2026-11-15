@@ -21,6 +21,9 @@ pub struct StreamInfo {
     /// 403 until a pre-roll ad would have ended or become skippable; yt-dlp reports that moment
     /// as `available_at` (see `_get_available_at_timestamp` in yt-dlp's YouTube extractor).
     pub progressive_at: i64,
+    /// The progressive MP4's (muxed) audio is not the original language — YouTube serves an AI dub
+    /// (e.g. English over a Vietnamese video). Play the filtered HLS instead, which keeps the original.
+    pub progressive_dubbed: bool,
     /// HLS master manifest (googlevideo); filtered by the server before the iPad sees it.
     pub hls_manifest: Option<String>,
     /// Like `progressive_at`, for the HLS formats.
@@ -107,6 +110,21 @@ pub fn streams_from_info(info: &Value) -> StreamInfo {
         .max_by_key(|f| f.get("height").and_then(Value::as_u64).unwrap_or(0));
     let progressive = progressive_fmt.map(|f| s(f, "url"));
 
+    // Original audio language: the audio format yt-dlp labels "original", else the video's language
+    let primary = |l: &str| l.split(['-', '_']).next().unwrap_or("").to_lowercase();
+    let lang = |f: &Value| f.get("language").and_then(Value::as_str).map(primary);
+    let original = formats
+        .iter()
+        .find(|f| {
+            s(f, "acodec") != "none" && s(f, "format_note").to_lowercase().contains("original")
+        })
+        .and_then(lang)
+        .or_else(|| info.get("language").and_then(Value::as_str).map(primary));
+    let progressive_dubbed = match (progressive_fmt.and_then(lang), original) {
+        (Some(a), Some(o)) => !a.is_empty() && !o.is_empty() && a != o,
+        _ => false,
+    };
+
     let hls_fmt = formats
         .iter()
         .find(|f| s(f, "protocol").starts_with("m3u8") && f.get("manifest_url").is_some());
@@ -120,6 +138,7 @@ pub fn streams_from_info(info: &Value) -> StreamInfo {
     StreamInfo {
         progressive,
         progressive_at: progressive_fmt.map_or(0, at),
+        progressive_dubbed,
         hls_manifest,
         hls_at: hls_fmt.map_or(0, at),
         expire,
@@ -159,6 +178,27 @@ mod tests {
         assert_eq!(s.expire, 1_794_725_568);
         assert_eq!(s.progressive_at, 1_794_709_267);
         assert_eq!(s.hls_at, 0);
+    }
+
+    #[test]
+    fn detects_dubbed_progressive_audio() {
+        // Vietnamese video, format 18 carries the English AI dub
+        let info = json!({ "language": "vi", "formats": [
+            { "format_id": "251", "protocol": "https", "acodec": "opus", "vcodec": "none", "language": "vi",
+              "format_note": "Vietnamese original (default), medium", "url": "https://x/251" },
+            { "format_id": "18", "protocol": "https", "ext": "mp4", "vcodec": "avc1.42001E", "acodec": "mp4a.40.2",
+              "height": 360, "language": "en", "url": "https://x/18" },
+        ]});
+        assert!(streams_from_info(&info).progressive_dubbed);
+        // Same language (en-US vs en) is not a dub
+        let same = json!({ "language": "en", "formats": [
+            { "format_id": "18", "protocol": "https", "ext": "mp4", "vcodec": "avc1", "acodec": "mp4a", "height": 360,
+              "language": "en-US", "url": "https://x/18" } ]});
+        assert!(!streams_from_info(&same).progressive_dubbed);
+        // No language info at all: assume fine
+        let none = json!({ "formats": [
+            { "format_id": "18", "protocol": "https", "ext": "mp4", "vcodec": "avc1", "acodec": "mp4a", "height": 360, "url": "https://x/18" } ]});
+        assert!(!streams_from_info(&none).progressive_dubbed);
     }
 
     #[test]
