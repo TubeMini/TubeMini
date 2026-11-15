@@ -60,6 +60,13 @@
 @property (nonatomic, assign) NSInteger availableIn;
 @property (nonatomic, assign) long long expire;
 @property (nonatomic, strong) NSArray *streams;
+/// `<tm:audio>`: audio-only HLS (nil when the video has no HLS).
+@property (nonatomic, copy) NSString *audioURL;
+/// `<tm:download>`: progressive 360p MP4 to save for offline viewing; `downloadDubbed` = AI-dubbed audio.
+@property (nonatomic, copy) NSString *downloadURL;
+@property (nonatomic, assign) BOOL downloadDubbed;
+/// The server sends everything through itself (`proxy="1"`).
+@property (nonatomic, assign) BOOL proxied;
 /// Highest stream not above `quality` (the MP4 wins a tie at 360); none fits → the smallest.
 - (TMStream *)streamForQuality:(NSInteger)quality;
 - (TMStream *)streamOfKind:(NSString *)kind;
@@ -71,4 +78,6 @@
 @property (nonatomic, copy) NSString *ytdlp;
 @property (nonatomic, copy) NSString *deno;
 @property (nonatomic, copy) NSString *auth;
+/// "on" when the server allows playing through it (`proxy_fallback`).
+@property (nonatomic, copy) NSString *proxy;
 @end

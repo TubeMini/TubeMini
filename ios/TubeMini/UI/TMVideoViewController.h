@@ -12,4 +12,7 @@
 - (void)showSection:(NSInteger)section;
 /// Same as tapping Subscribe / Unsubscribe (debug commands).
 - (void)toggleSubscribe;
+/// Same as tapping "Chỉ nghe" / "Tải về" (debug commands).
+- (void)listen;
+- (void)download;
 @end

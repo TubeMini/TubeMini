@@ -9,6 +9,8 @@
 #import "TMSearchViewController.h"
 #import "TMSettingsViewController.h"
 #import "TMChannelViewController.h"
+#import "TMDownloads.h"
+#import "TMDownloadsViewController.h"
 #import "TMSubscriptionsViewController.h"
 #import "TMVideoViewController.h"
 #import "TMLog.h"
@@ -165,6 +167,32 @@ static AVPlayer *gAVPlayer;
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top showSection:[arg integerValue]];
         if ([top isKindOfClass:[TMChannelViewController class]]) [(TMChannelViewController *)top showSection:[arg integerValue]];
+    } else if ([verb isEqualToString:@"listenbtn"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top listen];
+    } else if ([verb isEqualToString:@"dlbtn"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top download];
+    } else if ([verb isEqualToString:@"downloads"]) {
+        for (TMDownload *x in [TMDownloads shared].items) TMLog(@"[downloads] %@ %@ — %@", x.videoID, x.title, x.statusText);
+        TMLog(@"[downloads] tổng %@", [TMDownloads megabytes:[[TMDownloads shared] bytesUsed]]);
+    } else if ([verb isEqualToString:@"opendl"]) {
+        UIViewController *top = [self nav].topViewController;
+        if ([top isKindOfClass:[TMDownloadsViewController class]]) [(TMDownloadsViewController *)top selectRow:[arg integerValue]];
+    } else if ([verb isEqualToString:@"nowplaying"]) {
+        NSDictionary *np = [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo;
+        TMLog(@"[nowplaying] %@ — %@ · %@/%@ s · rate %@ · ảnh %@", np[MPMediaItemPropertyTitle], np[MPMediaItemPropertyArtist],
+              np[MPNowPlayingInfoPropertyElapsedPlaybackTime], np[MPMediaItemPropertyPlaybackDuration],
+              np[MPNowPlayingInfoPropertyPlaybackRate], np[MPMediaItemPropertyArtwork] ? @"có" : @"không");
+    } else if ([verb isEqualToString:@"proxy"]) {
+        [TMAPIClient shared].useProxy = [arg isEqualToString:@"on"];
+        [self reloadSettingsScreen];
+        TMLog(@"[debug] phát qua máy chủ = %d", [TMAPIClient shared].useProxy);
+    } else if ([verb isEqualToString:@"bonjour"]) {
+        TMAppDelegate *app = [self app];
+        app.tabs.selectedIndex = app.tabs.viewControllers.count - 1;
+        UIViewController *root = [app nav].viewControllers[0];
+        if ([root isKindOfClass:[TMSettingsViewController class]]) [(TMSettingsViewController *)root discover];
     } else if ([verb isEqualToString:@"subbtn"]) {
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top toggleSubscribe];

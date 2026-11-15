@@ -6,6 +6,8 @@
 @interface TMVideoCell : UITableViewCell
 + (CGFloat)height;
 - (void)configureWithVideo:(TMVideo *)video;
+/// Own meta line and bar (0–1, 0 = none): download rows.
+- (void)configureWithVideo:(TMVideo *)video meta:(NSString *)meta progress:(CGFloat)progress;
 /// Playlist row: first video's thumbnail, title, "N video".
 - (void)configureWithPlaylist:(TMPlaylist *)playlist;
 @end

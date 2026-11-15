@@ -1,5 +1,9 @@
 #import "TMAppDelegate.h"
+#import <AVFoundation/AVFoundation.h>
 #import "TMAPIClient.h"
+#import "TMDownloads.h"
+#import "TMDownloadsViewController.h"
+#import "TMPlayer.h"
 #import "TMImageLoader.h"
 #import "TMHomeViewController.h"
 #import "TMLibrary.h"
@@ -47,6 +51,10 @@ static UIImage *icon(TMDrawBlock draw) {
           [UIDevice currentDevice].systemVersion, TMDeviceModel());
     [TMImageLoader shared]; // registers for memory warnings early
     [TMTheme applyGlobalAppearance]; // light or dark, before any bar is created
+    // Playback category: sound ignores the silent switch, and "Chỉ nghe" keeps playing with the screen
+    // locked or in the background (UIBackgroundModes = audio in Info.plist)
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [[AVAudioSession sharedInstance] setActive:YES error:nil];
 
     TMHomeViewController *home = [[TMHomeViewController alloc] init];
 
@@ -83,6 +91,19 @@ static UIImage *icon(TMDrawBlock draw) {
         CGContextAddLineToPoint(ctx, 20, 19);
         CGContextStrokePath(ctx);
     });
+    UIImage *downloadsIcon = icon(^(CGContextRef ctx) {
+        // Arrow down into a tray
+        CGContextFillRect(ctx, CGRectMake(12.5, 2, 5, 11));
+        CGContextMoveToPoint(ctx, 6, 12);
+        CGContextAddLineToPoint(ctx, 24, 12);
+        CGContextAddLineToPoint(ctx, 15, 21);
+        CGContextFillPath(ctx);
+        CGContextMoveToPoint(ctx, 3.5, 18);
+        CGContextAddLineToPoint(ctx, 3.5, 26.5);
+        CGContextAddLineToPoint(ctx, 26.5, 26.5);
+        CGContextAddLineToPoint(ctx, 26.5, 18);
+        CGContextStrokePath(ctx);
+    });
     UIImage *settingsIcon = icon(^(CGContextRef ctx) {
         for (int i = 0; i < 8; i++) {
             CGFloat a = i * M_PI / 4;
@@ -97,6 +118,7 @@ static UIImage *icon(TMDrawBlock draw) {
         [self wrap:[[TMSearchViewController alloc] init] title:@"Tìm kiếm" image:searchIcon],
         [self wrap:[[TMSubscriptionsViewController alloc] init] title:@"Đã theo dõi" image:subscriptionsIcon],
         [self wrap:[[TMHistoryViewController alloc] init] title:@"Lịch sử" image:historyIcon],
+        [self wrap:[[TMDownloadsViewController alloc] init] title:@"Đã tải" image:downloadsIcon],
         [self wrap:[[TMSettingsViewController alloc] init] title:@"Cài đặt" image:settingsIcon],
     ];
 
@@ -114,10 +136,16 @@ static UIImage *icon(TMDrawBlock draw) {
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil] show];
     }
+    [[TMDownloads shared] resume]; // downloads interrupted last time
 #ifdef TM_DEBUG
     [TMDebug start];
 #endif
     return YES;
+}
+
+/// Lock screen / headphone buttons reach the end of the responder chain here.
+- (void)remoteControlReceivedWithEvent:(UIEvent *)event {
+    [[TMPlayer shared] remoteControl:event];
 }
 
 @end

@@ -25,6 +25,8 @@
 + (TMStreamSet *)parseStreams:(NSData *)data {
     TMStreamSet *set = nil;
     NSMutableArray *streams = [NSMutableArray array];
+    NSString *pendingAudio = nil, *pendingDownload = nil;
+    BOOL pendingDubbed = NO;
     for (NSArray *el in [self elementsIn:data]) {
         NSString *name = el[0];
         NSDictionary *a = el[1];
@@ -33,6 +35,12 @@
             set.videoID = a[@"video_id"] ?: @"";
             set.availableIn = [a[@"available_in"] integerValue];
             set.expire = [a[@"expire"] longLongValue];
+            set.proxied = [a[@"proxy"] isEqualToString:@"1"];
+        } else if ([name isEqualToString:@"tm:audio"]) {
+            pendingAudio = a[@"url"];
+        } else if ([name isEqualToString:@"tm:download"]) {
+            pendingDownload = a[@"url"];
+            pendingDubbed = [a[@"dubbed"] isEqualToString:@"1"];
         } else if ([name isEqualToString:@"tm:stream"] && [a[@"url"] length]) {
             TMStream *s = [[TMStream alloc] init];
             s.quality = [a[@"quality"] integerValue];
@@ -42,6 +50,9 @@
         }
     }
     set.streams = streams;
+    set.audioURL = pendingAudio;
+    set.downloadURL = pendingDownload;
+    set.downloadDubbed = pendingDubbed;
     return set.streams.count ? set : nil;
 }
 
@@ -54,6 +65,7 @@
             p.ytdlp = a[@"yt_dlp"] ?: @"";
             p.deno = a[@"deno"] ?: @"";
             p.auth = a[@"auth"] ?: @"";
+            p.proxy = a[@"proxy"] ?: @"off";
             return p;
         }
     }

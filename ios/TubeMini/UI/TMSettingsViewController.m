@@ -2,14 +2,29 @@
 #import "TMAPIClient.h"
 #import "TMLog.h"
 #import "TMTheme.h"
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
-enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTest, kSectionCount };
+enum {
+    kSectionServer,
+    kSectionDiscover,
+    kSectionToken,
+    kSectionQuality,
+    kSectionProxy,
+    kSectionTheme,
+    kSectionTest,
+    kSectionCount
+};
 
 @implementation TMSettingsViewController {
     UITextField *_server, *_token;
     UISegmentedControl *_quality, *_theme;
-    UIActivityIndicatorView *_spin;
-    BOOL _testing;
+    UISwitch *_proxy;
+    UIActivityIndicatorView *_spin, *_discoverSpin;
+    BOOL _testing, _searching;
+    NSNetServiceBrowser *_browser;
+    NSMutableArray *_services; // NSNetService being resolved (must stay alive)
+    NSMutableArray *_found;    // @[name, url]
 }
 
 - (instancetype)init {
@@ -51,6 +66,10 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
     _theme.segmentedControlStyle = UISegmentedControlStyleBar;
     [_theme addTarget:self action:@selector(themePicked) forControlEvents:UIControlEventValueChanged];
     _spin = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    _discoverSpin = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    _proxy = [[UISwitch alloc] init];
+    _proxy.on = api.useProxy;
+    [_proxy addTarget:self action:@selector(proxyToggled) forControlEvents:UIControlEventValueChanged];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applyTheme)
                                                  name:TMThemeDidChangeNotification
@@ -78,6 +97,7 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
     _theme.tintColor = seg;
     _theme.selectedSegmentIndex = t.dark ? 1 : 0;
     _spin.activityIndicatorViewStyle = t.dark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
+    _discoverSpin.activityIndicatorViewStyle = _spin.activityIndicatorViewStyle;
     [self.tableView reloadData];
 }
 
@@ -123,6 +143,12 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
     _server.text = api.serverURL;
     _token.text = api.token;
     _quality.selectedSegmentIndex = (NSInteger)[[TMAPIClient qualities] indexOfObject:@(api.preferredQuality)];
+    _proxy.on = api.useProxy;
+}
+
+- (void)proxyToggled {
+    [TMAPIClient shared].useProxy = _proxy.on;
+    TMLog(@"[settings] phát qua máy chủ: %@", _proxy.on ? @"bật" : @"tắt");
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -171,6 +197,7 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
     case kSectionServer: return @"Địa chỉ máy chủ";
     case kSectionToken: return @"Mã truy cập";
     case kSectionQuality: return @"Chất lượng mặc định";
+    case kSectionProxy: return @"Ở ngoài mạng nhà";
     case kSectionTheme: return @"Giao diện";
     default: return nil;
     }
@@ -179,6 +206,8 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     switch (section) {
     case kSectionServer: return @"Máy chạy tubemini-server trong mạng nhà, ví dụ http://192.168.1.10:8080";
+    case kSectionDiscover: return @"Tự tìm chỉ được khi iPad và máy chủ ở chung một mạng (cùng dải địa chỉ IP).";
+    case kSectionProxy: return @"Bật khi xem bằng 4G hay Wi-Fi khác mà video không phát: video sẽ đi qua máy chủ (tốn mạng nhà). Máy chủ phải đặt proxy_fallback = true.";
     case kSectionQuality: return @"360p nhẹ và ổn định. 720p (HD) cần Wi-Fi tốt, 1080p (Full HD) cần Wi-Fi rất tốt (khoảng 5 Mbit/s). Video không có mức đã chọn thì phát mức thấp hơn gần nhất. Video có quảng cáo phải chờ vài giây trước khi phát.";
     case kSectionTest: {
         NSDictionary *info = [NSBundle mainBundle].infoDictionary;
@@ -199,6 +228,22 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
     case kSectionToken: control = _token; break;
     case kSectionQuality: control = _quality; break;
     case kSectionTheme: control = _theme; break;
+    case kSectionDiscover:
+        cell.textLabel.text = _searching ? @"Đang tìm…" : @"Tìm máy chủ trong mạng";
+        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+        cell.textLabel.textColor = [TMTheme current].accent;
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+        _discoverSpin.center = CGPointMake(30, 22);
+        _searching ? [_discoverSpin startAnimating] : [_discoverSpin stopAnimating];
+        [cell.contentView addSubview:_discoverSpin];
+        return cell;
+    case kSectionProxy:
+        cell.textLabel.text = @"Phát qua máy chủ";
+        cell.textLabel.textColor = [TMTheme current].text;
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+        cell.accessoryView = _proxy;
+        return cell;
     case kSectionTest:
         cell.textLabel.text = _testing ? @"Đang kiểm tra…" : @"Kiểm tra kết nối";
         cell.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -219,6 +264,78 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == kSectionTest) [self testConnection];
+    if (indexPath.section == kSectionDiscover) [self discover];
+}
+
+#pragma mark - Bonjour
+
+- (void)discover {
+    if (_searching) return;
+    [self.view endEditing:YES];
+    _searching = YES;
+    _found = [NSMutableArray array];
+    _services = [NSMutableArray array];
+    _browser = [[NSNetServiceBrowser alloc] init];
+    _browser.delegate = self;
+    [_browser searchForServicesOfType:@"_tubemini._tcp." inDomain:@"local."];
+    TMLog(@"[settings] tìm máy chủ (Bonjour)");
+    [self.tableView reloadData];
+    [self performSelector:@selector(discoveryDone) withObject:nil afterDelay:5];
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindService:(NSNetService *)service moreComing:(BOOL)more {
+    [_services addObject:service];
+    service.delegate = self;
+    [service resolveWithTimeout:4];
+}
+
+- (void)netServiceDidResolveAddress:(NSNetService *)service {
+    for (NSData *data in service.addresses) {
+        const struct sockaddr *sa = data.bytes;
+        if (data.length < sizeof(struct sockaddr_in) || sa->sa_family != AF_INET) continue;
+        char ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &((const struct sockaddr_in *)sa)->sin_addr, ip, sizeof ip);
+        NSString *url = [NSString stringWithFormat:@"http://%s:%ld", ip, (long)service.port];
+        BOOL seen = NO;
+        for (NSArray *f in _found) seen = seen || [f[1] isEqualToString:url];
+        if (!seen) [_found addObject:@[ service.name ?: @"TubeMini", url ]];
+        TMLog(@"[settings] thấy %@ ở %@", service.name, url);
+    }
+}
+
+- (void)discoveryDone {
+    [_browser stop];
+    _browser = nil;
+    _searching = NO;
+    [self.tableView reloadData];
+    if (!_found.count) {
+        [[[UIAlertView alloc] initWithTitle:@"Không tìm thấy máy chủ"
+                                    message:@"iPad và máy chủ phải ở chung một mạng (cùng dải địa chỉ IP), và máy chủ bật "
+                                            @"mdns = true. Nếu không, nhập địa chỉ bằng tay."
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil] show];
+    } else if (_found.count == 1) {
+        [self useServer:_found[0][1]];
+    } else {
+        UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Chọn máy chủ"
+                                                           delegate:self
+                                                  cancelButtonTitle:nil
+                                             destructiveButtonTitle:nil
+                                                  otherButtonTitles:nil];
+        for (NSArray *f in _found) [sheet addButtonWithTitle:[NSString stringWithFormat:@"%@ — %@", f[0], f[1]]];
+        CGRect r = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:kSectionDiscover]];
+        [sheet showFromRect:r inView:self.tableView animated:YES];
+    }
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex >= 0 && buttonIndex < (NSInteger)_found.count) [self useServer:_found[(NSUInteger)buttonIndex][1]];
+}
+
+- (void)useServer:(NSString *)url {
+    _server.text = url;
+    [self testConnection]; // saves, then pings
 }
 
 - (void)testConnection {
@@ -239,6 +356,10 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
             [lines addObject:ping.ytdlp.length ? [NSString stringWithFormat:@"yt-dlp %@", ping.ytdlp]
                                                : @"⚠ Máy chủ thiếu yt-dlp: không phát được video."];
             [lines addObject:ping.deno.length ? @"Deno: có" : @"⚠ Máy chủ thiếu Deno: yt-dlp không lấy được link."];
+            if ([TMAPIClient shared].useProxy) {
+                [lines addObject:[ping.proxy isEqualToString:@"on"] ? @"Phát qua máy chủ: máy chủ cho phép."
+                                                                    : @"⚠ Máy chủ chưa bật proxy_fallback: “Phát qua máy chủ” chưa có tác dụng."];
+            }
             title = (ping.ytdlp.length && ping.deno.length) ? @"Kết nối tốt" : @"Kết nối được, nhưng thiếu công cụ";
             message = [lines componentsJoinedByString:@"\n"];
         }

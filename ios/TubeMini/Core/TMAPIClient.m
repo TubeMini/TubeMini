@@ -66,6 +66,15 @@ static const NSTimeInterval kTimeout = 20;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (BOOL)useProxy {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"TMUseProxy"];
+}
+
+- (void)setUseProxy:(BOOL)useProxy {
+    [[NSUserDefaults standardUserDefaults] setBool:useProxy forKey:@"TMUseProxy"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 - (BOOL)isConfigured {
     return self.serverURL.length > 0;
 }
@@ -306,7 +315,11 @@ static const NSTimeInterval kTimeout = 20;
 }
 
 - (void)streams:(NSString *)videoID fresh:(BOOL)fresh completion:(void (^)(TMStreamSet *, NSString *))done {
-    NSString *path = [NSString stringWithFormat:@"/tm/v1/videos/%@/streams%@", videoID, fresh ? @"?fresh=1" : @""];
+    NSMutableArray *params = [NSMutableArray array];
+    if (fresh) [params addObject:@"fresh=1"];
+    if (self.useProxy) [params addObject:@"proxy=1"];
+    NSString *path = [NSString stringWithFormat:@"/tm/v1/videos/%@/streams%@%@", videoID, params.count ? @"?" : @"",
+                                                [params componentsJoinedByString:@"&"]];
     [self getURL:[self.serverURL stringByAppendingString:path]
         completion:^(NSData *data, NSString *error) {
             if (error) {

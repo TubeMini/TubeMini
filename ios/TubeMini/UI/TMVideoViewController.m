@@ -1,6 +1,7 @@
 #import "TMVideoViewController.h"
 #import "TMFormat.h"
 #import "TMChannelViewController.h"
+#import "TMDownloads.h"
 #import "TMImageLoader.h"
 #import "TMLibrary.h"
 #import "TMPlayer.h"
@@ -10,7 +11,7 @@
     TMVideo *_video;
     UIView *_header;
     UIImageView *_thumb;
-    UIButton *_playOverlay, *_playButton, *_qualityButton, *_channelButton, *_subscribeButton;
+    UIButton *_playOverlay, *_playButton, *_qualityButton, *_channelButton, *_subscribeButton, *_listenButton, *_downloadButton;
     UILabel *_title, *_meta, *_desc;
     UISegmentedControl *_segment;
     BOOL _descExpanded, _subBusy;
@@ -104,6 +105,10 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     _qualityButton = makeButton(@"", self, @selector(chooseQuality));
     _channelButton = makeButton(@"Kênh", self, @selector(openChannel));
     _subscribeButton = makeButton(@"", self, @selector(toggleSubscribe));
+    _listenButton = makeButton(@"♫ Chỉ nghe", self, @selector(listen));
+    _downloadButton = makeButton(@"", self, @selector(download));
+    [_header addSubview:_listenButton];
+    [_header addSubview:_downloadButton];
     [_header addSubview:_playButton];
     [_header addSubview:_qualityButton];
     [_header addSubview:_channelButton];
@@ -132,7 +137,8 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     _title.textColor = t.text;
     _meta.textColor = t.secondaryText;
     _desc.textColor = t.secondaryText;
-    for (UIButton *b in @[ _playButton ?: [NSNull null], _qualityButton ?: [NSNull null], _channelButton ?: [NSNull null] ]) {
+    for (UIButton *b in @[ _playButton ?: [NSNull null], _qualityButton ?: [NSNull null], _channelButton ?: [NSNull null],
+                          _listenButton ?: [NSNull null], _downloadButton ?: [NSNull null] ]) {
         if ([b isKindOfClass:[UIButton class]]) [t styleButton:b];
     }
     _segment.tintColor = t.dark ? [UIColor colorWithWhite:0.28 alpha:1] : [UIColor colorWithRed:0.62 green:0.08 blue:0.08 alpha:1];
@@ -142,6 +148,21 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
 - (void)styleSubscribe {
     if (!_subscribeButton) return;
     [[TMTheme current] styleSubscribeButton:_subscribeButton subscribed:[[TMLibrary shared] isSubscribed:_video.authorID] busy:_subBusy];
+}
+
+- (void)updateDownloadTitle {
+    TMDownload *x = [[TMDownloads shared] itemFor:_video.videoID];
+    NSString *title = @"⬇ Tải về";
+    if (x.state == TMDownloadDone) {
+        title = @"✓ Đã tải";
+    } else if (x.state == TMDownloadFailed) {
+        title = @"⬇ Tải lại";
+    } else if (x.state == TMDownloadRunning && x.total > 0) {
+        title = [NSString stringWithFormat:@"⬇ %d%%", (int)(100 * x.received / x.total)];
+    } else if (x) {
+        title = @"⬇ Đang chờ…";
+    }
+    [_downloadButton setTitle:title forState:UIControlStateNormal];
 }
 
 - (void)updatePlayTitle {
@@ -159,6 +180,7 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     _subscribeButton.hidden = _channelButton.hidden;
     [self styleSubscribe];
     [self updatePlayTitle];
+    [self updateDownloadTitle];
     NSURL *hq = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", _video.videoID]];
     [[TMImageLoader shared] setImageURL:hq onImageView:_thumb placeholder:nil size:CGSizeMake(480, 360)];
     [self layoutHeaderForce:YES];
@@ -180,11 +202,15 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     CGSize ms = [_meta.text sizeWithFont:_meta.font constrainedToSize:CGSizeMake(inner, 40) lineBreakMode:NSLineBreakByWordWrapping];
     _meta.frame = CGRectMake(pad, y, inner, ms.height);
     y += ms.height + 10;
-    CGFloat bw = floor(MIN(200, (inner - 30) / 4));
+    // Two rows: watching (play, listen, quality), then download / channel / subscribe
+    CGFloat bw = floor(MIN(230, (inner - 20) / 3));
     _playButton.frame = CGRectMake(pad, y, bw, 40);
-    _qualityButton.frame = CGRectMake(pad + bw + 10, y, bw, 40);
-    _channelButton.frame = CGRectMake(pad + 2 * (bw + 10), y, bw, 40);
-    _subscribeButton.frame = CGRectMake(pad + 3 * (bw + 10), y, bw, 40);
+    _listenButton.frame = CGRectMake(pad + bw + 10, y, bw, 40);
+    _qualityButton.frame = CGRectMake(pad + 2 * (bw + 10), y, bw, 40);
+    y += 50;
+    _downloadButton.frame = CGRectMake(pad, y, bw, 40);
+    _channelButton.frame = CGRectMake(pad + bw + 10, y, bw, 40);
+    _subscribeButton.frame = CGRectMake(pad + 2 * (bw + 10), y, bw, 40);
     y += 52;
     if (_desc.text.length) {
         CGFloat maxH = _descExpanded ? 2000 : 4 * _desc.font.lineHeight + 2;
@@ -213,6 +239,10 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(historyChanged:)
                                                  name:TMHistoryDidChangeNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateDownloadTitle)
+                                                 name:TMDownloadsDidChangeNotification
                                                object:nil];
     // List entries (related videos) have no description: fetch the full entry once
     [[TMAPIClient shared] video:_video.videoID
@@ -244,6 +274,29 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
 
 - (void)play {
     [[TMPlayer shared] playVideo:_video quality:_quality startAt:_resumeAt from:self];
+}
+
+- (void)listen {
+    [[TMPlayer shared] playAudioOf:_video startAt:_resumeAt from:self];
+}
+
+- (void)download {
+    TMDownloads *d = [TMDownloads shared];
+    TMDownload *x = [d itemFor:_video.videoID];
+    // (nil first: a nil item's state reads as 0 = TMDownloadWaiting)
+    if (!x || x.state == TMDownloadFailed) {
+        _video.position = _resumeAt; // the saved copy resumes there too
+        [d add:_video];              // new, or retry after a failure
+    } else if (x.state == TMDownloadDone) {
+        // Already on the iPad: play the saved copy (works without network)
+        [[TMPlayer shared] playFile:x.filePath video:_video startAt:_resumeAt from:self];
+    } else {
+        [[[UIAlertView alloc] initWithTitle:@"Đang tải"
+                                    message:@"Xem tiến độ ở tab “Đã tải”."
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil] show];
+    }
 }
 
 - (void)chooseQuality {

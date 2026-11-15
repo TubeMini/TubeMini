@@ -11,6 +11,13 @@
 - (void)playVideo:(TMVideo *)video quality:(NSInteger)quality from:(UIViewController *)presenter;
 /// `seconds` > 0 resumes there.
 - (void)playVideo:(TMVideo *)video quality:(NSInteger)quality startAt:(NSInteger)seconds from:(UIViewController *)presenter;
+/// Audio only (`<tm:audio>`, falls back to 360p): keeps playing with the screen locked or in the
+/// background, with title / artwork on the lock screen and its play / pause controls.
+- (void)playAudioOf:(TMVideo *)video startAt:(NSInteger)seconds from:(UIViewController *)presenter;
+/// A downloaded file (offline).
+- (void)playFile:(NSString *)path video:(TMVideo *)video startAt:(NSInteger)seconds from:(UIViewController *)presenter;
+/// Lock screen / headphone remote events (forwarded by the app delegate).
+- (void)remoteControl:(UIEvent *)event;
 /// The movie player while one is on screen (nil otherwise); used by the debug commands.
 @property (nonatomic, readonly) MPMoviePlayerController *moviePlayer;
 /// Quality actually playing ("360p", "720p (HLS)"), for status text.

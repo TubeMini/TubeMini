@@ -19,6 +19,8 @@ typedef void (^TMFeedBlock)(TMFeed *feed, NSString *error);
 /// Qualities the user can choose (360, 720, 1080), and the nearest one not above `q`.
 + (NSArray *)qualities;
 + (NSInteger)normalizedQuality:(NSInteger)q;
+/// "Phát qua máy chủ": ask `streams?proxy=1` (outside the home network; the server must allow it).
+@property (nonatomic, assign) BOOL useProxy;
 - (BOOL)isConfigured;
 /// "192.168.1.10:8080" → "http://192.168.1.10:8080" (trims, adds scheme, drops trailing "/").
 + (NSString *)normalizeURL:(NSString *)input;

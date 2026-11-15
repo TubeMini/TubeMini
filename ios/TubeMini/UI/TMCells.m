@@ -100,6 +100,13 @@ static UILabel *makeLabel(UIFont *font, UIColor *color, NSInteger lines) {
     [self setNeedsLayout];
 }
 
+- (void)configureWithVideo:(TMVideo *)video meta:(NSString *)meta progress:(CGFloat)progress {
+    [self configureWithVideo:video];
+    _meta.text = meta;
+    _fraction = progress;
+    [self setNeedsLayout];
+}
+
 - (void)configureWithPlaylist:(TMPlaylist *)p {
     themeCell(self);
     _title.textColor = [TMTheme current].text;

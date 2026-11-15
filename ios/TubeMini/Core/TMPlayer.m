@@ -1,5 +1,6 @@
 #import "TMPlayer.h"
 #import "TMAPIClient.h"
+#import "TMImageLoader.h"
 #import "TMLibrary.h"
 #import "TMLog.h"
 #import <QuartzCore/QuartzCore.h>
@@ -24,6 +25,9 @@
     NSInteger _startAt;
     NSTimer *_saveTimer;
     NSInteger _lastPosition, _lastDuration; // last known from the player (seconds)
+    BOOL _audioOnly;
+    NSString *_localPath;  // playing a downloaded file
+    UIImage *_artwork;     // lock screen picture (the video thumbnail)
 }
 
 static const NSTimeInterval kSaveInterval = 15;
@@ -40,6 +44,10 @@ static const NSTimeInterval kSaveInterval = 15;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(saveProgress)
                                                      name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(updateNowPlaying)
+                                                     name:MPMoviePlayerPlaybackStateDidChangeNotification
                                                    object:nil];
     }
     return self;
@@ -112,6 +120,37 @@ static const NSTimeInterval kSaveInterval = 15;
 }
 
 - (void)playVideo:(TMVideo *)video quality:(NSInteger)quality startAt:(NSInteger)seconds from:(UIViewController *)presenter {
+    _audioOnly = NO;
+    _localPath = nil;
+    [self begin:video quality:quality startAt:seconds from:presenter];
+}
+
+- (void)playAudioOf:(TMVideo *)video startAt:(NSInteger)seconds from:(UIViewController *)presenter {
+    _audioOnly = YES;
+    _localPath = nil;
+    [self begin:video quality:360 startAt:seconds from:presenter];
+}
+
+- (void)playFile:(NSString *)path video:(TMVideo *)video startAt:(NSInteger)seconds from:(UIViewController *)presenter {
+    _generation++;
+    _audioOnly = NO;
+    _localPath = [path copy];
+    _video = video;
+    _presenter = presenter;
+    _retried = YES; // nothing to refetch
+    _startAt = MAX(seconds, 0);
+    _lastPosition = _startAt;
+    _lastDuration = video.duration;
+    _streams = nil;
+    TMStream *s = [[TMStream alloc] init];
+    s.kind = @"file";
+    s.quality = 360;
+    s.url = [[NSURL fileURLWithPath:path] absoluteString];
+    _stream = s;
+    [self startPlayback];
+}
+
+- (void)begin:(TMVideo *)video quality:(NSInteger)quality startAt:(NSInteger)seconds from:(UIViewController *)presenter {
     _generation++;
     _video = video;
     _quality = quality;
@@ -138,6 +177,12 @@ static const NSTimeInterval kSaveInterval = 15;
                            }
                            self->_streams = set;
                            self->_stream = [set streamForQuality:self->_quality];
+                           if (self->_audioOnly && set.audioURL.length) {
+                               TMStream *audio = [[TMStream alloc] init];
+                               audio.kind = @"audio";
+                               audio.url = set.audioURL;
+                               self->_stream = audio;
+                           }
                            [self waitThenPlay:set.availableIn];
                        }];
 }
@@ -168,6 +213,8 @@ static const NSTimeInterval kSaveInterval = 15;
 }
 
 - (NSString *)labelFor:(TMStream *)s {
+    if ([s.kind isEqualToString:@"audio"]) return @"chỉ nghe";
+    if ([s.kind isEqualToString:@"file"]) return @"đã tải (360p)";
     return [s.kind isEqualToString:@"hls"] ? [NSString stringWithFormat:@"%ldp (HLS)", (long)s.quality]
                                            : [NSString stringWithFormat:@"%ldp", (long)s.quality];
 }
@@ -201,7 +248,10 @@ static const NSTimeInterval kSaveInterval = 15;
         TMLog(@"[player] xem tiếp từ %ld giây", (long)_startAt);
         _playerVC.moviePlayer.initialPlaybackTime = _startAt;
     }
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    if (_audioOnly || [_stream.kind isEqualToString:@"audio"]) [self showArtworkIn:_playerVC.moviePlayer];
+    [UIApplication sharedApplication].idleTimerDisabled = !_audioOnly; // audio: let the screen lock
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    [self loadArtwork];
     [_presenter presentMoviePlayerViewControllerAnimated:_playerVC];
     [_playerVC.moviePlayer prepareToPlay];
     [_playerVC.moviePlayer play];
@@ -213,6 +263,90 @@ static const NSTimeInterval kSaveInterval = 15;
                                                 selector:@selector(saveProgress)
                                                 userInfo:nil
                                                  repeats:YES];
+}
+
+#pragma mark - Audio only, lock screen
+
+/// Audio has no picture: show the thumbnail and title behind the controls.
+- (void)showArtworkIn:(MPMoviePlayerController *)player {
+    UIView *bg = player.backgroundView;
+    bg.backgroundColor = [UIColor blackColor];
+    // The background view has no size yet when the player is created: lay out on the screen size
+    CGRect frame = CGRectIsEmpty(bg.bounds) ? [UIScreen mainScreen].bounds : bg.bounds;
+    UIView *box = [[UIView alloc] initWithFrame:frame];
+    box.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [bg addSubview:box];
+    bg = box;
+    UIImageView *art = [[UIImageView alloc] initWithFrame:bg.bounds];
+    art.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    art.contentMode = UIViewContentModeScaleAspectFit;
+    art.alpha = 0.55;
+    art.tag = 501;
+    [bg addSubview:art];
+    NSURL *hq = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", _video.videoID]];
+    [[TMImageLoader shared] setImageURL:hq onImageView:art placeholder:nil size:CGSizeMake(480, 360)];
+    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(20, frame.size.height * 0.7, frame.size.width - 40, 60)];
+    title.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    title.text = [NSString stringWithFormat:@"♫ %@", _video.title ?: @""];
+    title.textColor = [UIColor whiteColor];
+    title.backgroundColor = [UIColor clearColor];
+    title.font = [UIFont boldSystemFontOfSize:20];
+    title.textAlignment = NSTextAlignmentCenter;
+    title.numberOfLines = 2;
+    [bg addSubview:title];
+}
+
+/// The thumbnail for the lock screen (MPMediaItemArtwork needs a UIImage).
+- (void)loadArtwork {
+    _artwork = nil;
+    NSString *vid = _video.videoID;
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", vid]];
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:url]
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *r, NSData *data, NSError *e) {
+                               UIImage *img = data ? [UIImage imageWithData:data] : nil;
+                               if (!img || ![self->_video.videoID isEqualToString:vid]) return;
+                               self->_artwork = img;
+                               [self updateNowPlaying];
+                           }];
+}
+
+/// Title, channel, picture, position and rate on the lock screen (iOS 5+).
+- (void)updateNowPlaying {
+    MPMoviePlayerController *p = _playerVC.moviePlayer;
+    if (!p || !_video) {
+        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+        return;
+    }
+    [self readPlayer];
+    NSMutableDictionary *info = [NSMutableDictionary dictionary];
+    info[MPMediaItemPropertyTitle] = _video.title ?: @"";
+    info[MPMediaItemPropertyArtist] = _video.author ?: @"TubeMini";
+    if (_lastDuration > 0) info[MPMediaItemPropertyPlaybackDuration] = @(_lastDuration);
+    info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @(_lastPosition);
+    info[MPNowPlayingInfoPropertyPlaybackRate] = @(p.playbackState == MPMoviePlaybackStatePlaying ? 1.0 : 0.0);
+    if (_artwork) info[MPMediaItemPropertyArtwork] = [[MPMediaItemArtwork alloc] initWithImage:_artwork];
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
+}
+
+- (void)remoteControl:(UIEvent *)event {
+    MPMoviePlayerController *p = _playerVC.moviePlayer;
+    if (!p || event.type != UIEventTypeRemoteControl) return;
+    switch (event.subtype) {
+    case UIEventSubtypeRemoteControlTogglePlayPause:
+        if (p.playbackState == MPMoviePlaybackStatePlaying) {
+            [p pause];
+        } else {
+            [p play];
+        }
+        break;
+    case UIEventSubtypeRemoteControlPlay: [p play]; break;
+    case UIEventSubtypeRemoteControlPause: [p pause]; break;
+    case UIEventSubtypeRemoteControlStop: [p pause]; break;
+    default: return;
+    }
+    TMLog(@"[player] điều khiển từ xa: %ld", (long)event.subtype);
+    [self saveProgress];
 }
 
 #pragma mark - Watch position
@@ -236,6 +370,7 @@ static const NSTimeInterval kSaveInterval = 15;
     if (!_video.videoID.length) return;
     [[TMAPIClient shared] savePosition:position duration:_lastDuration video:_video];
     [[TMLibrary shared] historyChangedForVideo:_video.videoID position:position duration:_lastDuration];
+    [self updateNowPlaying];
 }
 
 - (void)dismissPlayer {
@@ -250,6 +385,8 @@ static const NSTimeInterval kSaveInterval = 15;
     _playerVC = nil;
     self.playingLabel = nil;
     [UIApplication sharedApplication].idleTimerDisabled = NO;
+    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
 }
 
 - (void)finished:(NSNotification *)n {
@@ -270,9 +407,12 @@ static const NSTimeInterval kSaveInterval = 15;
         return;
     }
     TMStream *mp4 = [_streams streamOfKind:@"mp4"];
-    BOOL canFallBack = [_stream.kind isEqualToString:@"hls"] && mp4;
+    BOOL canFallBack = ([_stream.kind isEqualToString:@"hls"] || [_stream.kind isEqualToString:@"audio"]) && mp4;
+    BOOL local = _localPath != nil;
     [self dismissPlayer];
-    if (canFallBack) {
+    if (local) {
+        [self alert:@"Không phát được bản đã tải. Có thể file bị hỏng: xoá rồi tải lại."];
+    } else if (canFallBack) {
         UIAlertView *a = [[UIAlertView alloc] initWithTitle:@"Không phát được"
                                                     message:[NSString stringWithFormat:@"Không phát được ở %@. Thử 360p?",
                                                                                        [self labelFor:_stream]]
