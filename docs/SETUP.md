@@ -155,3 +155,50 @@ Xem log: `journalctl -u tubemini -f`. Khởi động lại: `systemctl restart t
 
 Kênh đã theo dõi và lịch sử xem nằm trong `/opt/tubemini/data/tubemini.db` (SQLite; deploy không đụng tới thư mục `data`). Muốn
 giữ lại thì sao lưu file này. Trên Windows thì file nằm trong thư mục `data` cạnh `config.toml`.
+
+## 8. Xem ngoài mạng nhà (4G, Wi-Fi khác)
+
+Link googlevideo mà server lấy được **gắn với IP công cộng của nhà** (Giai đoạn 0, D7). Ở ngoài mạng nhà, iPad có IP khác nên có thể
+bị từ chối (phép thử 4G anh sẽ làm sau). Có hai cách:
+
+**Cách 1 — VPN về nhà (khuyên dùng).** iPad đi Internet qua mạng nhà, nên link vẫn hợp lệ, không phải sửa gì ở server hay app.
+
+- iOS 6 có sẵn VPN loại **L2TP/IPsec**, **Cisco IPSec** (IKEv1) và PPTP (cũ, không an toàn). Không có WireGuard; ứng dụng OpenVPN
+  bây giờ cũng không còn bản cho iOS 6.
+- Nhiều router gia đình có sẵn máy chủ L2TP/IPsec (mục VPN Server). Nếu router không có thì cài SoftEther VPN Server (hỗ trợ
+  L2TP/IPsec) trên máy LXC, rồi mở cổng UDP 500 và 4500 trên router.
+- Trên iPad: Cài đặt → Cài đặt chung → VPN → Thêm cấu hình VPN → L2TP, điền máy chủ (IP công cộng hoặc tên DDNS của nhà), tài
+  khoản, mật khẩu, khóa bí mật chung, và bật "Gửi mọi lưu lượng". Bật VPN rồi dùng TubeMini với đúng địa chỉ
+  `http://192.168.1.192:8080` như ở nhà.
+
+**Cách 2 — proxy dự phòng của server.** Video đi qua server (tốn băng thông tải lên của mạng nhà: 720p khoảng 2,5 Mbit/s).
+
+1. Trên máy .192, sửa `/opt/tubemini/config.toml`: `proxy_fallback = true`, và **đặt `auth_token`** (một chuỗi dài, ngẫu nhiên),
+   rồi `systemctl restart tubemini`.
+2. Trên router, chuyển cổng TCP 8080 vào 192.168.1.192:8080. Nên có tên DDNS cho IP nhà.
+3. Trên iPad (TubeMini → Cài đặt): địa chỉ `http://<IP công cộng hoặc DDNS>:8080`, nhập mã truy cập, bật **"Phát qua máy chủ"**,
+   rồi bấm "Kiểm tra kết nối": phải thấy "Phát qua máy chủ: máy chủ cho phép".
+
+Lưu ý: mã truy cập chỉ bảo vệ `/tm/v1`. Lớp GData (tìm kiếm, trang chủ cho app cũ) vẫn mở, còn `/proxy` chỉ nhận URL có chữ ký do
+server sinh. Vì vậy cách 1 an toàn hơn. Nếu phép thử 4G cho thấy link dùng được từ IP khác, thì chỉ cần chuyển cổng, không cần bật
+proxy.
+
+## 9. Triển khai lên VPS (Docker)
+
+```sh
+docker build -t tubemini server/
+docker run -d --name tubemini -p 8080:8080 -v tubemini-data:/data --restart unless-stopped tubemini
+docker exec -it tubemini sh -c 'vi /data/config.toml'   # đặt auth_token, region = "VN"; rồi docker restart tubemini
+```
+
+- Image gồm tubemini-server, yt-dlp (bản chạy độc lập) và Deno. Mỗi lần container khởi động thì yt-dlp tự cập nhật. Dữ liệu (kênh
+  theo dõi, lịch sử, config) nằm ở volume `/data`.
+- **Bắt buộc đặt `auth_token`** khi server ra Internet.
+- Link đi theo quốc gia của server: nên thuê VPS ở Việt Nam để video không bị chặn theo vùng. IP trung tâm dữ liệu cũng dễ bị
+  YouTube đòi xác minh "không phải bot" hơn IP nhà, nên yt-dlp có thể lỗi thường xuyên hơn.
+- Link gắn với IP của VPS. Nếu phép thử 4G cho thấy link không dùng được từ IP khác, thì phải bật `proxy_fallback = true`, và app
+  bật "Phát qua máy chủ" (tốn băng thông VPS).
+- **HTTPS và iOS 6:** chứng chỉ Let's Encrypt **không chạy** trên iOS 6, vì máy không có gốc ISRG Root X1 (mới có từ 2015).
+  Muốn HTTPS thì cần chứng chỉ nối tới một gốc mà iOS 6 tin (ví dụ GlobalSign Root CA R1, DigiCert Global Root CA). Em chưa thử
+  cách này. Cách đơn giản hơn: VPS chạy HTTP + mã truy cập, và iPad vào qua VPN (dựng L2TP/IPsec trên chính VPS).
+- Em chưa build thử image này: máy PC không có Docker.

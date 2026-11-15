@@ -54,6 +54,9 @@ Check "getvideo bad id"     "/getvideo/xyz"                                  404
 # /tm/v1 (server without auth_token); read-only, the POST is rejected before anything is written
 Check "tm ping"             "/tm/v1/ping"                                    200 "<tm:ping"
 Check "tm streams"          "/tm/v1/videos/aqz-KE-bpKQ/streams"              200 "<tm:stream "
+Check "tm streams audio/dl"  "/tm/v1/videos/aqz-KE-bpKQ/streams"              200 "<tm:download "
+Check "getaudio"            "/getaudio/aqz-KE-bpKQ"                          200 "mp4a.40"
+Check "proxy off"           "/proxy/0000000000000000/aHR0cHM6Ly94.ts"       404
 Check "tm subscriptions"    "/tm/v1/subscriptions"                           200 "#channel"
 Check "tm feed"             "/tm/v1/feed"                                    200 "tm:feed"
 Check "tm history"          "/tm/v1/history"                                 200 "xmlns:tm="

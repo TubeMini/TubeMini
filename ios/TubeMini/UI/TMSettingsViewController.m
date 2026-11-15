@@ -208,7 +208,7 @@ enum {
     case kSectionServer: return @"Máy chạy tubemini-server trong mạng nhà, ví dụ http://192.168.1.10:8080";
     case kSectionDiscover: return @"Tự tìm chỉ được khi iPad và máy chủ ở chung một mạng (cùng dải địa chỉ IP).";
     case kSectionProxy: return @"Bật khi xem bằng 4G hay Wi-Fi khác mà video không phát: video sẽ đi qua máy chủ (tốn mạng nhà). Máy chủ phải đặt proxy_fallback = true.";
-    case kSectionQuality: return @"360p nhẹ và ổn định. 720p (HD) cần Wi-Fi tốt, 1080p (Full HD) cần Wi-Fi rất tốt (khoảng 5 Mbit/s). Video không có mức đã chọn thì phát mức thấp hơn gần nhất. Video có quảng cáo phải chờ vài giây trước khi phát.";
+    case kSectionQuality: return @"360p nhẹ và ổn định. 720p cần Wi-Fi tốt, 1080p cần Wi-Fi rất tốt (khoảng 5 Mbit/s). Video không có mức đã chọn thì phát mức thấp hơn gần nhất.";
     case kSectionTest: {
         NSDictionary *info = [NSBundle mainBundle].infoDictionary;
         return [NSString stringWithFormat:@"TubeMini %@ · iOS %@", info[@"CFBundleShortVersionString"],

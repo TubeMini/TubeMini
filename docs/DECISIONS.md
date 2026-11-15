@@ -349,3 +349,37 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
     Hai nền kia vẫn vẽ được: `python scripts/make-icons.py --background silver` (hoặc `sky`).
   - Bản trước có nền xanh thép và góc bo vẽ sẵn: SpringBoard để icon cũ của app này (cài bằng `.deb`) vuông góc.
 - Đổi icon xong, `uicache` chưa đủ: SpringBoard giữ icon trong bộ nhớ, phải respring (`killall SpringBoard`).
+
+## D28. Giai đoạn 5: chỉ nghe, tải về, proxy dự phòng, mDNS, VPS — 15/11/2026
+
+- **Chỉ nghe:** playlist HLS có một biến thể chỉ tiếng, trỏ tới rendition tiếng của YouTube: AAC-LC 128k (itag 234), track gốc.
+  - Segment là AAC đóng gói có thẻ ID3 ("packed audio"), đúng định dạng Apple dùng cho HLS chỉ có tiếng, nên iOS 6 phát được.
+  - Không dùng itag 140 (m4a): đó là MP4 phân mảnh kiểu DASH, chưa chắc iOS 6 phát được.
+  - App: phiên âm thanh `AVAudioSessionCategoryPlayback` + `UIBackgroundModes = audio`, nên vẫn phát khi khoá màn hình hoặc chuyển
+    app. Màn hình khoá hiện tiêu đề, kênh, ảnh (`MPNowPlayingInfoCenter`); nút phát / dừng ở màn hình khoá và tai nghe chuyển tới
+    trình phát.
+  - Chế độ video thì vẫn tạm dừng khi app xuống nền (MPMoviePlayerController làm vậy với video). Muốn nghe nền thì dùng "Chỉ nghe".
+- **Tải về:** chỉ MP4 360p (progressive). HLS không lưu để xem offline được trên iOS 6 nếu không có máy chủ HTTP nội bộ trong app.
+  - Tải từng video một bằng NSURLConnection, ghi thẳng ra file. Đứt mạng thì tải tiếp bằng `Range` (thử lại 3 lần). googlevideo
+    trả 403/410 thì xin link mới (`streams?fresh=1`).
+  - App xuống nền thì tải tiếp trong thời gian iOS cho (khoảng 10 phút); hết giờ thì tạm dừng, mở app lại thì tải tiếp.
+  - File nằm trong `Documents/TubeMini-Downloads`, có đánh dấu không sao lưu lên iCloud / iTunes.
+  - Khi MP4 mang tiếng lồng AI (D23), bản tải ghi rõ "tiếng lồng AI", vì không thể ghép tiếng gốc khi không có ffmpeg.
+  - Mỗi bản tải nhớ vị trí xem riêng, nên xem tiếp được cả khi không có mạng.
+- **Proxy dự phòng** (`proxy_fallback`, mặc định tắt):
+  - URL `/proxy/<chữ ký>/<base64url>.<đuôi>`. Chữ ký là SipHash với khóa ngẫu nhiên mỗi lần server khởi động (lấy từ
+    `RandomState` có sẵn trong thư viện chuẩn, không cần thêm crate). Chỉ nhận đích `https://*.googlevideo.com`.
+  - Chuyển tiếp `Range`, trả `206`. Playlist con được viết lại để segment cũng qua proxy.
+  - Server quyết định "có phải playlist không" theo `Content-Type` của Google, để không bao giờ đọc một segment nhị phân như văn
+    bản. Test bắt được đúng lỗi này: segment có đường dẫn tương đối nằm trên host `manifest.`.
+  - Lớp nén gzip bỏ qua `video/*`, `audio/*` và `application/octet-stream` (googlevideo ghi segment HLS là octet-stream).
+  - Client proxy không có timeout tổng (video dài), chỉ có timeout kết nối và timeout đọc.
+  - Đã kiểm trên iPad: HLS 720p qua proxy, tua tới giây 300; app bật "Phát qua máy chủ" thì phát được với `serverAddress` là
+    server.
+- **mDNS:** tự viết bộ trả lời tối giản (khoảng 250 dòng, đọc / ghi bản ghi DNS, có xử lý nén tên) thay vì dùng crate
+  `mdns-sd` (kéo theo vài crate nữa). Chỉ cần thêm `socket2` (tokio vốn đã dùng) để mở cổng 5353 dùng chung với dịch vụ mDNS của
+  hệ điều hành.
+  - Kiểm từ PC: nhận đủ PTR, SRV, TXT, A.
+  - **Mạng nhà anh:** iPad ở `192.168.2.x`, còn server và PC ở `192.168.1.x/24`, khác mạng con. Router không chuyển tiếp mDNS, nên
+    iPad không tự tìm thấy server; app báo rõ lý do. Mạng nhà chỉ có một dải IP thì sẽ tìm được.
+- **VPS:** có `server/Dockerfile`. Chứng chỉ Let's Encrypt không chạy trên iOS 6 (thiếu gốc ISRG Root X1), nên khuyên dùng VPN.

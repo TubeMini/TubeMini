@@ -272,10 +272,16 @@ static const NSTimeInterval kSaveInterval = 15;
     UIView *bg = player.backgroundView;
     bg.backgroundColor = [UIColor blackColor];
     // The background view has no size yet when the player is created: lay out on the screen size
+    // without autoresizing (growing from 0×0 would double everything), fit it once on screen
     CGRect frame = CGRectIsEmpty(bg.bounds) ? [UIScreen mainScreen].bounds : bg.bounds;
     UIView *box = [[UIView alloc] initWithFrame:frame];
-    box.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [bg addSubview:box];
+    UIView *holder = bg;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (CGRectIsEmpty(holder.bounds)) return;
+        box.frame = holder.bounds;
+        box.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight; // rotation
+    });
     bg = box;
     UIImageView *art = [[UIImageView alloc] initWithFrame:bg.bounds];
     art.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

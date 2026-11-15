@@ -270,3 +270,54 @@
   sau khi respring.
 - [x] **Icon nền trong suốt** (anh yêu cầu): bỏ nền tối quanh bánh răng. Trên iPad, sau bánh răng vẫn thấy ô bóng mờ mà SpringBoard
   iOS 6 vẽ dưới mọi icon (D27); anh chọn giữ bản trong suốt.
+
+
+## Giai đoạn 5 — Mở rộng (15/11/2026)
+
+### Đã làm
+
+- [x] Server 0.5.0 (API.md, D28):
+  - `/getaudio/{id}`: HLS chỉ có tiếng (AAC 128k, track gốc);
+  - `streams` có thêm `tm:audio` và `tm:download` (MP4 360p, kèm cờ lồng tiếng AI);
+  - proxy dự phòng `proxy_fallback` (mặc định tắt): URL có chữ ký, chỉ chuyển tiếp googlevideo, hỗ trợ Range, viết lại playlist HLS;
+  - quảng bá mDNS `_tubemini._tcp` (`mdns = true`);
+  - `ping` báo proxy bật hay tắt;
+  - `server/Dockerfile` để chạy trên VPS.
+- [x] App TubeMini 0.5.0:
+  - **"♫ Chỉ nghe"**: chỉ tải tiếng, vẫn phát khi khoá màn hình hoặc chuyển app; màn hình khoá có tiêu đề, kênh, ảnh, nút phát /
+    dừng; trên màn trình phát hiện ảnh video.
+  - **"⬇ Tải về"** và tab **"Đã tải"**: tải MP4 360p, hiện %, tải tiếp khi đứt mạng hoặc mở lại app; xem offline, xem tiếp từ chỗ cũ;
+    vuốt để xoá; dòng tổng dung lượng.
+  - **Cài đặt**: "Tìm máy chủ trong mạng" (Bonjour), "Phát qua máy chủ".
+  - Trang video: 6 nút xếp hai hàng (Phát, Chỉ nghe, Chất lượng / Tải về, Kênh, Theo dõi).
+- [x] Hướng dẫn xem ngoài mạng nhà (VPN L2TP/IPsec, hoặc proxy) và triển khai VPS: SETUP mục 8, 9.
+- [x] Test: 73 unit test server (playlist chỉ tiếng, viết lại URL, chữ ký proxy, mDNS); `smoke.ps1` 33 kiểm tra, đều qua.
+
+### Kết quả nghiệm thu trên iPad mini 1 (iOS 6.1.3)
+
+| Tiêu chí | Kết quả |
+| --- | --- |
+| Chỉ nghe | Bitrate 144 kbit/s, không có hình (0x0), màn trình phát hiện ảnh video |
+| Nghe khi chuyển app | Mở app Cài đặt của iPad: TubeMini vẫn phát, vị trí từ giây 11,8 lên 52,4 sau 40 giây; thanh trạng thái có ▶ |
+| Màn hình khoá | Có tiêu đề, kênh, thời lượng, ảnh (`nowplaying`). Nút trên màn hình khoá cần anh thử bằng tay |
+| Tải về | 95,7 MB trong khoảng 70 giây; nút hiện "⬇ 7%"; tab "Đã tải" ghi "tiếng lồng AI" cho bản tin có lồng tiếng |
+| Xem offline | Phát từ file (không qua mạng), 640x360, cả 22 phút |
+| Proxy | HLS 720p qua proxy, tua tới giây 300; app bật "Phát qua máy chủ": `serverAddress` là 192.168.1.192 |
+| mDNS | PC nhận đủ bản ghi từ server. iPad không thấy vì khác mạng con (192.168.2.x / 192.168.1.x); app báo rõ |
+| Không crash | Không có báo cáo crash mới |
+
+### Anh kiểm tra bằng cách nào
+
+1. Mở một video, bấm **"♫ Chỉ nghe"**, rồi khoá màn hình: tiếng vẫn chạy. Bấm nút Home hai lần hoặc xem màn hình khoá để
+   dừng / phát.
+2. Bấm **"⬇ Tải về"**, chờ nút thành "✓ Đã tải". Bật chế độ máy bay, vào tab **"Đã tải"**, chạm video để xem offline.
+3. Cài đặt → **"Tìm máy chủ trong mạng"**: ở mạng nhà anh sẽ báo không tìm thấy (khác dải IP). Nếu cắm Wi-Fi cùng dải với server
+   thì sẽ tìm được.
+4. Ở ngoài mạng nhà: làm theo SETUP mục 8 (VPN, hoặc bật proxy + mã truy cập + chuyển cổng).
+
+### Còn tồn
+
+- Phép thử 4G / IP khác (anh làm): quyết định có cần proxy khi ở ngoài nhà hay không.
+- Chưa build thử Docker image (PC không có Docker). HTTPS cho iOS 6 chưa thử (Let's Encrypt không chạy được).
+- Video (không phải chỉ nghe) vẫn dừng khi app xuống nền.
+- Bản tải là 360p; HLS 720p / 1080p không tải được để xem offline.
