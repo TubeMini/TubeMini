@@ -2,6 +2,7 @@
 #import "TMAPIClient.h"
 #import "TMLog.h"
 #import "TMTheme.h"
+#import "TMUpdater.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
@@ -12,6 +13,7 @@ enum {
     kSectionQuality,
     kSectionProxy,
     kSectionTheme,
+    kSectionUpdate,
     kSectionTest,
     kSectionCount
 };
@@ -20,7 +22,7 @@ enum {
     UITextField *_server, *_token;
     UISegmentedControl *_quality, *_theme;
     UISwitch *_proxy;
-    UIActivityIndicatorView *_spin, *_discoverSpin;
+    UIActivityIndicatorView *_spin, *_discoverSpin, *_updateSpin;
     BOOL _testing, _searching;
     NSNetServiceBrowser *_browser;
     NSMutableArray *_services; // NSNetService being resolved (must stay alive)
@@ -67,6 +69,11 @@ enum {
     [_theme addTarget:self action:@selector(themePicked) forControlEvents:UIControlEventValueChanged];
     _spin = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     _discoverSpin = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    _updateSpin = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updaterChanged)
+                                                 name:TMUpdaterDidChangeNotification
+                                               object:nil];
     _proxy = [[UISwitch alloc] init];
     _proxy.on = api.useProxy;
     [_proxy addTarget:self action:@selector(proxyToggled) forControlEvents:UIControlEventValueChanged];
@@ -98,6 +105,7 @@ enum {
     _theme.selectedSegmentIndex = t.dark ? 1 : 0;
     _spin.activityIndicatorViewStyle = t.dark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray;
     _discoverSpin.activityIndicatorViewStyle = _spin.activityIndicatorViewStyle;
+    _updateSpin.activityIndicatorViewStyle = _spin.activityIndicatorViewStyle;
     [self.tableView reloadData];
 }
 
@@ -198,6 +206,7 @@ enum {
     case kSectionToken: return @"Mã truy cập";
     case kSectionQuality: return @"Chất lượng mặc định";
     case kSectionProxy: return @"Ở ngoài mạng nhà";
+    case kSectionUpdate: return @"Cập nhật ứng dụng";
     case kSectionTheme: return @"Giao diện";
     default: return nil;
     }
@@ -207,6 +216,9 @@ enum {
     switch (section) {
     case kSectionServer: return @"Máy chạy tubemini-server trong mạng nhà, ví dụ http://192.168.1.10:8080";
     case kSectionDiscover: return @"Tự tìm chỉ được khi iPad và máy chủ ở chung một mạng (cùng dải địa chỉ IP).";
+    case kSectionUpdate:
+        return [NSString stringWithFormat:@"Đang dùng TubeMini %@. Cũng cập nhật được trong Cydia: nguồn https://tubemini.github.io/cydia/",
+                                          [TMUpdater currentVersion]];
     case kSectionProxy: return @"Bật khi xem bằng 4G hay Wi-Fi khác mà video không phát: video sẽ đi qua máy chủ (tốn mạng nhà). Máy chủ phải đặt proxy_fallback = true.";
     case kSectionQuality: return @"360p nhẹ và ổn định. 720p cần Wi-Fi tốt, 1080p cần Wi-Fi rất tốt (khoảng 5 Mbit/s). Video không có mức đã chọn thì phát mức thấp hơn gần nhất.";
     case kSectionTest: {
@@ -238,6 +250,19 @@ enum {
         _searching ? [_discoverSpin startAnimating] : [_discoverSpin stopAnimating];
         [cell.contentView addSubview:_discoverSpin];
         return cell;
+    case kSectionUpdate: {
+        TMUpdater *u = [TMUpdater shared];
+        cell.textLabel.text = u.busy ? u.status : (u.updateAvailable ? [NSString stringWithFormat:@"Cập nhật lên %@", u.latestVersion]
+                                                                     : @"Kiểm tra cập nhật");
+        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+        cell.textLabel.textColor = [TMTheme current].accent;
+        cell.textLabel.backgroundColor = [UIColor clearColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+        _updateSpin.center = CGPointMake(30, 22);
+        u.busy ? [_updateSpin startAnimating] : [_updateSpin stopAnimating];
+        [cell.contentView addSubview:_updateSpin];
+        return cell;
+    }
     case kSectionProxy:
         cell.textLabel.text = @"Phát qua máy chủ";
         cell.textLabel.textColor = [TMTheme current].text;
@@ -265,6 +290,36 @@ enum {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == kSectionTest) [self testConnection];
     if (indexPath.section == kSectionDiscover) [self discover];
+    if (indexPath.section == kSectionUpdate) [self updateTapped];
+}
+
+#pragma mark - App update
+
+- (void)updaterChanged {
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kSectionUpdate] withRowAnimation:UITableViewRowAnimationNone];
+}
+
+- (void)updateTapped {
+    TMUpdater *u = [TMUpdater shared];
+    if (u.busy) return;
+    if (u.updateAvailable) {
+        [u offer];
+        return;
+    }
+    [u check:^(NSString *error) {
+        if (error) {
+            [[[UIAlertView alloc] initWithTitle:@"Không kiểm tra được" message:error delegate:nil cancelButtonTitle:@"Đóng"
+                              otherButtonTitles:nil] show];
+        } else if (u.updateAvailable) {
+            [u offer];
+        } else {
+            [[[UIAlertView alloc] initWithTitle:@"Đang dùng bản mới nhất"
+                                        message:[NSString stringWithFormat:@"TubeMini %@", [TMUpdater currentVersion]]
+                                       delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil] show];
+        }
+    }];
 }
 
 #pragma mark - Bonjour

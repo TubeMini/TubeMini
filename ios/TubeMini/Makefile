@@ -25,6 +25,10 @@ endif
 
 include $(THEOS_MAKE_PATH)/application.mk
 
+# OTA updates: setuid-root installer, /usr/libexec/tubemini/tmupdate (postinst sets the bit)
+SUBPROJECTS += tmupdate
+include $(THEOS_MAKE_PATH)/aggregate.mk
+
 # Files copied from Windows lose the executable bit
 before-package::
 	chmod 0755 $(THEOS_STAGING_DIR)/DEBIAN/postinst

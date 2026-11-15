@@ -7,6 +7,7 @@
 #import "TMVideoViewController.h"
 #import "TMDownloadsViewController.h"
 #import "TMPlayer.h"
+#import "TMUpdater.h"
 #import "TMImageLoader.h"
 #import "TMHomeViewController.h"
 #import "TMLibrary.h"
@@ -141,6 +142,7 @@ static UIImage *icon(TMDrawBlock draw) {
                           otherButtonTitles:nil] show];
     }
     [[TMDownloads shared] resume]; // downloads interrupted last time
+    if ([TMAPIClient shared].isConfigured) [[TMUpdater shared] checkQuietly]; // a newer TubeMini? (once a day)
 #ifdef TM_DEBUG
     [TMDebug start];
 #endif

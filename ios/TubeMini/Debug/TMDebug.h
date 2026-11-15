@@ -32,6 +32,7 @@
 ///   opendl <row>        tap a row of "Đã tải"                          nowplaying    log the lock screen info
 ///   proxy on|off        "Phát qua máy chủ"                             bonjour       "Tìm máy chủ trong mạng"
 ///   audio [status|toggle|seek <s>|skip <s>|stop]   the "Chỉ nghe" player behind the mini bar
+///   update [status|check|install|feed <url>]        OTA app update (feed: another update.json for tests)
 ///   scrollend           scroll the list to the bottom (loads the next page)
 ///   back                pop the current screen          pingtest      run "Kiểm tra kết nối"
 ///   dismissalert        log and close visible alerts    ui            log the current screen

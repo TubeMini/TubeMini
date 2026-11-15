@@ -4,6 +4,9 @@ Version: 0.5.0
 Architecture: iphoneos-arm
 Description: Ứng dụng YouTube cho iPad iOS 6, dùng server tubemini-server trong mạng nhà.
 Maintainer: TubeMini <https://github.com/TubeMini>
-Author: TubeMini
+Author: TubeMini <https://github.com/TubeMini>
 Section: Multimedia
 Depends: firmware (>= 6.0)
+Homepage: https://tubemini.github.io/
+Depiction: https://tubemini.github.io/cydia/depiction/
+Icon: https://tubemini.github.io/cydia/icon.png

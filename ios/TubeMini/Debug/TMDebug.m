@@ -9,6 +9,7 @@
 #import "TMSearchViewController.h"
 #import "TMSettingsViewController.h"
 #import "TMAudioPlayer.h"
+#import "TMUpdater.h"
 #import "TMChannelViewController.h"
 #import "TMDownloads.h"
 #import "TMDownloadsViewController.h"
@@ -168,6 +169,20 @@ static AVPlayer *gAVPlayer;
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top showSection:[arg integerValue]];
         if ([top isKindOfClass:[TMChannelViewController class]]) [(TMChannelViewController *)top showSection:[arg integerValue]];
+    } else if ([verb isEqualToString:@"update"]) {
+        // update check | install | feed <url> (empty = default) | status
+        TMUpdater *u = [TMUpdater shared];
+        NSArray *parts = [arg componentsSeparatedByString:@" "];
+        NSString *sub = parts.count && [parts[0] length] ? parts[0] : @"status";
+        if ([sub isEqualToString:@"feed"]) u.feedURL = parts.count > 1 ? parts[1] : nil;
+        if ([sub isEqualToString:@"check"]) {
+            [u check:^(NSString *error) {
+                TMLog(@"[update] kiểm tra: %@ · mới nhất %@ · có bản mới: %d", error ?: @"ok", u.latestVersion, u.updateAvailable);
+            }];
+        }
+        if ([sub isEqualToString:@"install"]) [u install];
+        TMLog(@"[update] feed %@ · đang dùng %@ · mới nhất %@ · %@", u.feedURL, [TMUpdater currentVersion], u.latestVersion ?: @"?",
+              u.status ?: @"rảnh");
     } else if ([verb isEqualToString:@"audio"]) {
         // audio status | toggle | seek <s> | skip <s> | stop
         TMAudioPlayer *a = [TMAudioPlayer shared];

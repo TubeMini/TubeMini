@@ -3,4 +3,9 @@
 if command -v uicache >/dev/null 2>&1; then
     su mobile -c uicache 2>/dev/null || uicache 2>/dev/null || true
 fi
+# The OTA installer runs as root (like Cydia's own helper); it only installs this app's package
+H=/usr/libexec/tubemini/tmupdate
+if [ -f "$H" ]; then
+    chown root:wheel "$H" && chmod 4755 "$H"
+fi
 exit 0
