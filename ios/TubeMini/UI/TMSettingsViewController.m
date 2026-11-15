@@ -42,8 +42,8 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
     _token = [self fieldWithPlaceholder:@"Để trống nếu máy chủ không đặt mã"];
     _token.secureTextEntry = YES;
     _token.text = api.token;
-    _quality = [[UISegmentedControl alloc] initWithItems:@[ @"360p", @"720p" ]];
-    _quality.selectedSegmentIndex = api.preferredQuality >= 720 ? 1 : 0;
+    _quality = [[UISegmentedControl alloc] initWithItems:@[ @"360p", @"720p", @"1080p" ]];
+    _quality.selectedSegmentIndex = (NSInteger)[[TMAPIClient qualities] indexOfObject:@(api.preferredQuality)];
     _quality.segmentedControlStyle = UISegmentedControlStyleBar; // iOS 6 only tints the bar style
     [_quality addTarget:self action:@selector(save) forControlEvents:UIControlEventValueChanged];
     _theme = [[UISegmentedControl alloc] initWithItems:@[ @"Sáng", @"Tối" ]];
@@ -122,7 +122,7 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
     TMAPIClient *api = [TMAPIClient shared];
     _server.text = api.serverURL;
     _token.text = api.token;
-    _quality.selectedSegmentIndex = api.preferredQuality >= 720 ? 1 : 0;
+    _quality.selectedSegmentIndex = (NSInteger)[[TMAPIClient qualities] indexOfObject:@(api.preferredQuality)];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -147,7 +147,7 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
     TMAPIClient *api = [TMAPIClient shared];
     api.serverURL = _server.text;
     api.token = _token.text;
-    api.preferredQuality = _quality.selectedSegmentIndex == 1 ? 720 : 360;
+    api.preferredQuality = [[TMAPIClient qualities][(NSUInteger)MAX(_quality.selectedSegmentIndex, 0)] integerValue];
     _server.text = api.serverURL; // show the normalized form
 }
 
@@ -179,7 +179,7 @@ enum { kSectionServer, kSectionToken, kSectionQuality, kSectionTheme, kSectionTe
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     switch (section) {
     case kSectionServer: return @"Máy chạy tubemini-server trong mạng nhà, ví dụ http://192.168.1.10:8080";
-    case kSectionQuality: return @"360p nhẹ và ổn định. 720p (HD) cần Wi-Fi tốt; video có quảng cáo phải chờ vài giây trước khi phát.";
+    case kSectionQuality: return @"360p nhẹ và ổn định. 720p (HD) cần Wi-Fi tốt, 1080p (Full HD) cần Wi-Fi rất tốt (khoảng 5 Mbit/s). Video không có mức đã chọn thì phát mức thấp hơn gần nhất. Video có quảng cáo phải chờ vài giây trước khi phát.";
     case kSectionTest: {
         NSDictionary *info = [NSBundle mainBundle].infoDictionary;
         return [NSString stringWithFormat:@"TubeMini %@ · iOS %@", info[@"CFBundleShortVersionString"],

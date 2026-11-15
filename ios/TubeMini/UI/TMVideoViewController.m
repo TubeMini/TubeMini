@@ -211,13 +211,14 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
                                                        delegate:self
                                               cancelButtonTitle:nil
                                          destructiveButtonTitle:nil
-                                              otherButtonTitles:@"360p (nhẹ, ổn định)", @"720p (HD)", nil];
+                                              otherButtonTitles:@"360p (nhẹ, ổn định)", @"720p (HD)", @"1080p (Full HD)", nil];
     [sheet showFromRect:_qualityButton.frame inView:_header animated:YES];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex < 0 || buttonIndex > 1) return;
-    _quality = buttonIndex == 1 ? 720 : 360;
+    NSArray *qualities = [TMAPIClient qualities];
+    if (buttonIndex < 0 || buttonIndex >= (NSInteger)qualities.count) return;
+    _quality = [qualities[(NSUInteger)buttonIndex] integerValue];
     [_qualityButton setTitle:[NSString stringWithFormat:@"Chất lượng: %ldp", (long)_quality] forState:UIControlStateNormal];
 }
 

@@ -343,8 +343,9 @@ static AVPlayer *gAVPlayer;
           p.naturalSize.height);
     MPMovieAccessLogEvent *a = p.accessLog.events.lastObject;
     if (a) {
-        TMLog(@"[status] accessLog: %@ bytes=%lld stalls=%ld observedBitrate=%.0f indicatedBitrate=%.0f",
-              a.serverAddress, a.numberOfBytesTransferred, (long)a.numberOfStalls, a.observedBitrate, a.indicatedBitrate);
+        TMLog(@"[status] accessLog: %@ bytes=%lld stalls=%ld dropped=%ld observedBitrate=%.0f indicatedBitrate=%.0f",
+              a.serverAddress, a.numberOfBytesTransferred, (long)a.numberOfStalls, (long)a.numberOfDroppedVideoFrames,
+              a.observedBitrate, a.indicatedBitrate);
     }
     [self logErrorLog:p];
 }

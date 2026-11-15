@@ -14,8 +14,11 @@ typedef void (^TMFeedBlock)(TMFeed *feed, NSString *error);
 /// Normalized server URL without trailing slash ("" when not set yet).
 @property (nonatomic, copy) NSString *serverURL;
 @property (nonatomic, copy) NSString *token;
-/// 360 or 720.
+/// 360, 720 or 1080.
 @property (nonatomic, assign) NSInteger preferredQuality;
+/// Qualities the user can choose (360, 720, 1080), and the nearest one not above `q`.
++ (NSArray *)qualities;
++ (NSInteger)normalizedQuality:(NSInteger)q;
 - (BOOL)isConfigured;
 /// "192.168.1.10:8080" → "http://192.168.1.10:8080" (trims, adds scheme, drops trailing "/").
 + (NSString *)normalizeURL:(NSString *)input;

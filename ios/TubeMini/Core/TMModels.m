@@ -65,11 +65,12 @@
     return nil;
 }
 - (TMStream *)streamForQuality:(NSInteger)quality {
-    TMStream *hls = [self streamOfKind:@"hls"];
-    TMStream *mp4 = [self streamOfKind:@"mp4"];
-    if (quality >= 720 && hls) return hls;
-    if (mp4) return mp4;
-    return hls;
+    TMStream *best = nil, *smallest = nil;
+    for (TMStream *s in self.streams) {
+        if (!smallest || s.quality < smallest.quality) smallest = s;
+        if (s.quality <= quality && (!best || s.quality > best.quality)) best = s;
+    }
+    return best ?: smallest;
 }
 @end
 

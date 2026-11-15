@@ -49,13 +49,20 @@ static const NSTimeInterval kTimeout = 20;
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
++ (NSArray *)qualities {
+    return @[ @360, @720, @1080 ];
+}
+
++ (NSInteger)normalizedQuality:(NSInteger)q {
+    return q >= 1080 ? 1080 : (q >= 720 ? 720 : 360);
+}
+
 - (NSInteger)preferredQuality {
-    NSInteger q = [[NSUserDefaults standardUserDefaults] integerForKey:kQualityKey];
-    return q >= 720 ? 720 : 360;
+    return [TMAPIClient normalizedQuality:[[NSUserDefaults standardUserDefaults] integerForKey:kQualityKey]];
 }
 
 - (void)setPreferredQuality:(NSInteger)preferredQuality {
-    [[NSUserDefaults standardUserDefaults] setInteger:(preferredQuality >= 720 ? 720 : 360) forKey:kQualityKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:[TMAPIClient normalizedQuality:preferredQuality] forKey:kQualityKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 

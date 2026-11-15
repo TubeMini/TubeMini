@@ -57,7 +57,7 @@
 @property (nonatomic, assign) NSInteger availableIn;
 @property (nonatomic, assign) long long expire;
 @property (nonatomic, strong) NSArray *streams;
-/// HLS for ≥ 720 when available, otherwise the MP4 (or whatever exists).
+/// Highest stream not above `quality` (the MP4 wins a tie at 360); none fits → the smallest.
 - (TMStream *)streamForQuality:(NSInteger)quality;
 - (TMStream *)streamOfKind:(NSString *)kind;
 @end

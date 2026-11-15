@@ -17,7 +17,7 @@
 ///   stop                close the player
 ///   mark <text>         write a marker line to the log
 /// UI automation (drives the real screens):
-///   server <url>        set the server address        quality <360|720>   default quality
+///   server <url>        set the server address        quality <360|720|1080> default quality
 ///   tab <n>             select tab (0 home, 1 search, 2 settings)
 ///   search <q>          search videos ("search ch:<q>" for channels)
 ///   open <row>          tap row <row> of the list on screen

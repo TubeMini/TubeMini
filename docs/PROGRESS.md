@@ -199,3 +199,8 @@
 - giao diện tối ở Trang chủ, Tìm kiếm (video, kênh), trang kênh, Chi tiết video, Cài đặt;
 - chuyển qua lại Lưới / Danh sách và Sáng / Tối không crash;
 - RAM khoảng 10–12 MB.
+- [x] **Thông báo "Đang lấy link phát…" xoay theo màn hình** (anh báo bị ngược khi cầm ngang): HUD gắn vào view của root view
+  controller thay vì gắn thẳng vào `UIWindow` (trên iOS 6 view gắn thẳng vào window không xoay). Đã kiểm bằng ảnh chụp khi ngang.
+- [x] **Chất lượng 1080p** (D25): Cài đặt và nút "Chất lượng" có 360p / 720p / 1080p; `streams` trả thêm mục HLS 1080.
+  Đã kiểm trên iPad: bản tin HTV 1920x1080 (avc1.640028, 25 fps) phát mượt, 0 lần giật, 0 khung bị rớt, RAM 13.6 MB.
+

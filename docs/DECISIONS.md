@@ -286,3 +286,18 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
   - **Từ nay build với `-Werror=unguarded-availability -Werror=partial-availability`:** header SDK 9.3 có ghi chú phiên bản, nên
     dùng API mới hơn iOS 6.0 là build lỗi luôn. Đã thử: bắt được `collectionViewLayout`, `keyboardDismissMode`, `containsString`.
     **Không bắt được** `UISearchBar.keyboardAppearance` (SDK không ghi chú), nên vẫn phải nhớ thủ công.
+
+## D25. Thêm chất lượng 1080p — 15/11/2026
+
+- Anh yêu cầu. Theo thông số của Apple, iPad mini 1 (chip A5) giải mã được H.264 tới 1080p 30 fps, High Profile level 4.1.
+  Biến thể 1080p avc1 của YouTube là `avc1.640028` (High 4.0), nằm trong giới hạn đó.
+  - Bản 1080p60 là `avc1.64002A` (level 4.2, quá sức A5), đã bị bộ lọc ≤ 30 fps loại sẵn.
+- `streams` trả hai mức HLS: 720 và 1080. Hai mục cùng độ phân giải thật thì chỉ giữ một, sắp xếp tăng dần.
+  - Video chỉ có 1080p60 thì không có mục 1080.
+  - Server tải master playlist của YouTube một lần rồi lọc cho từng mức.
+- App chọn mục cao nhất không vượt mức người dùng chọn; không có mục nào như vậy thì lấy mục thấp nhất.
+  - Cách chọn này cũng sửa một lỗi cũ: video bị lồng tiếng AI (360p là HLS) mà chọn 720p thì app lại lấy mục HLS 360 đầu tiên.
+- Màn hình iPad mini chỉ 1024x768, nên 1080p nhìn chỉ nét hơn 720p một chút, mà tốn khoảng 4–5 Mbit/s. Vì vậy mặc định vẫn là 360p.
+- Với HLS, `naturalSize` của MPMoviePlayerController trên iOS 6 luôn báo 853x480 (cả với biến thể 360p lẫn 720p). Muốn biết đang
+  phát biến thể nào thì xem `indicatedBitrate` trong access log rồi so với BANDWIDTH của playlist.
+- App YouTube cũ: tiền tố `/1080/...` đã chạy được từ trước (`res` được kẹp trong 144–2160).
