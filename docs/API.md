@@ -75,6 +75,10 @@ Trang chủ. `most_popular` trộn các trang chủ đề Âm nhạc, Tin tức,
 `_News`, `_Sports`, `_Games`, `_Film` là từng danh mục. Không có `rel='next'`. Nhận `max-results` (mặc định 25, tối đa 50). Phần
 `<region>` trong đường dẫn được bỏ qua: vùng lấy từ config.
 
+Khi config có `home_feed = "subscriptions"` và đã theo dõi ít nhất một kênh, các feed không có hậu tố danh mục (`most_popular`,
+`recently_featured`, `most_viewed`, `top_rated`…) trả **video mới từ các kênh đã theo dõi**, giống `/tm/v1/feed` (có `rel='next'`;
+app classic nhận 15 video đầu). Feed theo danh mục (`_Music`, `_News`…) vẫn như cũ. Chưa theo dõi kênh nào thì vẫn là feed phổ biến.
+
 ### `GET /feeds/api/videos?q=<từ khóa>`
 
 Tìm video. Tham số:
@@ -213,7 +217,12 @@ Quy ước:
   | `unauthorized` | 401 | Thiếu hoặc sai `X-Auth-Token` |
   | `bad_request` | 400 | ID video sai |
   | `no_stream` | 502 | yt-dlp không lấy được link (video riêng tư, bị chặn vùng, yt-dlp hỏng…) |
+  | `upstream` | 502 | YouTube không trả thông tin kênh hoặc video (khi theo dõi kênh, khi dựng feed) |
   | `not_found` | 404 | Route không tồn tại dưới `/tm/v1` |
+  | `internal` | 500 | Lỗi máy chủ (ví dụ không ghi được file SQLite) |
+- **Dữ liệu người dùng** (kênh theo dõi, lịch sử) nằm trong `<data_dir>/tubemini.db` (SQLite) trên server. Không có tài khoản: mọi
+  thiết bị dùng chung một server thì thấy chung dữ liệu.
+- **POST** nhận thân `application/x-www-form-urlencoded` (UTF-8).
 
 ### `GET /tm/v1/ping`
 
@@ -253,6 +262,78 @@ Các lựa chọn chất lượng, gọi ngay trước khi phát.
 - Thứ tự: `quality` tăng dần. App chọn mục có `quality` lớn nhất mà không vượt chất lượng người dùng chọn (360 / 720 / 1080);
   không có mục nào như vậy thì lấy mục nhỏ nhất.
 
-### Chưa làm (Giai đoạn 4)
+### `GET /tm/v1/subscriptions`
 
-`/tm/v1/subscriptions`, `/tm/v1/feed`, `/tm/v1/history`.
+Các kênh đã theo dõi, dạng **feed kênh Atom** giống hệt `/feeds/api/channels?q=` (`yt:channelId`, `title`, `media:thumbnail`,
+`yt:channelStatistics subscriberCount`). Sắp theo tên kênh, không phân trang. Tên, avatar và số người đăng ký là giá trị lúc bấm theo
+dõi.
+
+### `POST /tm/v1/subscriptions`
+
+Theo dõi một kênh. Thân: `channel_id=UC…`. Server lấy tên và avatar của kênh từ YouTube rồi lưu. Theo dõi lại kênh đã có thì chỉ cập
+nhật tên và avatar.
+
+```xml
+<tm:subscription xmlns:tm="urn:tubemini:1" channel_id="UCabc…" name="HTV Tin Tức" avatar="https://yt3.ggpht.com/…=s88-c-k-c0x00ffffff-no-rj"/>
+```
+
+- `bad_request` (400): thiếu hoặc sai `channel_id`. `upstream` (502): YouTube không trả thông tin kênh.
+
+### `DELETE /tm/v1/subscriptions/<channel id>`
+
+Bỏ theo dõi. Luôn trả `<tm:ok xmlns:tm="urn:tubemini:1"/>`, kể cả khi chưa theo dõi kênh đó.
+
+### `GET /tm/v1/feed[?fresh=1]`
+
+Video mới từ các kênh đã theo dõi, dạng **feed video Atom** giống lớp GData.
+
+- Server lấy trang đầu tab Video của từng kênh (khoảng 30 video, không gồm Shorts và livestream), gộp lại, sắp theo `published` mới
+  nhất trước, giữ tối đa 300 video. RSS của YouTube đã ngừng chạy nên không dùng được (D26).
+- `published` của tab Video chỉ là thời gian tương đối ("3 giờ trước"), nên thứ tự giữa các kênh chỉ gần đúng. Trong cùng một kênh
+  thì đúng thứ tự của YouTube.
+- Phân trang: `max-results` (mặc định 25, tối đa 50), `rel='next'` dùng `skip` như lớp GData.
+- Cache: mỗi kênh 30 phút, cả feed đã gộp 10 phút. Theo dõi hoặc bỏ theo dõi thì feed gộp được dựng lại. `fresh=1` tải lại mọi kênh
+  (app gọi khi kéo xuống để làm mới).
+- Chưa theo dõi kênh nào: feed rỗng (200, không có `entry`). Kênh nào lỗi thì bỏ qua kênh đó; tất cả đều lỗi thì `upstream` (502).
+
+### `GET /tm/v1/history`
+
+Lịch sử xem, dạng **feed video Atom** giống lớp GData, video xem gần nhất trước, phân trang như `/tm/v1/feed`. Mỗi `entry` có thêm:
+
+```xml
+<tm:position seconds="754"/>
+<tm:watched>2026-11-15T03:40:00.000Z</tm:watched>
+```
+
+- `tm:position`: vị trí đang xem (giây). `tm:watched`: lần xem gần nhất. `yt:duration` là thời lượng app gửi lên.
+- Server giữ 500 video xem gần nhất.
+
+### `GET /tm/v1/history/<id>`
+
+Vị trí đã xem của một video, để app hiện "Xem tiếp" và tua tới đó khi phát.
+
+```xml
+<tm:history xmlns:tm="urn:tubemini:1" video_id="dQw4w9WgXcQ" position="754" duration="1347" watched="2026-11-15T03:40:00.000Z"/>
+```
+
+Video chưa xem bao giờ: vẫn `200`, với `position="0" duration="0" watched=""`.
+
+### `POST /tm/v1/history`
+
+Lưu vị trí đang xem. Thân:
+
+| Trường | Bắt buộc | Ý nghĩa |
+| --- | --- | --- |
+| `video_id` | có | ID video |
+| `position` | có | giây, số nguyên ≥ 0 |
+| `duration` | không | thời lượng (giây) |
+| `title`, `author`, `author_id` | không | app gửi những gì nó biết; thiếu `title` thì server tự hỏi YouTube khi video mới vào lịch sử |
+
+Trả về `<tm:history …/>` như trên. App gửi khoảng 15 giây một lần trong lúc phát, và khi đóng trình phát.
+
+- `bad_request` (400): thiếu `video_id` / `position` hoặc sai định dạng.
+- App xem tiếp khi `position ≥ 10` và `position < duration − 20`; ngoài khoảng đó thì phát từ đầu.
+
+### `DELETE /tm/v1/history/<id>` và `DELETE /tm/v1/history`
+
+Xóa một video khỏi lịch sử, hoặc xóa hết. Trả `<tm:ok xmlns:tm="urn:tubemini:1"/>`.
