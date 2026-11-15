@@ -10,6 +10,9 @@
 ///   play <url>          open MPMoviePlayerViewController with the URL and autoplay
 ///   status              log player state (playback/load state, size, position, access/error log)
 ///   frame <name>        save the decoded video frame at the current position → TubeMini-shots/<name>.jpg
+///   avplay <url>        play the URL in a headless AVPlayer (to inspect tracks)
+///   avstatus            log the AVPlayer item: status, position, size, video/audio tracks, access log
+///   avstop              stop the AVPlayer
 ///   seek <seconds>      jump the player to a position
 ///   stop                close the player
 ///   mark <text>         write a marker line to the log

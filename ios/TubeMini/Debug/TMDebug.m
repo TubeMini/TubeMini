@@ -1,12 +1,15 @@
 #import "TMDebug.h"
 #import "TMAppDelegate.h"
 #import "TMLog.h"
+#import <AVFoundation/AVFoundation.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 #include <dlfcn.h>
 
 static MPMoviePlayerViewController *gPlayerVC;
+/// Headless AVPlayer for `avplay`: reports which tracks (video / audio) are really playing.
+static AVPlayer *gAVPlayer;
 
 @implementation TMDebug
 
@@ -74,6 +77,16 @@ static MPMoviePlayerViewController *gPlayerVC;
         [self status];
     } else if ([verb isEqualToString:@"frame"]) {
         [self frame:arg.length ? arg : @"frame"];
+    } else if ([verb isEqualToString:@"avplay"]) {
+        NSURL *url = [NSURL URLWithString:arg];
+        [gAVPlayer pause];
+        gAVPlayer = url ? [AVPlayer playerWithURL:url] : nil;
+        [gAVPlayer play];
+    } else if ([verb isEqualToString:@"avstatus"]) {
+        [self avStatus];
+    } else if ([verb isEqualToString:@"avstop"]) {
+        [gAVPlayer pause];
+        gAVPlayer = nil;
     } else if ([verb isEqualToString:@"seek"]) {
         gPlayerVC.moviePlayer.currentPlaybackTime = [arg doubleValue];
     } else if ([verb isEqualToString:@"stop"]) {
@@ -189,6 +202,27 @@ static MPMoviePlayerViewController *gPlayerVC;
               a.serverAddress, a.numberOfBytesTransferred, (long)a.numberOfStalls, a.observedBitrate, a.indicatedBitrate);
     }
     [self logErrorLog:p];
+}
+
++ (void)avStatus {
+    AVPlayerItem *item = gAVPlayer.currentItem;
+    if (!item) {
+        TMLog(@"[av] không có AVPlayer");
+        return;
+    }
+    TMLog(@"[av] status=%ld rate=%.1f t=%.1f size=%.0fx%.0f error=%@", (long)item.status, gAVPlayer.rate,
+          CMTimeGetSeconds(item.currentTime), item.presentationSize.width, item.presentationSize.height,
+          item.error.localizedDescription ?: @"không");
+    for (AVPlayerItemTrack *t in item.tracks) {
+        AVAssetTrack *a = t.assetTrack;
+        TMLog(@"[av] track %@ enabled=%d format=%@", a.mediaType, t.enabled,
+              a.formatDescriptions.count ? @"có" : @"(HLS: không báo)");
+    }
+    AVPlayerItemAccessLogEvent *e = item.accessLog.events.lastObject;
+    if (e) {
+        TMLog(@"[av] accessLog bytes=%lld indicatedBitrate=%.0f server=%@", e.numberOfBytesTransferred,
+              e.indicatedBitrate, e.serverAddress);
+    }
 }
 
 #pragma mark - screenshot
