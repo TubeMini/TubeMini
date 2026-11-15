@@ -1,0 +1,1790 @@
+{
+ "metadata": {
+  "channelMetadataRenderer": {
+   "title": "Blender"
+  }
+ },
+ "items": [
+  {
+   "richItemRenderer": {
+    "content": {
+     "lockupViewModel": {
+      "contentImage": {
+       "thumbnailViewModel": {
+        "image": {
+         "sources": [
+          {
+           "url": "https://i.ytimg.com/vi/pvUy69I_Xuk/hq720.jpg?sqp=-oaymwEjCOgCEMoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCFmp-yzQZv_rRoBmjgtT2uEvJn7A",
+           "width": 360,
+           "height": 202
+          },
+          {
+           "url": "https://i.ytimg.com/vi/pvUy69I_Xuk/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAMkrAx0QV8vDxhC1I1Nl7Gr7LgSg",
+           "width": 720,
+           "height": 404
+          }
+         ]
+        },
+        "overlays": [
+         {
+          "thumbnailBottomOverlayViewModel": {
+           "badges": [
+            {
+             "thumbnailBadgeViewModel": {
+              "text": "28:01",
+              "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+              "animationActivationTargetId": "pvUy69I_Xuk",
+              "animationActivationEntityKey": "Eh8veW91dHViZS9hcHAvd2F0Y2gvcGxheWVyX3N0YXRlIMMCKAE%3D",
+              "lottieData": {
+               "url": "https://www.gstatic.com/youtube/img/lottie/audio_indicator/audio_indicator_v2.json",
+               "settings": {
+                "loop": true,
+                "autoplay": true
+               }
+              },
+              "animatedText": "Đang phát",
+              "animationActivationEntitySelectorType": "THUMBNAIL_BADGE_ANIMATION_ENTITY_SELECTOR_TYPE_PLAYER_STATE",
+              "rendererContext": {
+               "accessibilityContext": {
+                "label": "28 phút, 1 giây"
+               }
+              }
+             }
+            }
+           ]
+          }
+         },
+         {
+          "thumbnailHoverOverlayToggleActionsViewModel": {
+           "buttons": [
+            {
+             "toggleButtonViewModel": {
+              "defaultButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "WATCH_LATER",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CLsCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true,
+                    "apiUrl": "/youtubei/v1/browse/edit_playlist"
+                   }
+                  },
+                  "playlistEditEndpoint": {
+                   "playlistId": "WL",
+                   "actions": [
+                    {
+                     "addedVideoId": "pvUy69I_Xuk",
+                     "action": "ACTION_ADD_VIDEO"
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Xem sau",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CLsCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "toggledButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "CHECK",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CLoCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true,
+                    "apiUrl": "/youtubei/v1/browse/edit_playlist"
+                   }
+                  },
+                  "playlistEditEndpoint": {
+                   "playlistId": "WL",
+                   "actions": [
+                    {
+                     "action": "ACTION_REMOVE_VIDEO_BY_VIDEO_ID",
+                     "removedVideoId": "pvUy69I_Xuk"
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Đã thêm",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CLoCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "isToggled": false,
+              "trackingParams": "CLQCENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ=="
+             }
+            },
+            {
+             "toggleButtonViewModel": {
+              "defaultButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "ADD_TO_QUEUE_TAIL",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CLkCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true
+                   }
+                  },
+                  "signalServiceEndpoint": {
+                   "signal": "CLIENT_SIGNAL",
+                   "actions": [
+                    {
+                     "clickTrackingParams": "CLkCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                     "addToPlaylistCommand": {
+                      "openMiniplayer": true,
+                      "videoId": "pvUy69I_Xuk",
+                      "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                      "onCreateListCommand": {
+                       "clickTrackingParams": "CLkCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                       "commandMetadata": {
+                        "webCommandMetadata": {
+                         "sendPost": true,
+                         "apiUrl": "/youtubei/v1/playlist/create"
+                        }
+                       },
+                       "createPlaylistServiceEndpoint": {
+                        "videoIds": [
+                         "pvUy69I_Xuk"
+                        ],
+                        "params": "CAQ%3D"
+                       }
+                      },
+                      "videoIds": [
+                       "pvUy69I_Xuk"
+                      ],
+                      "videoCommand": {
+                       "clickTrackingParams": "CLkCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                       "commandMetadata": {
+                        "webCommandMetadata": {
+                         "url": "/watch?v=pvUy69I_Xuk",
+                         "webPageType": "WEB_PAGE_TYPE_WATCH",
+                         "rootVe": 3832
+                        }
+                       },
+                       "watchEndpoint": {
+                        "videoId": "pvUy69I_Xuk",
+                        "watchEndpointSupportedOnesieConfig": {
+                         "html5PlaybackOnesieConfig": {
+                          "commonConfig": {
+                           "url": "https://rr3---sn-8pxuuxa-8ja6.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=a6f532ebd23f5ee9&ip=203.0.113.7&initcwndbps=3059500&mt=1794706436&oweuc="
+                          }
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Thêm vào danh sách chờ",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CLkCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "toggledButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "CHECK",
+                "accessibilityText": "Đã thêm",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CLgCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "isToggled": false,
+              "trackingParams": "CLQCENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ=="
+             }
+            }
+           ]
+          }
+         }
+        ]
+       }
+      },
+      "metadata": {
+       "lockupMetadataViewModel": {
+        "title": {
+         "content": "What's New in Blender 5.3! Official Overview"
+        },
+        "metadata": {
+         "contentMetadataViewModel": {
+          "metadataRows": [
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "278 N lượt xem"
+              }
+             },
+             {
+              "text": {
+               "content": "4 ngày trước"
+              },
+              "accessibilityLabel": "4 ngày trước"
+             }
+            ]
+           }
+          ],
+          "delimiter": " • "
+         }
+        },
+        "menuButton": {
+         "buttonViewModel": {
+          "iconName": "MORE_VERT",
+          "onTap": {
+           "innertubeCommand": {
+            "clickTrackingParams": "CLUCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+            "showSheetCommand": {
+             "panelLoadingStrategy": {
+              "inlineContent": {
+               "sheetViewModel": {
+                "content": {
+                 "listViewModel": {
+                  "listItems": [
+                   {
+                    "listItemViewModel": {
+                     "title": {
+                      "content": "Thêm vào danh sách chờ"
+                     },
+                     "leadingImage": {
+                      "sources": [
+                       {
+                        "clientResource": {
+                         "imageName": "ADD_TO_QUEUE_TAIL"
+                        }
+                       }
+                      ]
+                     },
+                     "rendererContext": {
+                      "loggingContext": {
+                       "loggingDirectives": {
+                        "trackingParams": "CLcCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                        "visibility": {
+                         "types": "12"
+                        }
+                       }
+                      },
+                      "commandContext": {
+                       "onTap": {
+                        "innertubeCommand": {
+                         "clickTrackingParams": "CLcCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                         "commandMetadata": {
+                          "webCommandMetadata": {
+                           "sendPost": true
+                          }
+                         },
+                         "signalServiceEndpoint": {
+                          "signal": "CLIENT_SIGNAL",
+                          "actions": [
+                           {
+                            "clickTrackingParams": "CLcCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                            "addToPlaylistCommand": {
+                             "openMiniplayer": true,
+                             "videoId": "pvUy69I_Xuk",
+                             "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                             "onCreateListCommand": {
+                              "clickTrackingParams": "CLcCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                              "commandMetadata": {
+                               "webCommandMetadata": {
+                                "sendPost": true,
+                                "apiUrl": "/youtubei/v1/playlist/create"
+                               }
+                              },
+                              "createPlaylistServiceEndpoint": {
+                               "videoIds": [
+                                "pvUy69I_Xuk"
+                               ],
+                               "params": "CAQ%3D"
+                              }
+                             },
+                             "videoIds": [
+                              "pvUy69I_Xuk"
+                             ],
+                             "videoCommand": {
+                              "clickTrackingParams": "CLcCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                              "commandMetadata": {
+                               "webCommandMetadata": {
+                                "url": "/watch?v=pvUy69I_Xuk",
+                                "webPageType": "WEB_PAGE_TYPE_WATCH",
+                                "rootVe": 3832
+                               }
+                              },
+                              "watchEndpoint": {
+                               "videoId": "pvUy69I_Xuk",
+                               "watchEndpointSupportedOnesieConfig": {
+                                "html5PlaybackOnesieConfig": {
+                                 "commonConfig": {
+                                  "url": "https://rr3---sn-8pxuuxa-8ja6.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=a6f532ebd23f5ee9&ip=203.0.113.7&initcwndbps=3059500&mt=1794706436&oweuc="
+                                 }
+                                }
+                               }
+                              }
+                             }
+                            }
+                           }
+                          ]
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "listItemViewModel": {
+                     "title": {
+                      "content": "Chia sẻ"
+                     },
+                     "leadingImage": {
+                      "sources": [
+                       {
+                        "clientResource": {
+                         "imageName": "SHARE"
+                        }
+                       }
+                      ]
+                     },
+                     "rendererContext": {
+                      "commandContext": {
+                       "onTap": {
+                        "innertubeCommand": {
+                         "clickTrackingParams": "CLUCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                         "commandMetadata": {
+                          "webCommandMetadata": {
+                           "sendPost": true,
+                           "apiUrl": "/youtubei/v1/share/get_share_panel"
+                          }
+                         },
+                         "shareEntityServiceEndpoint": {
+                          "serializedShareEntity": "CgtwdlV5NjlJX1h1aw%3D%3D",
+                          "commands": [
+                           {
+                            "clickTrackingParams": "CLUCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                            "openPopupAction": {
+                             "popup": {
+                              "unifiedSharePanelRenderer": {
+                               "trackingParams": "CLYCEI5iIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                               "showLoadingSpinner": true
+                              }
+                             },
+                             "popupType": "DIALOG",
+                             "beReused": true
+                            }
+                           }
+                          ]
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   }
+                  ]
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          },
+          "accessibilityText": "Thao tác khác",
+          "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+          "trackingParams": "CLUCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+          "type": "BUTTON_VIEW_MODEL_TYPE_TEXT",
+          "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+          "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+         }
+        }
+       }
+      },
+      "contentId": "pvUy69I_Xuk",
+      "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+      "themedPalette": {
+       "lightThemePalette": {
+        "baseBackground": 4294966768,
+        "raisedBackground": 4294966768,
+        "additiveBackground": 566867525,
+        "textPrimary": 4281741066,
+        "textSecondary": 4285425466,
+        "outline": 860570390,
+        "keyLight": 4292728492,
+        "collectionStack": 4290820235,
+        "invertedBackground": 4286739223,
+        "textPrimaryInverse": 4294966768,
+        "textDisabled": 2135638806,
+        "dropShadow": 432649797,
+        "cardOutline": 180991557,
+        "overlayBackground": 3426103050,
+        "overlayTextPrimary": 4294966768,
+        "solidWash": 4283122454,
+        "solidRim": 4281741066,
+        "overlaySolidWash": 4294637280,
+        "overlaySolidRim": 4294966768,
+        "tonalWash": 2583690736,
+        "tonalRim": 202312960,
+        "overlayTonalWash": 436207088,
+        "overlayTonalRim": 436207088,
+        "outlineRim": 1280000790,
+        "overlayOutlineRim": 871558346,
+        "solidWashInverse": 4294110410,
+        "solidRimInverse": 2147153632,
+        "tonalWashInverse": 654310896,
+        "tonalRimInverse": 653981408,
+        "outlineRimInverse": 654310896,
+        "solidBackground": 4283122454,
+        "solidBackgroundInverse": 4290820235,
+        "tonalBackground": 868268171,
+        "tonalBackgroundInverse": 435350730,
+        "outlineInverse": 872085216,
+        "directionalLightStopPrimary": 4294637280,
+        "directionalLightStopSecondary": 4294966768,
+        "primary": 4279176448,
+        "filledStateLayer": 4281741066,
+        "tonalTouchLight": 4294966768,
+        "tonalHoverLight": 3438999264,
+        "tonalStateLayer": 420416768,
+        "overlayDisabledContainer": 871558346,
+        "overlayTonalTouchLight": 1291515616,
+        "overlayTonalHoverLight": 1291515616,
+        "overlayTonalStateLayer": 436207088,
+        "disabledContainer": 420416768,
+        "filledTouchLight": 4285425466,
+        "filledHoverLight": 4284306728,
+        "onOverlayDisabledContainer": 2583690736,
+        "overlayTonalContainer": 2583361248,
+        "overlayOutline": 872414704,
+        "onFilledContainer": 4294966768,
+        "filledContainer": 4280031234,
+        "tonalContainer": 641085194,
+        "overlayPrimary": 4294966768,
+        "onOverlayFilledContainer": 4279176448,
+        "overlayFilledTouchLight": 4294966768,
+        "overlayFilledHoverLight": 4294637280,
+        "overlayFilledStateLayer": 4292728492,
+        "overlayFilledContainer": 4294110410,
+        "onDisabledContainer": 1712262400,
+        "temporaryOutline": 860570390
+       },
+       "darkThemePalette": {
+        "baseBackground": 4280031234,
+        "raisedBackground": 4281741066,
+        "additiveBackground": 734639685,
+        "textPrimary": 4294637280,
+        "textSecondary": 4292728492,
+        "outline": 1072884938,
+        "keyLight": 4284306728,
+        "collectionStack": 4285425466,
+        "invertedBackground": 4293121148,
+        "textPrimaryInverse": 4280031234,
+        "textDisabled": 2146626762,
+        "dropShadow": 432649797,
+        "cardOutline": 180991557,
+        "overlayBackground": 3426103050,
+        "overlayTextPrimary": 4294966768,
+        "solidWash": 4294637280,
+        "solidRim": 4294966768,
+        "overlaySolidWash": 4294637280,
+        "overlaySolidRim": 4294966768,
+        "tonalWash": 217246922,
+        "tonalRim": 218103280,
+        "overlayTonalWash": 436207088,
+        "overlayTonalRim": 436207088,
+        "outlineRim": 871558346,
+        "overlayOutlineRim": 871558346,
+        "solidWashInverse": 4285425466,
+        "solidRimInverse": 871558346,
+        "tonalWashInverse": 872414704,
+        "tonalRimInverse": 870176428,
+        "outlineRimInverse": 1291845104,
+        "solidBackground": 4290820235,
+        "solidBackgroundInverse": 4283122454,
+        "tonalBackground": 435350730,
+        "tonalBackgroundInverse": 868268171,
+        "outlineInverse": 860570390,
+        "directionalLightStopPrimary": 4281741066,
+        "directionalLightStopSecondary": 4280031234,
+        "primary": 4294966768,
+        "filledStateLayer": 4292728492,
+        "tonalTouchLight": 1073411808,
+        "tonalHoverLight": 653981408,
+        "tonalStateLayer": 436207088,
+        "overlayDisabledContainer": 871558346,
+        "overlayTonalTouchLight": 1291515616,
+        "overlayTonalHoverLight": 1291515616,
+        "overlayTonalStateLayer": 436207088,
+        "disabledContainer": 436207088,
+        "filledTouchLight": 4294966768,
+        "filledHoverLight": 4294637280,
+        "onOverlayDisabledContainer": 2583690736,
+        "overlayTonalContainer": 2583361248,
+        "overlayOutline": 872414704,
+        "onFilledContainer": 4279176448,
+        "filledContainer": 4294110410,
+        "tonalContainer": 435350730,
+        "overlayPrimary": 4294966768,
+        "onOverlayFilledContainer": 4279176448,
+        "overlayFilledTouchLight": 4294966768,
+        "overlayFilledHoverLight": 4294637280,
+        "overlayFilledStateLayer": 4292728492,
+        "overlayFilledContainer": 4294110410,
+        "onDisabledContainer": 1728052720,
+        "temporaryOutline": 871558346
+       }
+      },
+      "rendererContext": {
+       "loggingContext": {
+        "loggingDirectives": {
+         "trackingParams": "CLQCENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ==",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "accessibilityContext": {
+        "label": "What's New in Blender 5.3! Official Overview 28 phút"
+       },
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CLQCENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dVoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEDEPI4ygEEDwmgRQ==",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=pvUy69I_Xuk",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "pvUy69I_Xuk",
+           "params": "0gYaEhgaBgoCZW4QASIGCgJlbhABKgYKAmVuEAE%3D",
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr3---sn-8pxuuxa-8ja6.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=a6f532ebd23f5ee9&ip=203.0.113.7&initcwndbps=3059500&mt=1794706436&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "richItemRenderer": {
+    "content": {
+     "lockupViewModel": {
+      "contentImage": {
+       "thumbnailViewModel": {
+        "image": {
+         "sources": [
+          {
+           "url": "https://i.ytimg.com/vi/mHrHLqQj7Ts/hq720.jpg?sqp=-oaymwEjCOgCEMoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLB-NyXmUOZrETsVi1AMgzRCaGSfeg",
+           "width": 360,
+           "height": 202
+          },
+          {
+           "url": "https://i.ytimg.com/vi/mHrHLqQj7Ts/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCXumTDPqD8YJgajN5mWRpZ1XRCJw",
+           "width": 720,
+           "height": 404
+          }
+         ]
+        },
+        "overlays": [
+         {
+          "thumbnailBottomOverlayViewModel": {
+           "badges": [
+            {
+             "thumbnailBadgeViewModel": {
+              "text": "4:40",
+              "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+              "animationActivationTargetId": "mHrHLqQj7Ts",
+              "animationActivationEntityKey": "Eh8veW91dHViZS9hcHAvd2F0Y2gvcGxheWVyX3N0YXRlIMMCKAE%3D",
+              "lottieData": {
+               "url": "https://www.gstatic.com/youtube/img/lottie/audio_indicator/audio_indicator_v2.json",
+               "settings": {
+                "loop": true,
+                "autoplay": true
+               }
+              },
+              "animatedText": "Đang phát",
+              "animationActivationEntitySelectorType": "THUMBNAIL_BADGE_ANIMATION_ENTITY_SELECTOR_TYPE_PLAYER_STATE",
+              "rendererContext": {
+               "accessibilityContext": {
+                "label": "4 phút, 40 giây"
+               }
+              }
+             }
+            }
+           ]
+          }
+         },
+         {
+          "thumbnailHoverOverlayToggleActionsViewModel": {
+           "buttons": [
+            {
+             "toggleButtonViewModel": {
+              "defaultButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "WATCH_LATER",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CLICEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true,
+                    "apiUrl": "/youtubei/v1/browse/edit_playlist"
+                   }
+                  },
+                  "playlistEditEndpoint": {
+                   "playlistId": "WL",
+                   "actions": [
+                    {
+                     "addedVideoId": "mHrHLqQj7Ts",
+                     "action": "ACTION_ADD_VIDEO"
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Xem sau",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CLICEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "toggledButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "CHECK",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CLECEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true,
+                    "apiUrl": "/youtubei/v1/browse/edit_playlist"
+                   }
+                  },
+                  "playlistEditEndpoint": {
+                   "playlistId": "WL",
+                   "actions": [
+                    {
+                     "action": "ACTION_REMOVE_VIDEO_BY_VIDEO_ID",
+                     "removedVideoId": "mHrHLqQj7Ts"
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Đã thêm",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CLECEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "isToggled": false,
+              "trackingParams": "CKsCENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ=="
+             }
+            },
+            {
+             "toggleButtonViewModel": {
+              "defaultButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "ADD_TO_QUEUE_TAIL",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CLACEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true
+                   }
+                  },
+                  "signalServiceEndpoint": {
+                   "signal": "CLIENT_SIGNAL",
+                   "actions": [
+                    {
+                     "clickTrackingParams": "CLACEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                     "addToPlaylistCommand": {
+                      "openMiniplayer": true,
+                      "videoId": "mHrHLqQj7Ts",
+                      "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                      "onCreateListCommand": {
+                       "clickTrackingParams": "CLACEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                       "commandMetadata": {
+                        "webCommandMetadata": {
+                         "sendPost": true,
+                         "apiUrl": "/youtubei/v1/playlist/create"
+                        }
+                       },
+                       "createPlaylistServiceEndpoint": {
+                        "videoIds": [
+                         "mHrHLqQj7Ts"
+                        ],
+                        "params": "CAQ%3D"
+                       }
+                      },
+                      "videoIds": [
+                       "mHrHLqQj7Ts"
+                      ],
+                      "videoCommand": {
+                       "clickTrackingParams": "CLACEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                       "commandMetadata": {
+                        "webCommandMetadata": {
+                         "url": "/watch?v=mHrHLqQj7Ts",
+                         "webPageType": "WEB_PAGE_TYPE_WATCH",
+                         "rootVe": 3832
+                        }
+                       },
+                       "watchEndpoint": {
+                        "videoId": "mHrHLqQj7Ts",
+                        "watchEndpointSupportedOnesieConfig": {
+                         "html5PlaybackOnesieConfig": {
+                          "commonConfig": {
+                           "url": "https://rr1---sn-8pxuuxa-8jak.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=987ac72ea423ed3b&ip=203.0.113.7&initcwndbps=3059500&mt=1794706461&oweuc="
+                          }
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Thêm vào danh sách chờ",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CLACEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "toggledButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "CHECK",
+                "accessibilityText": "Đã thêm",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CK8CEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "isToggled": false,
+              "trackingParams": "CKsCENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ=="
+             }
+            }
+           ]
+          }
+         }
+        ]
+       }
+      },
+      "metadata": {
+       "lockupMetadataViewModel": {
+        "title": {
+         "content": "Making of: The Blender Open Movies Exhibition"
+        },
+        "metadata": {
+         "contentMetadataViewModel": {
+          "metadataRows": [
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "19 N lượt xem"
+              }
+             },
+             {
+              "text": {
+               "content": "12 ngày trước"
+              },
+              "accessibilityLabel": "12 ngày trước"
+             }
+            ]
+           }
+          ],
+          "delimiter": " • "
+         }
+        },
+        "menuButton": {
+         "buttonViewModel": {
+          "iconName": "MORE_VERT",
+          "onTap": {
+           "innertubeCommand": {
+            "clickTrackingParams": "CKwCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+            "showSheetCommand": {
+             "panelLoadingStrategy": {
+              "inlineContent": {
+               "sheetViewModel": {
+                "content": {
+                 "listViewModel": {
+                  "listItems": [
+                   {
+                    "listItemViewModel": {
+                     "title": {
+                      "content": "Thêm vào danh sách chờ"
+                     },
+                     "leadingImage": {
+                      "sources": [
+                       {
+                        "clientResource": {
+                         "imageName": "ADD_TO_QUEUE_TAIL"
+                        }
+                       }
+                      ]
+                     },
+                     "rendererContext": {
+                      "loggingContext": {
+                       "loggingDirectives": {
+                        "trackingParams": "CK4CEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                        "visibility": {
+                         "types": "12"
+                        }
+                       }
+                      },
+                      "commandContext": {
+                       "onTap": {
+                        "innertubeCommand": {
+                         "clickTrackingParams": "CK4CEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                         "commandMetadata": {
+                          "webCommandMetadata": {
+                           "sendPost": true
+                          }
+                         },
+                         "signalServiceEndpoint": {
+                          "signal": "CLIENT_SIGNAL",
+                          "actions": [
+                           {
+                            "clickTrackingParams": "CK4CEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                            "addToPlaylistCommand": {
+                             "openMiniplayer": true,
+                             "videoId": "mHrHLqQj7Ts",
+                             "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                             "onCreateListCommand": {
+                              "clickTrackingParams": "CK4CEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                              "commandMetadata": {
+                               "webCommandMetadata": {
+                                "sendPost": true,
+                                "apiUrl": "/youtubei/v1/playlist/create"
+                               }
+                              },
+                              "createPlaylistServiceEndpoint": {
+                               "videoIds": [
+                                "mHrHLqQj7Ts"
+                               ],
+                               "params": "CAQ%3D"
+                              }
+                             },
+                             "videoIds": [
+                              "mHrHLqQj7Ts"
+                             ],
+                             "videoCommand": {
+                              "clickTrackingParams": "CK4CEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                              "commandMetadata": {
+                               "webCommandMetadata": {
+                                "url": "/watch?v=mHrHLqQj7Ts",
+                                "webPageType": "WEB_PAGE_TYPE_WATCH",
+                                "rootVe": 3832
+                               }
+                              },
+                              "watchEndpoint": {
+                               "videoId": "mHrHLqQj7Ts",
+                               "watchEndpointSupportedOnesieConfig": {
+                                "html5PlaybackOnesieConfig": {
+                                 "commonConfig": {
+                                  "url": "https://rr1---sn-8pxuuxa-8jak.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=987ac72ea423ed3b&ip=203.0.113.7&initcwndbps=3059500&mt=1794706461&oweuc="
+                                 }
+                                }
+                               }
+                              }
+                             }
+                            }
+                           }
+                          ]
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "listItemViewModel": {
+                     "title": {
+                      "content": "Chia sẻ"
+                     },
+                     "leadingImage": {
+                      "sources": [
+                       {
+                        "clientResource": {
+                         "imageName": "SHARE"
+                        }
+                       }
+                      ]
+                     },
+                     "rendererContext": {
+                      "commandContext": {
+                       "onTap": {
+                        "innertubeCommand": {
+                         "clickTrackingParams": "CKwCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                         "commandMetadata": {
+                          "webCommandMetadata": {
+                           "sendPost": true,
+                           "apiUrl": "/youtubei/v1/share/get_share_panel"
+                          }
+                         },
+                         "shareEntityServiceEndpoint": {
+                          "serializedShareEntity": "CgttSHJITHFRajdUcw%3D%3D",
+                          "commands": [
+                           {
+                            "clickTrackingParams": "CKwCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                            "openPopupAction": {
+                             "popup": {
+                              "unifiedSharePanelRenderer": {
+                               "trackingParams": "CK0CEI5iIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                               "showLoadingSpinner": true
+                              }
+                             },
+                             "popupType": "DIALOG",
+                             "beReused": true
+                            }
+                           }
+                          ]
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   }
+                  ]
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          },
+          "accessibilityText": "Thao tác khác",
+          "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+          "trackingParams": "CKwCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+          "type": "BUTTON_VIEW_MODEL_TYPE_TEXT",
+          "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+          "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+         }
+        }
+       }
+      },
+      "contentId": "mHrHLqQj7Ts",
+      "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+      "themedPalette": {
+       "lightThemePalette": {
+        "baseBackground": 4294963443,
+        "raisedBackground": 4294963443,
+        "additiveBackground": 566838629,
+        "textPrimary": 4281731604,
+        "textSecondary": 4285544517,
+        "outline": 860624162,
+        "keyLight": 4292783031,
+        "collectionStack": 4290939287,
+        "invertedBackground": 4287568180,
+        "textPrimaryInverse": 4294963443,
+        "textDisabled": 2135692578,
+        "dropShadow": 432620901,
+        "cardOutline": 180962661,
+        "overlayBackground": 3426093588,
+        "overlayTextPrimary": 4294963443,
+        "solidWash": 4283176226,
+        "solidRim": 4281731604,
+        "overlaySolidWash": 4294631654,
+        "overlaySolidRim": 4294963443,
+        "tonalWash": 2583687411,
+        "tonalRim": 202309636,
+        "overlayTonalWash": 436203763,
+        "overlayTonalRim": 436203763,
+        "outlineRim": 1280054562,
+        "overlayOutlineRim": 871549651,
+        "solidWashInverse": 4294101715,
+        "solidRimInverse": 2147148006,
+        "tonalWashInverse": 654307571,
+        "tonalRimInverse": 653975782,
+        "outlineRimInverse": 654307571,
+        "solidBackground": 4283176226,
+        "solidBackgroundInverse": 4290939287,
+        "tonalBackground": 868387223,
+        "tonalBackgroundInverse": 435342035,
+        "outlineInverse": 872079590,
+        "directionalLightStopPrimary": 4294631654,
+        "directionalLightStopSecondary": 4294963443,
+        "primary": 4279173124,
+        "filledStateLayer": 4281731604,
+        "tonalTouchLight": 4294963443,
+        "tonalHoverLight": 3438993638,
+        "tonalStateLayer": 420413444,
+        "overlayDisabledContainer": 871549651,
+        "overlayTonalTouchLight": 1291509990,
+        "overlayTonalHoverLight": 1291509990,
+        "overlayTonalStateLayer": 436203763,
+        "disabledContainer": 420413444,
+        "filledTouchLight": 4285544517,
+        "filledHoverLight": 4284360500,
+        "onOverlayDisabledContainer": 2583687411,
+        "overlayTonalContainer": 2583355622,
+        "overlayOutline": 872411379,
+        "onFilledContainer": 4294963443,
+        "filledContainer": 4280025608,
+        "tonalContainer": 641075732,
+        "overlayPrimary": 4294963443,
+        "onOverlayFilledContainer": 4279173124,
+        "overlayFilledTouchLight": 4294963443,
+        "overlayFilledHoverLight": 4294631654,
+        "overlayFilledStateLayer": 4292783031,
+        "overlayFilledContainer": 4294101715,
+        "onDisabledContainer": 1712259076,
+        "temporaryOutline": 860624162
+       },
+       "darkThemePalette": {
+        "baseBackground": 4280025608,
+        "raisedBackground": 4281731604,
+        "additiveBackground": 734610789,
+        "textPrimary": 4294631654,
+        "textSecondary": 4292783031,
+        "outline": 1072876243,
+        "keyLight": 4284360500,
+        "collectionStack": 4285544517,
+        "invertedBackground": 4293098645,
+        "textPrimaryInverse": 4280025608,
+        "textDisabled": 2146618067,
+        "dropShadow": 432620901,
+        "cardOutline": 180962661,
+        "overlayBackground": 3426093588,
+        "overlayTextPrimary": 4294963443,
+        "solidWash": 4294631654,
+        "solidRim": 4294963443,
+        "overlaySolidWash": 4294631654,
+        "overlaySolidRim": 4294963443,
+        "tonalWash": 217238227,
+        "tonalRim": 218099955,
+        "overlayTonalWash": 436203763,
+        "overlayTonalRim": 436203763,
+        "outlineRim": 871549651,
+        "overlayOutlineRim": 871549651,
+        "solidWashInverse": 4285544517,
+        "solidRimInverse": 871549651,
+        "tonalWashInverse": 872411379,
+        "tonalRimInverse": 870230967,
+        "outlineRimInverse": 1291841779,
+        "solidBackground": 4290939287,
+        "solidBackgroundInverse": 4283176226,
+        "tonalBackground": 435342035,
+        "tonalBackgroundInverse": 868387223,
+        "outlineInverse": 860624162,
+        "directionalLightStopPrimary": 4281731604,
+        "directionalLightStopSecondary": 4280025608,
+        "primary": 4294963443,
+        "filledStateLayer": 4292783031,
+        "tonalTouchLight": 1073406182,
+        "tonalHoverLight": 653975782,
+        "tonalStateLayer": 436203763,
+        "overlayDisabledContainer": 871549651,
+        "overlayTonalTouchLight": 1291509990,
+        "overlayTonalHoverLight": 1291509990,
+        "overlayTonalStateLayer": 436203763,
+        "disabledContainer": 436203763,
+        "filledTouchLight": 4294963443,
+        "filledHoverLight": 4294631654,
+        "onOverlayDisabledContainer": 2583687411,
+        "overlayTonalContainer": 2583355622,
+        "overlayOutline": 872411379,
+        "onFilledContainer": 4279173124,
+        "filledContainer": 4294101715,
+        "tonalContainer": 435342035,
+        "overlayPrimary": 4294963443,
+        "onOverlayFilledContainer": 4279173124,
+        "overlayFilledTouchLight": 4294963443,
+        "overlayFilledHoverLight": 4294631654,
+        "overlayFilledStateLayer": 4292783031,
+        "overlayFilledContainer": 4294101715,
+        "onDisabledContainer": 1728049395,
+        "temporaryOutline": 871549651
+       }
+      },
+      "rendererContext": {
+       "loggingContext": {
+        "loggingDirectives": {
+         "trackingParams": "CKsCENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ==",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "accessibilityContext": {
+        "label": "Making of: The Blender Open Movies Exhibition 4 phút, 40 giây"
+       },
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CKsCENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dVoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEDEPI4ygEEDwmgRQ==",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=mHrHLqQj7Ts",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "mHrHLqQj7Ts",
+           "params": "0gYaEhgaBgoCZW4QASIGCgJlbhABKgYKAmVuEAE%3D",
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr1---sn-8pxuuxa-8jak.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=987ac72ea423ed3b&ip=203.0.113.7&initcwndbps=3059500&mt=1794706461&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "richItemRenderer": {
+    "content": {
+     "lockupViewModel": {
+      "contentImage": {
+       "thumbnailViewModel": {
+        "image": {
+         "sources": [
+          {
+           "url": "https://i.ytimg.com/vi/dVrELpmfcEQ/hq720.jpg?sqp=-oaymwEjCOgCEMoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLC1__Itj7J5zVV0v70p_doRZun9hw",
+           "width": 360,
+           "height": 202
+          },
+          {
+           "url": "https://i.ytimg.com/vi/dVrELpmfcEQ/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCwaxMxw3HvFj03V6aq3mpxqabvvw",
+           "width": 720,
+           "height": 404
+          }
+         ]
+        },
+        "overlays": [
+         {
+          "thumbnailBottomOverlayViewModel": {
+           "badges": [
+            {
+             "thumbnailBadgeViewModel": {
+              "text": "2:04:42",
+              "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+              "animationActivationTargetId": "dVrELpmfcEQ",
+              "animationActivationEntityKey": "Eh8veW91dHViZS9hcHAvd2F0Y2gvcGxheWVyX3N0YXRlIMMCKAE%3D",
+              "lottieData": {
+               "url": "https://www.gstatic.com/youtube/img/lottie/audio_indicator/audio_indicator_v2.json",
+               "settings": {
+                "loop": true,
+                "autoplay": true
+               }
+              },
+              "animatedText": "Đang phát",
+              "animationActivationEntitySelectorType": "THUMBNAIL_BADGE_ANIMATION_ENTITY_SELECTOR_TYPE_PLAYER_STATE",
+              "rendererContext": {
+               "accessibilityContext": {
+                "label": "2 giờ, 4 phút, 42 giây"
+               }
+              }
+             }
+            }
+           ]
+          }
+         },
+         {
+          "thumbnailHoverOverlayToggleActionsViewModel": {
+           "buttons": [
+            {
+             "toggleButtonViewModel": {
+              "defaultButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "WATCH_LATER",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CKkCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true,
+                    "apiUrl": "/youtubei/v1/browse/edit_playlist"
+                   }
+                  },
+                  "playlistEditEndpoint": {
+                   "playlistId": "WL",
+                   "actions": [
+                    {
+                     "addedVideoId": "dVrELpmfcEQ",
+                     "action": "ACTION_ADD_VIDEO"
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Xem sau",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CKkCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "toggledButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "CHECK",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CKgCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true,
+                    "apiUrl": "/youtubei/v1/browse/edit_playlist"
+                   }
+                  },
+                  "playlistEditEndpoint": {
+                   "playlistId": "WL",
+                   "actions": [
+                    {
+                     "action": "ACTION_REMOVE_VIDEO_BY_VIDEO_ID",
+                     "removedVideoId": "dVrELpmfcEQ"
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Đã thêm",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CKgCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "isToggled": false,
+              "trackingParams": "CKICENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ=="
+             }
+            },
+            {
+             "toggleButtonViewModel": {
+              "defaultButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "ADD_TO_QUEUE_TAIL",
+                "onTap": {
+                 "innertubeCommand": {
+                  "clickTrackingParams": "CKcCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                  "commandMetadata": {
+                   "webCommandMetadata": {
+                    "sendPost": true
+                   }
+                  },
+                  "signalServiceEndpoint": {
+                   "signal": "CLIENT_SIGNAL",
+                   "actions": [
+                    {
+                     "clickTrackingParams": "CKcCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                     "addToPlaylistCommand": {
+                      "openMiniplayer": true,
+                      "videoId": "dVrELpmfcEQ",
+                      "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                      "onCreateListCommand": {
+                       "clickTrackingParams": "CKcCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                       "commandMetadata": {
+                        "webCommandMetadata": {
+                         "sendPost": true,
+                         "apiUrl": "/youtubei/v1/playlist/create"
+                        }
+                       },
+                       "createPlaylistServiceEndpoint": {
+                        "videoIds": [
+                         "dVrELpmfcEQ"
+                        ],
+                        "params": "CAQ%3D"
+                       }
+                      },
+                      "videoIds": [
+                       "dVrELpmfcEQ"
+                      ],
+                      "videoCommand": {
+                       "clickTrackingParams": "CKcCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                       "commandMetadata": {
+                        "webCommandMetadata": {
+                         "url": "/watch?v=dVrELpmfcEQ",
+                         "webPageType": "WEB_PAGE_TYPE_WATCH",
+                         "rootVe": 3832
+                        }
+                       },
+                       "watchEndpoint": {
+                        "videoId": "dVrELpmfcEQ",
+                        "watchEndpointSupportedOnesieConfig": {
+                         "html5PlaybackOnesieConfig": {
+                          "commonConfig": {
+                           "url": "https://rr2---sn-8pxuuxa-8ja6.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=755ac42e999f7044&ip=203.0.113.7&initcwndbps=3059500&mt=1794706436&oweuc="
+                          }
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   ]
+                  }
+                 }
+                },
+                "accessibilityText": "Thêm vào danh sách chờ",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CKcCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "toggledButtonViewModel": {
+               "buttonViewModel": {
+                "iconName": "CHECK",
+                "accessibilityText": "Đã thêm",
+                "style": "BUTTON_VIEW_MODEL_STYLE_OVERLAY_DARK",
+                "trackingParams": "CKYCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                "type": "BUTTON_VIEW_MODEL_TYPE_TONAL",
+                "buttonSize": "BUTTON_VIEW_MODEL_SIZE_COMPACT",
+                "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+               }
+              },
+              "isToggled": false,
+              "trackingParams": "CKICENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ=="
+             }
+            }
+           ]
+          }
+         }
+        ]
+       }
+      },
+      "metadata": {
+       "lockupMetadataViewModel": {
+        "title": {
+         "content": "Blender Education Community Meeting — BCON26"
+        },
+        "metadata": {
+         "contentMetadataViewModel": {
+          "metadataRows": [
+           {
+            "metadataParts": [
+             {
+              "text": {
+               "content": "12 N lượt xem"
+              }
+             },
+             {
+              "text": {
+               "content": "3 tuần trước"
+              },
+              "accessibilityLabel": "3 tuần trước"
+             }
+            ]
+           }
+          ],
+          "delimiter": " • "
+         }
+        },
+        "menuButton": {
+         "buttonViewModel": {
+          "iconName": "MORE_VERT",
+          "onTap": {
+           "innertubeCommand": {
+            "clickTrackingParams": "CKMCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+            "showSheetCommand": {
+             "panelLoadingStrategy": {
+              "inlineContent": {
+               "sheetViewModel": {
+                "content": {
+                 "listViewModel": {
+                  "listItems": [
+                   {
+                    "listItemViewModel": {
+                     "title": {
+                      "content": "Thêm vào danh sách chờ"
+                     },
+                     "leadingImage": {
+                      "sources": [
+                       {
+                        "clientResource": {
+                         "imageName": "ADD_TO_QUEUE_TAIL"
+                        }
+                       }
+                      ]
+                     },
+                     "rendererContext": {
+                      "loggingContext": {
+                       "loggingDirectives": {
+                        "trackingParams": "CKUCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                        "visibility": {
+                         "types": "12"
+                        }
+                       }
+                      },
+                      "commandContext": {
+                       "onTap": {
+                        "innertubeCommand": {
+                         "clickTrackingParams": "CKUCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                         "commandMetadata": {
+                          "webCommandMetadata": {
+                           "sendPost": true
+                          }
+                         },
+                         "signalServiceEndpoint": {
+                          "signal": "CLIENT_SIGNAL",
+                          "actions": [
+                           {
+                            "clickTrackingParams": "CKUCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                            "addToPlaylistCommand": {
+                             "openMiniplayer": true,
+                             "videoId": "dVrELpmfcEQ",
+                             "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                             "onCreateListCommand": {
+                              "clickTrackingParams": "CKUCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                              "commandMetadata": {
+                               "webCommandMetadata": {
+                                "sendPost": true,
+                                "apiUrl": "/youtubei/v1/playlist/create"
+                               }
+                              },
+                              "createPlaylistServiceEndpoint": {
+                               "videoIds": [
+                                "dVrELpmfcEQ"
+                               ],
+                               "params": "CAQ%3D"
+                              }
+                             },
+                             "videoIds": [
+                              "dVrELpmfcEQ"
+                             ],
+                             "videoCommand": {
+                              "clickTrackingParams": "CKUCEP6YBBgAIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                              "commandMetadata": {
+                               "webCommandMetadata": {
+                                "url": "/watch?v=dVrELpmfcEQ",
+                                "webPageType": "WEB_PAGE_TYPE_WATCH",
+                                "rootVe": 3832
+                               }
+                              },
+                              "watchEndpoint": {
+                               "videoId": "dVrELpmfcEQ",
+                               "watchEndpointSupportedOnesieConfig": {
+                                "html5PlaybackOnesieConfig": {
+                                 "commonConfig": {
+                                  "url": "https://rr2---sn-8pxuuxa-8ja6.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=755ac42e999f7044&ip=203.0.113.7&initcwndbps=3059500&mt=1794706436&oweuc="
+                                 }
+                                }
+                               }
+                              }
+                             }
+                            }
+                           }
+                          ]
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   },
+                   {
+                    "listItemViewModel": {
+                     "title": {
+                      "content": "Chia sẻ"
+                     },
+                     "leadingImage": {
+                      "sources": [
+                       {
+                        "clientResource": {
+                         "imageName": "SHARE"
+                        }
+                       }
+                      ]
+                     },
+                     "rendererContext": {
+                      "commandContext": {
+                       "onTap": {
+                        "innertubeCommand": {
+                         "clickTrackingParams": "CKMCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                         "commandMetadata": {
+                          "webCommandMetadata": {
+                           "sendPost": true,
+                           "apiUrl": "/youtubei/v1/share/get_share_panel"
+                          }
+                         },
+                         "shareEntityServiceEndpoint": {
+                          "serializedShareEntity": "CgtkVnJFTHBtZmNFUQ%3D%3D",
+                          "commands": [
+                           {
+                            "clickTrackingParams": "CKMCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+                            "openPopupAction": {
+                             "popup": {
+                              "unifiedSharePanelRenderer": {
+                               "trackingParams": "CKQCEI5iIhMI7eOI7OuImAMVckwPAh2IWzR1",
+                               "showLoadingSpinner": true
+                              }
+                             },
+                             "popupType": "DIALOG",
+                             "beReused": true
+                            }
+                           }
+                          ]
+                         }
+                        }
+                       }
+                      }
+                     }
+                    }
+                   }
+                  ]
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          },
+          "accessibilityText": "Thao tác khác",
+          "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+          "trackingParams": "CKMCEPBbIhMI7eOI7OuImAMVckwPAh2IWzR1",
+          "type": "BUTTON_VIEW_MODEL_TYPE_TEXT",
+          "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+          "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+         }
+        }
+       }
+      },
+      "contentId": "dVrELpmfcEQ",
+      "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+      "themedPalette": {
+       "lightThemePalette": {
+        "baseBackground": 4293980415,
+        "raisedBackground": 4293980415,
+        "additiveBackground": 556674529,
+        "textPrimary": 4278453053,
+        "textSecondary": 4279440022,
+        "outline": 856098650,
+        "keyLight": 4287993076,
+        "collectionStack": 4284571883,
+        "invertedBackground": 4279440022,
+        "textPrimaryInverse": 4293980415,
+        "textDisabled": 2131167066,
+        "dropShadow": 422456801,
+        "cardOutline": 170798561,
+        "overlayBackground": 3422815037,
+        "overlayTextPrimary": 4293980415,
+        "solidWash": 4278650714,
+        "solidRim": 4278453053,
+        "overlaySolidWash": 4292730365,
+        "overlaySolidRim": 4293980415,
+        "tonalWash": 2582704383,
+        "tonalRim": 201326607,
+        "overlayTonalWash": 435220735,
+        "overlayTonalRim": 435220735,
+        "outlineRim": 1275529050,
+        "overlayOutlineRim": 868336123,
+        "solidWashInverse": 4290888187,
+        "solidRimInverse": 2145246717,
+        "tonalWashInverse": 653324543,
+        "tonalRimInverse": 652074493,
+        "outlineRimInverse": 653324543,
+        "solidBackground": 4278650714,
+        "solidBackgroundInverse": 4284571883,
+        "tonalBackground": 862019819,
+        "tonalBackgroundInverse": 432128507,
+        "outlineInverse": 870178301,
+        "directionalLightStopPrimary": 4292730365,
+        "directionalLightStopSecondary": 4293980415,
+        "primary": 4278190095,
+        "filledStateLayer": 4278453053,
+        "tonalTouchLight": 4293980415,
+        "tonalHoverLight": 3437092349,
+        "tonalStateLayer": 419430415,
+        "overlayDisabledContainer": 868336123,
+        "overlayTonalTouchLight": 1289608701,
+        "overlayTonalHoverLight": 1289608701,
+        "overlayTonalStateLayer": 435220735,
+        "disabledContainer": 419430415,
+        "filledTouchLight": 4279440022,
+        "filledHoverLight": 4279045240,
+        "onOverlayDisabledContainer": 2582704383,
+        "overlayTonalContainer": 2581454333,
+        "overlayOutline": 871428351,
+        "onFilledContainer": 4293980415,
+        "filledContainer": 4278255902,
+        "tonalContainer": 637797181,
+        "overlayPrimary": 4293980415,
+        "onOverlayFilledContainer": 4278190095,
+        "overlayFilledTouchLight": 4293980415,
+        "overlayFilledHoverLight": 4292730365,
+        "overlayFilledStateLayer": 4287993076,
+        "overlayFilledContainer": 4290888187,
+        "onDisabledContainer": 1711276047,
+        "temporaryOutline": 856098650
+       },
+       "darkThemePalette": {
+        "baseBackground": 4278255902,
+        "raisedBackground": 4278453053,
+        "additiveBackground": 724446689,
+        "textPrimary": 4292730365,
+        "textSecondary": 4287993076,
+        "outline": 1069662715,
+        "keyLight": 4279045240,
+        "collectionStack": 4279440022,
+        "invertedBackground": 4285756141,
+        "textPrimaryInverse": 4278255902,
+        "textDisabled": 2143404539,
+        "dropShadow": 422456801,
+        "cardOutline": 170798561,
+        "overlayBackground": 3422815037,
+        "overlayTextPrimary": 4293980415,
+        "solidWash": 4292730365,
+        "solidRim": 4293980415,
+        "overlaySolidWash": 4292730365,
+        "overlaySolidRim": 4293980415,
+        "tonalWash": 214024699,
+        "tonalRim": 217116927,
+        "overlayTonalWash": 435220735,
+        "overlayTonalRim": 435220735,
+        "outlineRim": 868336123,
+        "overlayOutlineRim": 868336123,
+        "solidWashInverse": 4279440022,
+        "solidRimInverse": 868336123,
+        "tonalWashInverse": 871428351,
+        "tonalRimInverse": 865441012,
+        "outlineRimInverse": 1290858751,
+        "solidBackground": 4284571883,
+        "solidBackgroundInverse": 4278650714,
+        "tonalBackground": 432128507,
+        "tonalBackgroundInverse": 862019819,
+        "outlineInverse": 856098650,
+        "directionalLightStopPrimary": 4278453053,
+        "directionalLightStopSecondary": 4278255902,
+        "primary": 4293980415,
+        "filledStateLayer": 4287993076,
+        "tonalTouchLight": 1071504893,
+        "tonalHoverLight": 652074493,
+        "tonalStateLayer": 435220735,
+        "overlayDisabledContainer": 868336123,
+        "overlayTonalTouchLight": 1289608701,
+        "overlayTonalHoverLight": 1289608701,
+        "overlayTonalStateLayer": 435220735,
+        "disabledContainer": 435220735,
+        "filledTouchLight": 4293980415,
+        "filledHoverLight": 4292730365,
+        "onOverlayDisabledContainer": 2582704383,
+        "overlayTonalContainer": 2581454333,
+        "overlayOutline": 871428351,
+        "onFilledContainer": 4278190095,
+        "filledContainer": 4290888187,
+        "tonalContainer": 432128507,
+        "overlayPrimary": 4293980415,
+        "onOverlayFilledContainer": 4278190095,
+        "overlayFilledTouchLight": 4293980415,
+        "overlayFilledHoverLight": 4292730365,
+        "overlayFilledStateLayer": 4287993076,
+        "overlayFilledContainer": 4290888187,
+        "onDisabledContainer": 1727066367,
+        "temporaryOutline": 868336123
+       }
+      },
+      "rendererContext": {
+       "loggingContext": {
+        "loggingDirectives": {
+         "trackingParams": "CKICENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dQ==",
+         "visibility": {
+          "types": "12"
+         }
+        }
+       },
+       "accessibilityContext": {
+        "label": "Blender Education Community Meeting — BCON26 2 giờ, 4 phút"
+       },
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CKICENTEDCITCO3jiOzriJgDFXJMDwIdiFs0dVoYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnmgEDEPI4ygEEDwmgRQ==",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/watch?v=dVrELpmfcEQ",
+            "webPageType": "WEB_PAGE_TYPE_WATCH",
+            "rootVe": 3832
+           }
+          },
+          "watchEndpoint": {
+           "videoId": "dVrELpmfcEQ",
+           "watchEndpointSupportedOnesieConfig": {
+            "html5PlaybackOnesieConfig": {
+             "commonConfig": {
+              "url": "https://rr2---sn-8pxuuxa-8ja6.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=755ac42e999f7044&ip=203.0.113.7&initcwndbps=3059500&mt=1794706436&oweuc="
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "continuation": {
+  "continuationItemRenderer": {
+   "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+   "continuationEndpoint": {
+    "clickTrackingParams": "CCoQ8eIEIhMI7eOI7OuImAMVckwPAh2IWzR1ygEEDwmgRQ==",
+    "commandMetadata": {
+     "webCommandMetadata": {
+      "sendPost": true,
+      "apiUrl": "/youtubei/v1/browse"
+     }
+    },
+    "continuationCommand": {
+     "token": "4qmFsgK5CxIYVUNTTU9RZUJKMlJBbnVGdW5nblFPeExnGpwLOGdhc0NCcXBDSHFtQ0RxakNBb2tObUpsTkdJMFl6UXRNREF3TUMweVlqZzRMVGszT1RRdE5UZ3lOREk1WXpVNFpUY3dFdmdIUVdOV09GWmtWM1kwTkhReFgxaEVaazloTWpKNFdtaFVPSG8wTjBVemVtODJjMUY1TWsxb1QwVXdjMEoyZDJjMGRTMHpWRk5HTFZOTFgzbHlabEJOTWxJNWVFazNabGhzWjAwd00xZEdkMnRzYURSTU9YWmhVaTFqYTJSbU9DMW5aRUp3VTNWdFFURjFTVmhyVkRsVk4zUm1ia1JqVjFWRWFsSnNZMnRLUW5wRlZsbGtlSFJaV1hWdk9HTndSRTFhY1hWVmRESlliSGRWVlMwelUwdzJTMm81ZFZNeU1uSlFOVXA2V1dvNVJYVnZWamt6ZDI0MFZVRkdTbGh3WHpOUlZHOTJYM05sVjJ4M1JXeFRZbHB2WlcxaFdHVTBWVEpFYlVvelVWOU5jazFRYkVReFNGQkJTbGRUYmpnM1JGY3daVEowTmpOdFpFa3ljamRKZDA1V2VYVTFiamhrYkVVMlFVNUdXa3RpTVhSVFdVdFNaVzFSYjBrelprWkdVVkl6Y0hocE5YVjNORGcxUkZNME0zb3pNMDEwY1U1bWFHUllMVGxHYjFNeldWOVNkV1ZJVVZjeGNVcExhSE15ZFVGbWVsWlVObUk0YVRaTWNqVmxVSFZXT0dSd1VGcDBaakpuYTJzd1pUSnJWazVETmpVdFUwbFhXR1ZrWTFCV2IyZzJhRzVWU0dsSVlYazRaMU40V0dSWVNXVkNYMTh3UkZKbVVVWndWM1pmUkVSbFEydEZhV1p6TUZsRFJEWkhTa2xxUWkxNFNHUnJVV1U0ZEhSTlZVdGlWamxZVUZwNmFVUmtXa1pIZG1saVRtWkdPRWxVWTBkTFpXRjRNRk5WZWtKdlRFbHpSbEJqUzFjeWJVZHpWVlZtZFZSSVExTlpNMHB1YkZsNmVGQmhXVTVsUTNaWUxWTmlORFZRWVZGalozUlFOalpVU3pCM1UzZFBSMnBrTUdwQ1RHOVJTR2xRVlRWR1NXNDFiamhRZEUwM1NVVnRXVUZwWDBRd0xYZDNSVGxVUTJJM1NVRnpVRVJYUlV0VE4xcHFTVGt0VFVVM2RETjVUbmRyVjBoT1gweGxRa2MwV1d4RE1EWjRNbHBrWTJ4eVZGSkVla2hTWTFCVlFtOUNOVUpGYTNaWFJGQTNkbVZDUm1obVVqRlpWblpET0VkT1ZuUlFlRGhHVW5KTlZVVXhhR3hTWTNoa1lYSlBOVzFUYlVOYWRUaGphMHRRVEhseFl6QmpjbkpVYXpkVmFrWmtXSFY1YkhGU1dEaENlRmxJTTNwRVJEUkhjVFprUkU5WFpuWnZkWEU1VEdOV1dHVjRhVnBpUkc1ak5rMWljMXBJZVRoR2RVbEhiM0JPVUdOalZUZFdhM28zUWpsU05sRlpVRVZxWW1neE5VMTRRMWxTVGxWNWVuWnJTREJCY2pJMFYwY3RVVFYxTlhKaGNUSmxRelJwTFRaMmVYUlljbGM1TlZGWGVEUldaMHQxUzNNNWQyUlZhMmhGY1U1dVIwNVZOR0ZCVGxFdGNuZ3dhM1Z1VmxodGFrUnplRGswUVhWM1JYWkVOR1JSTVhkeWNqQkJTRVo2WlhSYWJ6QnVlaTFWVFZsTU9FTmhWRU56TmxkclJUZFhTM1kxVFc4NVJHNWhlSFZWZFdWeGJsOTVha2xaWjFsUWJYQkVkM0F6VnpKaU1VMW1TR1U1UTNsNWFsWXdPRkZuV25vNVZWQm9abmx4UlRaVUxXTnVjM1ZhYld0VlFVdFBlV2RyVmw5SFRUVTBORVpQWjFkeFh6ZFhRV0ppV1U5YU5tNDNSMm9ZQkElM0QlM0Q%3D",
+     "request": "CONTINUATION_REQUEST_TYPE_BROWSE"
+    }
+   }
+  }
+ }
+}

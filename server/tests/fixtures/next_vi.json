@@ -1,0 +1,1589 @@
+{
+ "contents": {
+  "twoColumnWatchNextResults": {
+   "results": {
+    "continuationItemRenderer": {
+     "continuationEndpoint": {
+      "continuationCommand": {
+       "token": "COMMENTS_TOKEN"
+      }
+     }
+    }
+   },
+   "secondaryResults": {
+    "secondaryResults": {
+     "results": [
+      {
+       "lockupViewModel": {
+        "contentImage": {
+         "thumbnailViewModel": {
+          "image": {
+           "sources": [
+            {
+             "url": "https://i.ytimg.com/vi/ebARvyQEjX0/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAAAAYASUAAMhCPQCAokN4AbgC8xg=&rs=AOn4CLABjqZn3BxLqccmp709Kdww05NM-w&usqp=CCY",
+             "width": 168,
+             "height": 94
+            },
+            {
+             "url": "https://i.ytimg.com/vi/ebARvyQEjX0/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAAAAGAElAADIQj0AgKJDeAG4AvMY&rs=AOn4CLDeXFngD8F64kUMs4KZ82DoS6Dufg&usqp=CCY",
+             "width": 336,
+             "height": 188
+            }
+           ]
+          },
+          "overlays": [
+           {
+            "thumbnailBottomOverlayViewModel": {
+             "badges": [
+              {
+               "thumbnailBadgeViewModel": {
+                "text": "56:06",
+                "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+                "animationActivationTargetId": "ebARvyQEjX0",
+                "animationActivationEntityKey": "Eh8veW91dHViZS9hcHAvd2F0Y2gvcGxheWVyX3N0YXRlIMMCKAE%3D",
+                "lottieData": {
+                 "url": "https://www.gstatic.com/youtube/img/lottie/audio_indicator/audio_indicator_v2.json",
+                 "settings": {
+                  "loop": true,
+                  "autoplay": true
+                 }
+                },
+                "animatedText": "Đang phát",
+                "animationActivationEntitySelectorType": "THUMBNAIL_BADGE_ANIMATION_ENTITY_SELECTOR_TYPE_PLAYER_STATE",
+                "rendererContext": {
+                 "accessibilityContext": {
+                  "label": "56 phút, 6 giây"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        },
+        "metadata": {
+         "lockupMetadataViewModel": {
+          "title": {
+           "content": "Series Ăn Cơm Cùng Doraemon #190 | Bài học tình yêu từ Doraemon"
+          },
+          "image": {
+           "decoratedAvatarViewModel": {
+            "avatar": {
+             "avatarViewModel": {
+              "image": {
+               "sources": [
+                {
+                 "url": "https://yt3.ggpht.com/kJDmqJDRqEBVgHZ-vdtNGU9jeBN8vYqhfsUhCncj4h1-zBipcPbxgcbeTLGkVKA45H3hn6-kDQ=s68-c-k-c0x00ffffff-no-rj",
+                 "width": 68,
+                 "height": 68
+                }
+               ]
+              },
+              "avatarImageSize": "AVATAR_SIZE_M"
+             }
+            },
+            "a11yLabel": "Chuyển đến kênh POPS Kids",
+            "rendererContext": {
+             "commandContext": {
+              "onTap": {
+               "innertubeCommand": {
+                "clickTrackingParams": "CJcBENTEDBgBIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                "commandMetadata": {
+                 "webCommandMetadata": {
+                  "url": "/@popskids",
+                  "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                  "rootVe": 3611,
+                  "apiUrl": "/youtubei/v1/browse"
+                 }
+                },
+                "browseEndpoint": {
+                 "browseId": "UC5ezaYrzZpyItPSRG27MLpg",
+                 "canonicalBaseUrl": "/@popskids"
+                }
+               }
+              }
+             }
+            }
+           }
+          },
+          "metadata": {
+           "contentMetadataViewModel": {
+            "metadataRows": [
+             {
+              "metadataParts": [
+               {
+                "text": {
+                 "content": "POPS Kids",
+                 "styleRuns": [
+                  {
+                   "startIndex": 9,
+                   "styleRunExtensions": {
+                    "styleRunColorMapExtension": {
+                     "colorMap": [
+                      {
+                       "key": "USER_INTERFACE_THEME_DARK",
+                       "value": 4289374890
+                      },
+                      {
+                       "key": "USER_INTERFACE_THEME_LIGHT",
+                       "value": 4284506208
+                      }
+                     ]
+                    }
+                   }
+                  }
+                 ],
+                 "attachmentRuns": [
+                  {
+                   "startIndex": 9,
+                   "length": 0,
+                   "element": {
+                    "type": {
+                     "imageType": {
+                      "image": {
+                       "sources": [
+                        {
+                         "clientResource": {
+                          "imageName": "CHECK_CIRCLE_FILLED"
+                         },
+                         "width": 14,
+                         "height": 14
+                        }
+                       ]
+                      }
+                     }
+                    },
+                    "properties": {
+                     "layoutProperties": {
+                      "height": {
+                       "value": 14,
+                       "unit": "DIMENSION_UNIT_POINT"
+                      },
+                      "width": {
+                       "value": 14,
+                       "unit": "DIMENSION_UNIT_POINT"
+                      },
+                      "margin": {
+                       "left": {
+                        "value": 4,
+                        "unit": "DIMENSION_UNIT_POINT"
+                       }
+                      }
+                     }
+                    }
+                   },
+                   "alignment": "ALIGNMENT_VERTICAL_CENTER"
+                  }
+                 ]
+                }
+               }
+              ]
+             },
+             {
+              "metadataParts": [
+               {
+                "text": {
+                 "content": "3,6 Tr"
+                },
+                "accessibilityLabel": "3,6 triệu lượt xem",
+                "leadingIcon": {
+                 "name": "PLAY_ARROW_OUTLINED",
+                 "height": 12,
+                 "width": 12,
+                 "marginEndToken": {
+                  "spacing": 2
+                 }
+                }
+               },
+               {
+                "text": {
+                 "content": "3 tháng trước"
+                },
+                "accessibilityLabel": "3 tháng trước"
+               }
+              ]
+             }
+            ],
+            "delimiter": " "
+           }
+          },
+          "menuButton": {
+           "buttonViewModel": {
+            "iconName": "MORE_VERT",
+            "onTap": {
+             "innertubeCommand": {
+              "clickTrackingParams": "CJgBEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+              "showSheetCommand": {
+               "panelLoadingStrategy": {
+                "inlineContent": {
+                 "sheetViewModel": {
+                  "content": {
+                   "listViewModel": {
+                    "listItems": [
+                     {
+                      "listItemViewModel": {
+                       "title": {
+                        "content": "Thêm vào danh sách chờ"
+                       },
+                       "leadingImage": {
+                        "sources": [
+                         {
+                          "clientResource": {
+                           "imageName": "ADD_TO_QUEUE_TAIL"
+                          }
+                         }
+                        ]
+                       },
+                       "rendererContext": {
+                        "loggingContext": {
+                         "loggingDirectives": {
+                          "trackingParams": "CJoBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweK",
+                          "visibility": {
+                           "types": "12"
+                          }
+                         }
+                        },
+                        "commandContext": {
+                         "onTap": {
+                          "innertubeCommand": {
+                           "clickTrackingParams": "CJoBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                           "commandMetadata": {
+                            "webCommandMetadata": {
+                             "sendPost": true
+                            }
+                           },
+                           "signalServiceEndpoint": {
+                            "signal": "CLIENT_SIGNAL",
+                            "actions": [
+                             {
+                              "clickTrackingParams": "CJoBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                              "addToPlaylistCommand": {
+                               "openMiniplayer": true,
+                               "videoId": "ebARvyQEjX0",
+                               "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                               "onCreateListCommand": {
+                                "clickTrackingParams": "CJoBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                                "commandMetadata": {
+                                 "webCommandMetadata": {
+                                  "sendPost": true,
+                                  "apiUrl": "/youtubei/v1/playlist/create"
+                                 }
+                                },
+                                "createPlaylistServiceEndpoint": {
+                                 "videoIds": [
+                                  "ebARvyQEjX0"
+                                 ],
+                                 "params": "CAQ%3D"
+                                }
+                               },
+                               "videoIds": [
+                                "ebARvyQEjX0"
+                               ],
+                               "videoCommand": {
+                                "clickTrackingParams": "CJoBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                                "commandMetadata": {
+                                 "webCommandMetadata": {
+                                  "url": "/watch?v=ebARvyQEjX0",
+                                  "webPageType": "WEB_PAGE_TYPE_WATCH",
+                                  "rootVe": 3832
+                                 }
+                                },
+                                "watchEndpoint": {
+                                 "videoId": "ebARvyQEjX0",
+                                 "watchEndpointSupportedOnesieConfig": {
+                                  "html5PlaybackOnesieConfig": {
+                                   "commonConfig": {
+                                    "url": "https://rr6---sn-8pxuuxa-8jal.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=79b011bf24048d7d&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+                                   }
+                                  }
+                                 }
+                                }
+                               }
+                              }
+                             }
+                            ]
+                           }
+                          }
+                         }
+                        }
+                       }
+                      }
+                     },
+                     {
+                      "listItemViewModel": {
+                       "title": {
+                        "content": "Chia sẻ"
+                       },
+                       "leadingImage": {
+                        "sources": [
+                         {
+                          "clientResource": {
+                           "imageName": "SHARE"
+                          }
+                         }
+                        ]
+                       },
+                       "rendererContext": {
+                        "commandContext": {
+                         "onTap": {
+                          "innertubeCommand": {
+                           "clickTrackingParams": "CJgBEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                           "commandMetadata": {
+                            "webCommandMetadata": {
+                             "sendPost": true,
+                             "apiUrl": "/youtubei/v1/share/get_share_panel"
+                            }
+                           },
+                           "shareEntityServiceEndpoint": {
+                            "serializedShareEntity": "CgtlYkFSdnlRRWpYMA%3D%3D",
+                            "commands": [
+                             {
+                              "clickTrackingParams": "CJgBEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                              "openPopupAction": {
+                               "popup": {
+                                "unifiedSharePanelRenderer": {
+                                 "trackingParams": "CJkBEI5iIhMIj57U6-uImAMVT-yLAR3PxweK",
+                                 "showLoadingSpinner": true
+                                }
+                               },
+                               "popupType": "DIALOG",
+                               "beReused": true
+                              }
+                             }
+                            ]
+                           }
+                          }
+                         }
+                        }
+                       }
+                      }
+                     }
+                    ]
+                   }
+                  }
+                 }
+                }
+               }
+              }
+             }
+            },
+            "accessibilityText": "Thao tác khác",
+            "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+            "trackingParams": "CJgBEPBbIhMIj57U6-uImAMVT-yLAR3PxweK",
+            "type": "BUTTON_VIEW_MODEL_TYPE_TEXT",
+            "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+            "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+           }
+          }
+         }
+        },
+        "contentId": "ebARvyQEjX0",
+        "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+        "themedPalette": {
+         "lightThemePalette": {
+          "baseBackground": 4293981439,
+          "raisedBackground": 4293981439,
+          "additiveBackground": 558197705,
+          "textPrimary": 4278851126,
+          "textSecondary": 4282009966,
+          "outline": 857089355,
+          "keyLight": 4289510109,
+          "collectionStack": 4287339200,
+          "invertedBackground": 4279843727,
+          "textPrimaryInverse": 4293981439,
+          "textDisabled": 2132157771,
+          "dropShadow": 423979977,
+          "cardOutline": 172321737,
+          "overlayBackground": 3423213110,
+          "overlayTextPrimary": 4293981439,
+          "solidWash": 4279641419,
+          "solidRim": 4278851126,
+          "overlaySolidWash": 4292929530,
+          "overlaySolidRim": 4293981439,
+          "tonalWash": 2582705407,
+          "tonalRim": 201327631,
+          "overlayTonalWash": 435221759,
+          "overlayTonalRim": 435221759,
+          "outlineRim": 1276519755,
+          "overlayOutlineRim": 868931058,
+          "solidWashInverse": 4291483122,
+          "solidRimInverse": 2145445882,
+          "tonalWashInverse": 653325567,
+          "tonalRimInverse": 652273658,
+          "outlineRimInverse": 653325567,
+          "solidBackground": 4279641419,
+          "solidBackgroundInverse": 4287339200,
+          "tonalBackground": 864787136,
+          "tonalBackgroundInverse": 432723442,
+          "outlineInverse": 870377466,
+          "directionalLightStopPrimary": 4292929530,
+          "directionalLightStopSecondary": 4293981439,
+          "primary": 4278191119,
+          "filledStateLayer": 4278851126,
+          "tonalTouchLight": 4293981439,
+          "tonalHoverLight": 3437291514,
+          "tonalStateLayer": 419431439,
+          "overlayDisabledContainer": 868931058,
+          "overlayTonalTouchLight": 1289807866,
+          "overlayTonalHoverLight": 1289807866,
+          "overlayTonalStateLayer": 435221759,
+          "disabledContainer": 419431439,
+          "filledTouchLight": 4282009966,
+          "filledHoverLight": 4280825693,
+          "onOverlayDisabledContainer": 2582705407,
+          "overlayTonalContainer": 2581653498,
+          "overlayOutline": 871429375,
+          "onFilledContainer": 4293981439,
+          "filledContainer": 4278323740,
+          "tonalContainer": 638195254,
+          "overlayPrimary": 4293981439,
+          "onOverlayFilledContainer": 4278191119,
+          "overlayFilledTouchLight": 4293981439,
+          "overlayFilledHoverLight": 4292929530,
+          "overlayFilledStateLayer": 4289510109,
+          "overlayFilledContainer": 4291483122,
+          "onDisabledContainer": 1711277071,
+          "temporaryOutline": 857089355
+         },
+         "darkThemePalette": {
+          "baseBackground": 4278323740,
+          "raisedBackground": 4278851126,
+          "additiveBackground": 725969865,
+          "textPrimary": 4292929530,
+          "textSecondary": 4289510109,
+          "outline": 1070257650,
+          "keyLight": 4280825693,
+          "collectionStack": 4282009966,
+          "invertedBackground": 4286355939,
+          "textPrimaryInverse": 4278323740,
+          "textDisabled": 2143999474,
+          "dropShadow": 423979977,
+          "cardOutline": 172321737,
+          "overlayBackground": 3423213110,
+          "overlayTextPrimary": 4293981439,
+          "solidWash": 4292929530,
+          "solidRim": 4293981439,
+          "overlaySolidWash": 4292929530,
+          "overlaySolidRim": 4293981439,
+          "tonalWash": 214619634,
+          "tonalRim": 217117951,
+          "overlayTonalWash": 435221759,
+          "overlayTonalRim": 435221759,
+          "outlineRim": 868931058,
+          "overlayOutlineRim": 868931058,
+          "solidWashInverse": 4282009966,
+          "solidRimInverse": 868931058,
+          "tonalWashInverse": 871429375,
+          "tonalRimInverse": 866958045,
+          "outlineRimInverse": 1290859775,
+          "solidBackground": 4287339200,
+          "solidBackgroundInverse": 4279641419,
+          "tonalBackground": 432723442,
+          "tonalBackgroundInverse": 864787136,
+          "outlineInverse": 857089355,
+          "directionalLightStopPrimary": 4278851126,
+          "directionalLightStopSecondary": 4278323740,
+          "primary": 4293981439,
+          "filledStateLayer": 4289510109,
+          "tonalTouchLight": 1071704058,
+          "tonalHoverLight": 652273658,
+          "tonalStateLayer": 435221759,
+          "overlayDisabledContainer": 868931058,
+          "overlayTonalTouchLight": 1289807866,
+          "overlayTonalHoverLight": 1289807866,
+          "overlayTonalStateLayer": 435221759,
+          "disabledContainer": 435221759,
+          "filledTouchLight": 4293981439,
+          "filledHoverLight": 4292929530,
+          "onOverlayDisabledContainer": 2582705407,
+          "overlayTonalContainer": 2581653498,
+          "overlayOutline": 871429375,
+          "onFilledContainer": 4278191119,
+          "filledContainer": 4291483122,
+          "tonalContainer": 432723442,
+          "overlayPrimary": 4293981439,
+          "onOverlayFilledContainer": 4278191119,
+          "overlayFilledTouchLight": 4293981439,
+          "overlayFilledHoverLight": 4292929530,
+          "overlayFilledStateLayer": 4289510109,
+          "overlayFilledContainer": 4291483122,
+          "onDisabledContainer": 1727067391,
+          "temporaryOutline": 868931058
+         }
+        },
+        "rendererContext": {
+         "loggingContext": {
+          "loggingDirectives": {
+           "trackingParams": "CJcBENTEDBgBIhMIj57U6-uImAMVT-yLAR3PxweK",
+           "visibility": {
+            "types": "12"
+           }
+          }
+         },
+         "accessibilityContext": {
+          "label": "Series Ăn Cơm Cùng Doraemon #190 | Bài học tình yêu từ Doraemon 56 phút"
+         },
+         "commandContext": {
+          "onTap": {
+           "innertubeCommand": {
+            "clickTrackingParams": "CJcBENTEDBgBIhMIj57U6-uImAMVT-yLAR3PxweKMgdyZWxhdGVkSKTJ7vyExb_WapoBBQgBEPgdygEESGWGFQ==",
+            "commandMetadata": {
+             "webCommandMetadata": {
+              "url": "/watch?v=ebARvyQEjX0&pp=0gcJCUoMAYcqIYzv",
+              "webPageType": "WEB_PAGE_TYPE_WATCH",
+              "rootVe": 3832
+             }
+            },
+            "watchEndpoint": {
+             "videoId": "ebARvyQEjX0",
+             "playerParams": "0gcJCUoMAYcqIYzv",
+             "nofollow": true,
+             "watchEndpointSupportedOnesieConfig": {
+              "html5PlaybackOnesieConfig": {
+               "commonConfig": {
+                "url": "https://rr6---sn-8pxuuxa-8jal.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=79b011bf24048d7d&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      {
+       "lockupViewModel": {
+        "contentImage": {
+         "thumbnailViewModel": {
+          "image": {
+           "sources": [
+            {
+             "url": "https://i.ytimg.com/vi/2vBn9QJcsAE/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAAAAYASUAAMhCPQCAokN4AbgC8xg=&rs=AOn4CLACckDzpZTl-T525e78WU0Lsafijw&usqp=CCY",
+             "width": 168,
+             "height": 94
+            },
+            {
+             "url": "https://i.ytimg.com/vi/2vBn9QJcsAE/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAAAAGAElAADIQj0AgKJDeAG4AvMY&rs=AOn4CLD-a0V9E3ugK0Vplci5ScDwLlYraw&usqp=CCY",
+             "width": 336,
+             "height": 188
+            }
+           ]
+          },
+          "overlays": [
+           {
+            "thumbnailBottomOverlayViewModel": {
+             "badges": [
+              {
+               "thumbnailBadgeViewModel": {
+                "text": "53:27",
+                "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+                "animationActivationTargetId": "2vBn9QJcsAE",
+                "animationActivationEntityKey": "Eh8veW91dHViZS9hcHAvd2F0Y2gvcGxheWVyX3N0YXRlIMMCKAE%3D",
+                "lottieData": {
+                 "url": "https://www.gstatic.com/youtube/img/lottie/audio_indicator/audio_indicator_v2.json",
+                 "settings": {
+                  "loop": true,
+                  "autoplay": true
+                 }
+                },
+                "animatedText": "Đang phát",
+                "animationActivationEntitySelectorType": "THUMBNAIL_BADGE_ANIMATION_ENTITY_SELECTOR_TYPE_PLAYER_STATE",
+                "rendererContext": {
+                 "accessibilityContext": {
+                  "label": "53 phút, 27 giây"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        },
+        "metadata": {
+         "lockupMetadataViewModel": {
+          "title": {
+           "content": "💦 Chiếc giếng cổ của làng | Hoạt hình thiếu nhi 👮 Cảnh sát trưởng Labrador Vietnam 🚔"
+          },
+          "image": {
+           "decoratedAvatarViewModel": {
+            "avatar": {
+             "avatarViewModel": {
+              "image": {
+               "sources": [
+                {
+                 "url": "https://yt3.ggpht.com/TcZOm5ij7-jlvcm5hQH9zl4gXigzYJts_vWp-b6E8xijcWnhgMNbJvI_treud9OKdXx_5V8WXA=s68-c-k-c0x00ffffff-no-rj",
+                 "width": 68,
+                 "height": 68
+                }
+               ]
+              },
+              "avatarImageSize": "AVATAR_SIZE_M"
+             }
+            },
+            "a11yLabel": "Chuyển đến kênh Cảnh Sát Trưởng Labrador - Hoạt hình thiếu nhi",
+            "rendererContext": {
+             "commandContext": {
+              "onTap": {
+               "innertubeCommand": {
+                "clickTrackingParams": "CJMBENTEDBgCIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                "commandMetadata": {
+                 "webCommandMetadata": {
+                  "url": "/@SheriffLabradorVN",
+                  "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                  "rootVe": 3611,
+                  "apiUrl": "/youtubei/v1/browse"
+                 }
+                },
+                "browseEndpoint": {
+                 "browseId": "UC5_mjTuvrZpDX34CZvqfQ9Q",
+                 "canonicalBaseUrl": "/@SheriffLabradorVN"
+                }
+               }
+              }
+             }
+            }
+           }
+          },
+          "metadata": {
+           "contentMetadataViewModel": {
+            "metadataRows": [
+             {
+              "metadataParts": [
+               {
+                "text": {
+                 "content": "Cảnh Sát Trưởng Labrador - Hoạt hình thiếu nhi"
+                }
+               }
+              ]
+             },
+             {
+              "metadataParts": [
+               {
+                "text": {
+                 "content": "594 N"
+                },
+                "accessibilityLabel": "594 nghìn lượt xem",
+                "leadingIcon": {
+                 "name": "PLAY_ARROW_OUTLINED",
+                 "height": 12,
+                 "width": 12,
+                 "marginEndToken": {
+                  "spacing": 2
+                 }
+                }
+               },
+               {
+                "text": {
+                 "content": "4 ngày trước"
+                },
+                "accessibilityLabel": "4 ngày trước"
+               }
+              ]
+             },
+             {
+              "badges": [
+               {
+                "badgeViewModel": {
+                 "badgeText": "Mới",
+                 "badgeStyle": "BADGE_DEFAULT",
+                 "trackingParams": "CJMBENTEDBgCIhMIj57U6-uImAMVT-yLAR3PxweK"
+                }
+               }
+              ]
+             }
+            ],
+            "delimiter": " "
+           }
+          },
+          "menuButton": {
+           "buttonViewModel": {
+            "iconName": "MORE_VERT",
+            "onTap": {
+             "innertubeCommand": {
+              "clickTrackingParams": "CJQBEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+              "showSheetCommand": {
+               "panelLoadingStrategy": {
+                "inlineContent": {
+                 "sheetViewModel": {
+                  "content": {
+                   "listViewModel": {
+                    "listItems": [
+                     {
+                      "listItemViewModel": {
+                       "title": {
+                        "content": "Thêm vào danh sách chờ"
+                       },
+                       "leadingImage": {
+                        "sources": [
+                         {
+                          "clientResource": {
+                           "imageName": "ADD_TO_QUEUE_TAIL"
+                          }
+                         }
+                        ]
+                       },
+                       "rendererContext": {
+                        "loggingContext": {
+                         "loggingDirectives": {
+                          "trackingParams": "CJYBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweK",
+                          "visibility": {
+                           "types": "12"
+                          }
+                         }
+                        },
+                        "commandContext": {
+                         "onTap": {
+                          "innertubeCommand": {
+                           "clickTrackingParams": "CJYBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                           "commandMetadata": {
+                            "webCommandMetadata": {
+                             "sendPost": true
+                            }
+                           },
+                           "signalServiceEndpoint": {
+                            "signal": "CLIENT_SIGNAL",
+                            "actions": [
+                             {
+                              "clickTrackingParams": "CJYBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                              "addToPlaylistCommand": {
+                               "openMiniplayer": true,
+                               "videoId": "2vBn9QJcsAE",
+                               "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                               "onCreateListCommand": {
+                                "clickTrackingParams": "CJYBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                                "commandMetadata": {
+                                 "webCommandMetadata": {
+                                  "sendPost": true,
+                                  "apiUrl": "/youtubei/v1/playlist/create"
+                                 }
+                                },
+                                "createPlaylistServiceEndpoint": {
+                                 "videoIds": [
+                                  "2vBn9QJcsAE"
+                                 ],
+                                 "params": "CAQ%3D"
+                                }
+                               },
+                               "videoIds": [
+                                "2vBn9QJcsAE"
+                               ],
+                               "videoCommand": {
+                                "clickTrackingParams": "CJYBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                                "commandMetadata": {
+                                 "webCommandMetadata": {
+                                  "url": "/watch?v=2vBn9QJcsAE",
+                                  "webPageType": "WEB_PAGE_TYPE_WATCH",
+                                  "rootVe": 3832
+                                 }
+                                },
+                                "watchEndpoint": {
+                                 "videoId": "2vBn9QJcsAE",
+                                 "watchEndpointSupportedOnesieConfig": {
+                                  "html5PlaybackOnesieConfig": {
+                                   "commonConfig": {
+                                    "url": "https://rr2---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=daf067f5025cb001&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+                                   }
+                                  }
+                                 }
+                                }
+                               }
+                              }
+                             }
+                            ]
+                           }
+                          }
+                         }
+                        }
+                       }
+                      }
+                     },
+                     {
+                      "listItemViewModel": {
+                       "title": {
+                        "content": "Chia sẻ"
+                       },
+                       "leadingImage": {
+                        "sources": [
+                         {
+                          "clientResource": {
+                           "imageName": "SHARE"
+                          }
+                         }
+                        ]
+                       },
+                       "rendererContext": {
+                        "commandContext": {
+                         "onTap": {
+                          "innertubeCommand": {
+                           "clickTrackingParams": "CJQBEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                           "commandMetadata": {
+                            "webCommandMetadata": {
+                             "sendPost": true,
+                             "apiUrl": "/youtubei/v1/share/get_share_panel"
+                            }
+                           },
+                           "shareEntityServiceEndpoint": {
+                            "serializedShareEntity": "CgsydkJuOVFKY3NBRQ%3D%3D",
+                            "commands": [
+                             {
+                              "clickTrackingParams": "CJQBEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                              "openPopupAction": {
+                               "popup": {
+                                "unifiedSharePanelRenderer": {
+                                 "trackingParams": "CJUBEI5iIhMIj57U6-uImAMVT-yLAR3PxweK",
+                                 "showLoadingSpinner": true
+                                }
+                               },
+                               "popupType": "DIALOG",
+                               "beReused": true
+                              }
+                             }
+                            ]
+                           }
+                          }
+                         }
+                        }
+                       }
+                      }
+                     }
+                    ]
+                   }
+                  }
+                 }
+                }
+               }
+              }
+             }
+            },
+            "accessibilityText": "Thao tác khác",
+            "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+            "trackingParams": "CJQBEPBbIhMIj57U6-uImAMVT-yLAR3PxweK",
+            "type": "BUTTON_VIEW_MODEL_TYPE_TEXT",
+            "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+            "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+           }
+          }
+         }
+        },
+        "contentId": "2vBn9QJcsAE",
+        "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+        "themedPalette": {
+         "lightThemePalette": {
+          "baseBackground": 4293982975,
+          "raisedBackground": 4293982975,
+          "additiveBackground": 556639457,
+          "textPrimary": 4278397245,
+          "textSecondary": 4279397014,
+          "outline": 856112730,
+          "keyLight": 4287943924,
+          "collectionStack": 4284529899,
+          "invertedBackground": 4279397014,
+          "textPrimaryInverse": 4293982975,
+          "textDisabled": 2131181146,
+          "dropShadow": 422421729,
+          "cardOutline": 170763489,
+          "overlayBackground": 3422759229,
+          "overlayTextPrimary": 4293982975,
+          "solidWash": 4278664794,
+          "solidRim": 4278397245,
+          "overlaySolidWash": 4292735741,
+          "overlaySolidRim": 4293982975,
+          "tonalWash": 2582706943,
+          "tonalRim": 201329167,
+          "overlayTonalWash": 435223295,
+          "overlayTonalRim": 435223295,
+          "outlineRim": 1275543130,
+          "overlayOutlineRim": 868345851,
+          "solidWashInverse": 4290897915,
+          "solidRimInverse": 2145252093,
+          "tonalWashInverse": 653327103,
+          "tonalRimInverse": 652079869,
+          "outlineRimInverse": 653327103,
+          "solidBackground": 4278664794,
+          "solidBackgroundInverse": 4284529899,
+          "tonalBackground": 861977835,
+          "tonalBackgroundInverse": 432138235,
+          "outlineInverse": 870183677,
+          "directionalLightStopPrimary": 4292735741,
+          "directionalLightStopSecondary": 4293982975,
+          "primary": 4278192655,
+          "filledStateLayer": 4278397245,
+          "tonalTouchLight": 4293982975,
+          "tonalHoverLight": 3437097725,
+          "tonalStateLayer": 419432975,
+          "overlayDisabledContainer": 868345851,
+          "overlayTonalTouchLight": 1289614077,
+          "overlayTonalHoverLight": 1289614077,
+          "overlayTonalStateLayer": 435223295,
+          "disabledContainer": 419432975,
+          "filledTouchLight": 4279397014,
+          "filledHoverLight": 4278998136,
+          "onOverlayDisabledContainer": 2582706943,
+          "overlayTonalContainer": 2581459709,
+          "overlayOutline": 871430911,
+          "onFilledContainer": 4293982975,
+          "filledContainer": 4278260766,
+          "tonalContainer": 637741373,
+          "overlayPrimary": 4293982975,
+          "onOverlayFilledContainer": 4278192655,
+          "overlayFilledTouchLight": 4293982975,
+          "overlayFilledHoverLight": 4292735741,
+          "overlayFilledStateLayer": 4287943924,
+          "overlayFilledContainer": 4290897915,
+          "onDisabledContainer": 1711278607,
+          "temporaryOutline": 856112730
+         },
+         "darkThemePalette": {
+          "baseBackground": 4278260766,
+          "raisedBackground": 4278397245,
+          "additiveBackground": 724411617,
+          "textPrimary": 4292735741,
+          "textSecondary": 4287943924,
+          "outline": 1069672443,
+          "keyLight": 4278998136,
+          "collectionStack": 4279397014,
+          "invertedBackground": 4285711597,
+          "textPrimaryInverse": 4278260766,
+          "textDisabled": 2143414267,
+          "dropShadow": 422421729,
+          "cardOutline": 170763489,
+          "overlayBackground": 3422759229,
+          "overlayTextPrimary": 4293982975,
+          "solidWash": 4292735741,
+          "solidRim": 4293982975,
+          "overlaySolidWash": 4292735741,
+          "overlaySolidRim": 4293982975,
+          "tonalWash": 214034427,
+          "tonalRim": 217119487,
+          "overlayTonalWash": 435223295,
+          "overlayTonalRim": 435223295,
+          "outlineRim": 868345851,
+          "overlayOutlineRim": 868345851,
+          "solidWashInverse": 4279397014,
+          "solidRimInverse": 868345851,
+          "tonalWashInverse": 871430911,
+          "tonalRimInverse": 865391860,
+          "outlineRimInverse": 1290861311,
+          "solidBackground": 4284529899,
+          "solidBackgroundInverse": 4278664794,
+          "tonalBackground": 432138235,
+          "tonalBackgroundInverse": 861977835,
+          "outlineInverse": 856112730,
+          "directionalLightStopPrimary": 4278397245,
+          "directionalLightStopSecondary": 4278260766,
+          "primary": 4293982975,
+          "filledStateLayer": 4287943924,
+          "tonalTouchLight": 1071510269,
+          "tonalHoverLight": 652079869,
+          "tonalStateLayer": 435223295,
+          "overlayDisabledContainer": 868345851,
+          "overlayTonalTouchLight": 1289614077,
+          "overlayTonalHoverLight": 1289614077,
+          "overlayTonalStateLayer": 435223295,
+          "disabledContainer": 435223295,
+          "filledTouchLight": 4293982975,
+          "filledHoverLight": 4292735741,
+          "onOverlayDisabledContainer": 2582706943,
+          "overlayTonalContainer": 2581459709,
+          "overlayOutline": 871430911,
+          "onFilledContainer": 4278192655,
+          "filledContainer": 4290897915,
+          "tonalContainer": 432138235,
+          "overlayPrimary": 4293982975,
+          "onOverlayFilledContainer": 4278192655,
+          "overlayFilledTouchLight": 4293982975,
+          "overlayFilledHoverLight": 4292735741,
+          "overlayFilledStateLayer": 4287943924,
+          "overlayFilledContainer": 4290897915,
+          "onDisabledContainer": 1727068927,
+          "temporaryOutline": 868345851
+         }
+        },
+        "rendererContext": {
+         "loggingContext": {
+          "loggingDirectives": {
+           "trackingParams": "CJMBENTEDBgCIhMIj57U6-uImAMVT-yLAR3PxweK",
+           "visibility": {
+            "types": "12"
+           }
+          }
+         },
+         "accessibilityContext": {
+          "label": "💦 Chiếc giếng cổ của làng | Hoạt hình thiếu nhi 👮 Cảnh sát trưởng Labrador Vietnam 🚔 53 phút"
+         },
+         "commandContext": {
+          "onTap": {
+           "innertubeCommand": {
+            "clickTrackingParams": "CJMBENTEDBgCIhMIj57U6-uImAMVT-yLAR3PxweKMgdyZWxhdGVkSKTJ7vyExb_WapoBBQgBEPgdygEESGWGFQ==",
+            "commandMetadata": {
+             "webCommandMetadata": {
+              "url": "/watch?v=2vBn9QJcsAE",
+              "webPageType": "WEB_PAGE_TYPE_WATCH",
+              "rootVe": 3832
+             }
+            },
+            "watchEndpoint": {
+             "videoId": "2vBn9QJcsAE",
+             "nofollow": true,
+             "watchEndpointSupportedOnesieConfig": {
+              "html5PlaybackOnesieConfig": {
+               "commonConfig": {
+                "url": "https://rr2---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=daf067f5025cb001&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      {
+       "lockupViewModel": {
+        "contentImage": {
+         "thumbnailViewModel": {
+          "image": {
+           "sources": [
+            {
+             "url": "https://i.ytimg.com/vi/Ypypy0Qq82A/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAAAAYASUAAMhCPQCAokN4AbgC8xg=&rs=AOn4CLDXHNb-xsRcI7xKZJ2sGbdPqXPefg&usqp=CCY",
+             "width": 168,
+             "height": 94
+            },
+            {
+             "url": "https://i.ytimg.com/vi/Ypypy0Qq82A/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAAAAGAElAADIQj0AgKJDeAG4AvMY&rs=AOn4CLAoGHZtFDbhZlDrSiL07iBhiqscBA&usqp=CCY",
+             "width": 336,
+             "height": 188
+            }
+           ]
+          },
+          "overlays": [
+           {
+            "thumbnailBottomOverlayViewModel": {
+             "badges": [
+              {
+               "thumbnailBadgeViewModel": {
+                "text": "5:06",
+                "badgeStyle": "THUMBNAIL_OVERLAY_BADGE_STYLE_DEFAULT",
+                "animationActivationTargetId": "Ypypy0Qq82A",
+                "animationActivationEntityKey": "Eh8veW91dHViZS9hcHAvd2F0Y2gvcGxheWVyX3N0YXRlIMMCKAE%3D",
+                "lottieData": {
+                 "url": "https://www.gstatic.com/youtube/img/lottie/audio_indicator/audio_indicator_v2.json",
+                 "settings": {
+                  "loop": true,
+                  "autoplay": true
+                 }
+                },
+                "animatedText": "Đang phát",
+                "animationActivationEntitySelectorType": "THUMBNAIL_BADGE_ANIMATION_ENTITY_SELECTOR_TYPE_PLAYER_STATE",
+                "rendererContext": {
+                 "accessibilityContext": {
+                  "label": "5 phút, 6 giây"
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        },
+        "metadata": {
+         "lockupMetadataViewModel": {
+          "title": {
+           "content": "I Was the Last Kid at the Gate Every Day | The Gate (Animated Short Film)"
+          },
+          "image": {
+           "decoratedAvatarViewModel": {
+            "avatar": {
+             "avatarViewModel": {
+              "image": {
+               "sources": [
+                {
+                 "url": "https://yt3.ggpht.com/KZGb_BMKxNrwdM-2HqVMxFDwRbJVjq23ZBueZFnsIrP7JoQqMkJ83xYC0n9clJWx7Kq33AQrXQM=s68-c-k-c0x00ffffff-no-rj",
+                 "width": 68,
+                 "height": 68
+                }
+               ]
+              },
+              "avatarImageSize": "AVATAR_SIZE_M"
+             }
+            },
+            "a11yLabel": "Chuyển đến kênh Grew Up Anyway",
+            "rendererContext": {
+             "commandContext": {
+              "onTap": {
+               "innertubeCommand": {
+                "clickTrackingParams": "CI8BENTEDBgDIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                "commandMetadata": {
+                 "webCommandMetadata": {
+                  "url": "/@GrewUpAnyway",
+                  "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+                  "rootVe": 3611,
+                  "apiUrl": "/youtubei/v1/browse"
+                 }
+                },
+                "browseEndpoint": {
+                 "browseId": "UC0acmAAuxksjwau6H9UW72w",
+                 "canonicalBaseUrl": "/@GrewUpAnyway"
+                }
+               }
+              }
+             }
+            }
+           }
+          },
+          "metadata": {
+           "contentMetadataViewModel": {
+            "metadataRows": [
+             {
+              "metadataParts": [
+               {
+                "text": {
+                 "content": "Grew Up Anyway"
+                }
+               }
+              ]
+             },
+             {
+              "metadataParts": [
+               {
+                "text": {
+                 "content": "29"
+                },
+                "accessibilityLabel": "29 lượt xem",
+                "leadingIcon": {
+                 "name": "PLAY_ARROW_OUTLINED",
+                 "height": 12,
+                 "width": 12,
+                 "marginEndToken": {
+                  "spacing": 2
+                 }
+                }
+               },
+               {
+                "text": {
+                 "content": "1 ngày trước"
+                },
+                "accessibilityLabel": "1 ngày trước"
+               }
+              ]
+             },
+             {
+              "badges": [
+               {
+                "badgeViewModel": {
+                 "badgeText": "Mới",
+                 "badgeStyle": "BADGE_DEFAULT",
+                 "trackingParams": "CI8BENTEDBgDIhMIj57U6-uImAMVT-yLAR3PxweK"
+                }
+               }
+              ]
+             }
+            ],
+            "delimiter": " "
+           }
+          },
+          "menuButton": {
+           "buttonViewModel": {
+            "iconName": "MORE_VERT",
+            "onTap": {
+             "innertubeCommand": {
+              "clickTrackingParams": "CJABEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+              "showSheetCommand": {
+               "panelLoadingStrategy": {
+                "inlineContent": {
+                 "sheetViewModel": {
+                  "content": {
+                   "listViewModel": {
+                    "listItems": [
+                     {
+                      "listItemViewModel": {
+                       "title": {
+                        "content": "Thêm vào danh sách chờ"
+                       },
+                       "leadingImage": {
+                        "sources": [
+                         {
+                          "clientResource": {
+                           "imageName": "ADD_TO_QUEUE_TAIL"
+                          }
+                         }
+                        ]
+                       },
+                       "rendererContext": {
+                        "loggingContext": {
+                         "loggingDirectives": {
+                          "trackingParams": "CJIBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweK",
+                          "visibility": {
+                           "types": "12"
+                          }
+                         }
+                        },
+                        "commandContext": {
+                         "onTap": {
+                          "innertubeCommand": {
+                           "clickTrackingParams": "CJIBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                           "commandMetadata": {
+                            "webCommandMetadata": {
+                             "sendPost": true
+                            }
+                           },
+                           "signalServiceEndpoint": {
+                            "signal": "CLIENT_SIGNAL",
+                            "actions": [
+                             {
+                              "clickTrackingParams": "CJIBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                              "addToPlaylistCommand": {
+                               "openMiniplayer": true,
+                               "videoId": "Ypypy0Qq82A",
+                               "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+                               "onCreateListCommand": {
+                                "clickTrackingParams": "CJIBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                                "commandMetadata": {
+                                 "webCommandMetadata": {
+                                  "sendPost": true,
+                                  "apiUrl": "/youtubei/v1/playlist/create"
+                                 }
+                                },
+                                "createPlaylistServiceEndpoint": {
+                                 "videoIds": [
+                                  "Ypypy0Qq82A"
+                                 ],
+                                 "params": "CAQ%3D"
+                                }
+                               },
+                               "videoIds": [
+                                "Ypypy0Qq82A"
+                               ],
+                               "videoCommand": {
+                                "clickTrackingParams": "CJIBEP6YBBgAIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                                "commandMetadata": {
+                                 "webCommandMetadata": {
+                                  "url": "/watch?v=Ypypy0Qq82A",
+                                  "webPageType": "WEB_PAGE_TYPE_WATCH",
+                                  "rootVe": 3832
+                                 }
+                                },
+                                "watchEndpoint": {
+                                 "videoId": "Ypypy0Qq82A",
+                                 "watchEndpointSupportedOnesieConfig": {
+                                  "html5PlaybackOnesieConfig": {
+                                   "commonConfig": {
+                                    "url": "https://rr2---sn-8pxuuxa-8jas.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=629ca9cb442af360&ip=203.0.113.7&initcwndbps=3134375&mt=1794706222&oweuc="
+                                   }
+                                  }
+                                 }
+                                }
+                               }
+                              }
+                             }
+                            ]
+                           }
+                          }
+                         }
+                        }
+                       }
+                      }
+                     },
+                     {
+                      "listItemViewModel": {
+                       "title": {
+                        "content": "Chia sẻ"
+                       },
+                       "leadingImage": {
+                        "sources": [
+                         {
+                          "clientResource": {
+                           "imageName": "SHARE"
+                          }
+                         }
+                        ]
+                       },
+                       "rendererContext": {
+                        "commandContext": {
+                         "onTap": {
+                          "innertubeCommand": {
+                           "clickTrackingParams": "CJABEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                           "commandMetadata": {
+                            "webCommandMetadata": {
+                             "sendPost": true,
+                             "apiUrl": "/youtubei/v1/share/get_share_panel"
+                            }
+                           },
+                           "shareEntityServiceEndpoint": {
+                            "serializedShareEntity": "CgtZcHlweTBRcTgyQQ%3D%3D",
+                            "commands": [
+                             {
+                              "clickTrackingParams": "CJABEPBbIhMIj57U6-uImAMVT-yLAR3PxweKygEESGWGFQ==",
+                              "openPopupAction": {
+                               "popup": {
+                                "unifiedSharePanelRenderer": {
+                                 "trackingParams": "CJEBEI5iIhMIj57U6-uImAMVT-yLAR3PxweK",
+                                 "showLoadingSpinner": true
+                                }
+                               },
+                               "popupType": "DIALOG",
+                               "beReused": true
+                              }
+                             }
+                            ]
+                           }
+                          }
+                         }
+                        }
+                       }
+                      }
+                     }
+                    ]
+                   }
+                  }
+                 }
+                }
+               }
+              }
+             }
+            },
+            "accessibilityText": "Thao tác khác",
+            "style": "BUTTON_VIEW_MODEL_STYLE_MONO",
+            "trackingParams": "CJABEPBbIhMIj57U6-uImAMVT-yLAR3PxweK",
+            "type": "BUTTON_VIEW_MODEL_TYPE_TEXT",
+            "buttonSize": "BUTTON_VIEW_MODEL_SIZE_DEFAULT",
+            "state": "BUTTON_VIEW_MODEL_STATE_ACTIVE"
+           }
+          }
+         }
+        },
+        "contentId": "Ypypy0Qq82A",
+        "contentType": "LOCKUP_CONTENT_TYPE_VIDEO",
+        "themedPalette": {
+         "lightThemePalette": {
+          "baseBackground": 4294440951,
+          "raisedBackground": 4294440951,
+          "additiveBackground": 562530183,
+          "textPrimary": 4280295456,
+          "textSecondary": 4283716692,
+          "outline": 858796080,
+          "keyLight": 4291085508,
+          "collectionStack": 4289111718,
+          "invertedBackground": 4283716692,
+          "textPrimaryInverse": 4294440951,
+          "textDisabled": 2133864496,
+          "dropShadow": 428312455,
+          "cardOutline": 176654215,
+          "overlayBackground": 3424657440,
+          "overlayTextPrimary": 4294440951,
+          "solidWash": 4281348144,
+          "solidRim": 4280295456,
+          "overlaySolidWash": 4293783021,
+          "overlaySolidRim": 4294440951,
+          "tonalWash": 2583164919,
+          "tonalRim": 201852936,
+          "overlayTonalWash": 435681271,
+          "overlayTonalRim": 435681271,
+          "outlineRim": 1278226480,
+          "overlayOutlineRim": 870244062,
+          "solidWashInverse": 4292796126,
+          "solidRimInverse": 2146299373,
+          "tonalWashInverse": 653785079,
+          "tonalRimInverse": 653127149,
+          "outlineRimInverse": 653785079,
+          "solidBackground": 4281348144,
+          "solidBackgroundInverse": 4289111718,
+          "tonalBackground": 866559654,
+          "tonalBackgroundInverse": 434036446,
+          "outlineInverse": 871230957,
+          "directionalLightStopPrimary": 4293783021,
+          "directionalLightStopSecondary": 4294440951,
+          "primary": 4278716424,
+          "filledStateLayer": 4280295456,
+          "tonalTouchLight": 4294440951,
+          "tonalHoverLight": 3438145005,
+          "tonalStateLayer": 419956744,
+          "overlayDisabledContainer": 870244062,
+          "overlayTonalTouchLight": 1290661357,
+          "overlayTonalHoverLight": 1290661357,
+          "overlayTonalStateLayer": 435681271,
+          "disabledContainer": 419956744,
+          "filledTouchLight": 4283716692,
+          "filledHoverLight": 4282532418,
+          "onOverlayDisabledContainer": 2583164919,
+          "overlayTonalContainer": 2582506989,
+          "overlayOutline": 871888887,
+          "onFilledContainer": 4294440951,
+          "filledContainer": 4279176975,
+          "tonalContainer": 639639584,
+          "overlayPrimary": 4294440951,
+          "onOverlayFilledContainer": 4278716424,
+          "overlayFilledTouchLight": 4294440951,
+          "overlayFilledHoverLight": 4293783021,
+          "overlayFilledStateLayer": 4291085508,
+          "overlayFilledContainer": 4292796126,
+          "onDisabledContainer": 1711802376,
+          "temporaryOutline": 858796080
+         },
+         "darkThemePalette": {
+          "baseBackground": 4279176975,
+          "raisedBackground": 4280295456,
+          "additiveBackground": 730302343,
+          "textPrimary": 4293783021,
+          "textSecondary": 4291085508,
+          "outline": 1071570654,
+          "keyLight": 4282532418,
+          "collectionStack": 4283716692,
+          "invertedBackground": 4289111718,
+          "textPrimaryInverse": 4279176975,
+          "textDisabled": 2145312478,
+          "dropShadow": 428312455,
+          "cardOutline": 176654215,
+          "overlayBackground": 3424657440,
+          "overlayTextPrimary": 4294440951,
+          "solidWash": 4293783021,
+          "solidRim": 4294440951,
+          "overlaySolidWash": 4293783021,
+          "overlaySolidRim": 4294440951,
+          "tonalWash": 215932638,
+          "tonalRim": 217577463,
+          "overlayTonalWash": 435681271,
+          "overlayTonalRim": 435681271,
+          "outlineRim": 870244062,
+          "overlayOutlineRim": 870244062,
+          "solidWashInverse": 4283716692,
+          "solidRimInverse": 870244062,
+          "tonalWashInverse": 871888887,
+          "tonalRimInverse": 868533444,
+          "outlineRimInverse": 1291319287,
+          "solidBackground": 4289111718,
+          "solidBackgroundInverse": 4281348144,
+          "tonalBackground": 434036446,
+          "tonalBackgroundInverse": 866559654,
+          "outlineInverse": 858796080,
+          "directionalLightStopPrimary": 4280295456,
+          "directionalLightStopSecondary": 4279176975,
+          "primary": 4294440951,
+          "filledStateLayer": 4291085508,
+          "tonalTouchLight": 1072557549,
+          "tonalHoverLight": 653127149,
+          "tonalStateLayer": 435681271,
+          "overlayDisabledContainer": 870244062,
+          "overlayTonalTouchLight": 1290661357,
+          "overlayTonalHoverLight": 1290661357,
+          "overlayTonalStateLayer": 435681271,
+          "disabledContainer": 435681271,
+          "filledTouchLight": 4294440951,
+          "filledHoverLight": 4293783021,
+          "onOverlayDisabledContainer": 2583164919,
+          "overlayTonalContainer": 2582506989,
+          "overlayOutline": 871888887,
+          "onFilledContainer": 4278716424,
+          "filledContainer": 4292796126,
+          "tonalContainer": 434036446,
+          "overlayPrimary": 4294440951,
+          "onOverlayFilledContainer": 4278716424,
+          "overlayFilledTouchLight": 4294440951,
+          "overlayFilledHoverLight": 4293783021,
+          "overlayFilledStateLayer": 4291085508,
+          "overlayFilledContainer": 4292796126,
+          "onDisabledContainer": 1727526903,
+          "temporaryOutline": 870244062
+         }
+        },
+        "rendererContext": {
+         "loggingContext": {
+          "loggingDirectives": {
+           "trackingParams": "CI8BENTEDBgDIhMIj57U6-uImAMVT-yLAR3PxweK",
+           "visibility": {
+            "types": "12"
+           }
+          }
+         },
+         "accessibilityContext": {
+          "label": "I Was the Last Kid at the Gate Every Day | The Gate (Animated Short Film) 5 phút, 6 giây"
+         },
+         "commandContext": {
+          "onTap": {
+           "innertubeCommand": {
+            "clickTrackingParams": "CI8BENTEDBgDIhMIj57U6-uImAMVT-yLAR3PxweKMgdyZWxhdGVkSKTJ7vyExb_WapoBBQgBEPgdygEESGWGFQ==",
+            "commandMetadata": {
+             "webCommandMetadata": {
+              "url": "/watch?v=Ypypy0Qq82A",
+              "webPageType": "WEB_PAGE_TYPE_WATCH",
+              "rootVe": 3832
+             }
+            },
+            "watchEndpoint": {
+             "videoId": "Ypypy0Qq82A",
+             "params": "0gYaEhgaBgoCZW4QASIGCgJlbhABKgYKAmVuEAE%3D",
+             "nofollow": true,
+             "watchEndpointSupportedOnesieConfig": {
+              "html5PlaybackOnesieConfig": {
+               "commonConfig": {
+                "url": "https://rr2---sn-8pxuuxa-8jas.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=629ca9cb442af360&ip=203.0.113.7&initcwndbps=3134375&mt=1794706222&oweuc="
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      },
+      {
+       "continuationItemRenderer": {
+        "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+        "continuationEndpoint": {
+         "clickTrackingParams": "CEkQqTAiEwiPntTr64iYAxVP7IsBHc_HB4rKAQRIZYYV",
+         "commandMetadata": {
+          "webCommandMetadata": {
+           "sendPost": true,
+           "apiUrl": "/youtubei/v1/next"
+          }
+         },
+         "continuationCommand": {
+          "token": "CBQSDRILYXF6LUtFLWJwS1EYACqkCU1nc0l6dmpPOEtIeDFkQ3hBZHJPaS1zTTV3WUs1QVlLQV9JLUFBb093ajRMQ01yWXE1NmtvYy1WaGdFS0RzSS1Dd2k0LWQzZnJQZkZ3NE1CQ2czQ1Bnb0l1dU9FOThiT2w2UXpDZzdDUGdzSWlaTF9vS1N0bFA2akFRb053ajRLQ1BmZF9vZVl6N25tTHdvT3dqNExDTVdndXBlSnlzNlgtd0VLRGNJLUNnaXUwdkNjaU56d3ZTc0tEc0ktQ3dpQm1iT3kyNmpEMEswQkNnM0NQZ29JeUtXX21OaXBxT05LQ2dQeVBnQUtEc0ktQ3dpbjlNcnR0YlQtMHUwQkNnN0NQZ3NJeDZ5VHl2Zm4xZkdEQVFvTndqNEtDTkdDd3N2R3RQYUZUd29Od2o0S0NMU2drNXZzd2FyQ0VRb0Q4ajRBQ2czQ1Bnb0lfWnFTb1BLM2hOaDVDZ1B5UGdBS0RzSS1Dd2lCNFBLUzBQNlotTm9CQ2dQeVBnQUtEY0ktQ2dqZzVxdWh0TG1xem1JS0FfSS1BQW9Od2o0S0NKV0VfcktnbUpDcU5Bb0Q4ajRBQ2c3Q1Bnc0ktXy1Pa3J1TWpiZVpBUW9EOGo0QUNnN0NQZ3NJN3VmUTFLTF93cGJSQVFvRDhqNEFDZzNDUGdvSXZmTHN5djIyb0oxV0NnUHlQZ0FLRGNJLUNnaXN2TUh1dk9TaXZ5RUtBX0ktQUFvTndqNEtDUEwyMktLUTZZVG1aZ29EOGo0QUNnM0NQZ29JbnZPMzROT1V0NTkwQ2dQeVBnQUtEc0ktQ3dpcjBvcTEtTm1nbFlFQkNnUHlQZ0FLRHNJLUN3anF3ZGJJdUpLVWpjTUJDZ1B5UGdBS0RjSS1DZ2lELWY2bzFPdWRzaHdLQV9JLUFBb093ajRMQ0oyRWdhalA3NTZudkFFS0FfSS1BQW9Od2o0S0NJTEg1LU9ra3IybUFnb0Q4ajRBQ2c3Q1Bnc0lfTlBzN3V1bV84RG1BUW9EOGo0QUNnN0NQZ3NJbnJMOWtaMk51UGJlQVFvRDhqNEFDZzNDUGdvSV85TG04dDdsbjdFM0NnUHlQZ0FLRHNJLUN3aXAyNDdDbHJyMnZ0c0JDZ1B5UGdBS0RzSS1Dd2pPLU03d29mSFYwTEVCRWhZQUNnOFJFeFVYR1JzZEh5RWpKU2NwS3kwdk1UTTFHZ1FJQUJBQkdnUUlBQkFDR2dRSUFCQURHZ1FJQUJBRUdnUUlBQkFGR2dRSUFCQUdHZ1FJQUJBSEdnUUlBQkFJR2dRSUFCQUpHZ1FJQ2hBTEdnUUlDaEFNR2dRSUNoQU5HZ1FJQ2hBT0dnUUlEeEFRR2dRSUVSQVNHZ1FJRXhBVUdnUUlGUkFXR2dRSUZ4QVlHZ1FJR1JBYUdnUUlHeEFjR2dRSUhSQWVHZ1FJSHhBZ0dnUUlJUkFpR2dRSUl4QWtHZ1FJSlJBbUdnUUlKeEFvR2dRSUtSQXFHZ1FJS3hBc0dnUUlMUkF1R2dRSUx4QXdHZ1FJTVJBeUdnUUlNeEEwR2dRSU5SQTJLaFlBQ2c4UkV4VVhHUnNkSHlFakpTY3BLeTB2TVRNMWoPd2F0Y2gtbmV4dC1mZWVk",
+          "request": "CONTINUATION_REQUEST_TYPE_WATCH_NEXT"
+         }
+        },
+        "button": {
+         "buttonRenderer": {
+          "style": "STYLE_SUGGESTIVE",
+          "size": "SIZE_DEFAULT",
+          "isDisabled": false,
+          "text": {
+           "runs": [
+            {
+             "text": "Hiện thêm"
+            }
+           ]
+          },
+          "trackingParams": "CEoQ8FsiEwiPntTr64iYAxVP7IsBHc_HB4o=",
+          "command": {
+           "clickTrackingParams": "CEoQ8FsiEwiPntTr64iYAxVP7IsBHc_HB4rKAQRIZYYV",
+           "commandMetadata": {
+            "webCommandMetadata": {
+             "sendPost": true,
+             "apiUrl": "/youtubei/v1/next"
+            }
+           },
+           "continuationCommand": {
+            "token": "CBQSDRILYXF6LUtFLWJwS1EYACqkCU1nc0l6dmpPOEtIeDFkQ3hBZHJPaS1zTTV3WUs1QVlLQV9JLUFBb093ajRMQ01yWXE1NmtvYy1WaGdFS0RzSS1Dd2k0LWQzZnJQZkZ3NE1CQ2czQ1Bnb0l1dU9FOThiT2w2UXpDZzdDUGdzSWlaTF9vS1N0bFA2akFRb053ajRLQ1BmZF9vZVl6N25tTHdvT3dqNExDTVdndXBlSnlzNlgtd0VLRGNJLUNnaXUwdkNjaU56d3ZTc0tEc0ktQ3dpQm1iT3kyNmpEMEswQkNnM0NQZ29JeUtXX21OaXBxT05LQ2dQeVBnQUtEc0ktQ3dpbjlNcnR0YlQtMHUwQkNnN0NQZ3NJeDZ5VHl2Zm4xZkdEQVFvTndqNEtDTkdDd3N2R3RQYUZUd29Od2o0S0NMU2drNXZzd2FyQ0VRb0Q4ajRBQ2czQ1Bnb0lfWnFTb1BLM2hOaDVDZ1B5UGdBS0RzSS1Dd2lCNFBLUzBQNlotTm9CQ2dQeVBnQUtEY0ktQ2dqZzVxdWh0TG1xem1JS0FfSS1BQW9Od2o0S0NKV0VfcktnbUpDcU5Bb0Q4ajRBQ2c3Q1Bnc0ktXy1Pa3J1TWpiZVpBUW9EOGo0QUNnN0NQZ3NJN3VmUTFLTF93cGJSQVFvRDhqNEFDZzNDUGdvSXZmTHN5djIyb0oxV0NnUHlQZ0FLRGNJLUNnaXN2TUh1dk9TaXZ5RUtBX0ktQUFvTndqNEtDUEwyMktLUTZZVG1aZ29EOGo0QUNnM0NQZ29JbnZPMzROT1V0NTkwQ2dQeVBnQUtEc0ktQ3dpcjBvcTEtTm1nbFlFQkNnUHlQZ0FLRHNJLUN3anF3ZGJJdUpLVWpjTUJDZ1B5UGdBS0RjSS1DZ2lELWY2bzFPdWRzaHdLQV9JLUFBb093ajRMQ0oyRWdhalA3NTZudkFFS0FfSS1BQW9Od2o0S0NJTEg1LU9ra3IybUFnb0Q4ajRBQ2c3Q1Bnc0lfTlBzN3V1bV84RG1BUW9EOGo0QUNnN0NQZ3NJbnJMOWtaMk51UGJlQVFvRDhqNEFDZzNDUGdvSV85TG04dDdsbjdFM0NnUHlQZ0FLRHNJLUN3aXAyNDdDbHJyMnZ0c0JDZ1B5UGdBS0RzSS1Dd2pPLU03d29mSFYwTEVCRWhZQUNnOFJFeFVYR1JzZEh5RWpKU2NwS3kwdk1UTTFHZ1FJQUJBQkdnUUlBQkFDR2dRSUFCQURHZ1FJQUJBRUdnUUlBQkFGR2dRSUFCQUdHZ1FJQUJBSEdnUUlBQkFJR2dRSUFCQUpHZ1FJQ2hBTEdnUUlDaEFNR2dRSUNoQU5HZ1FJQ2hBT0dnUUlEeEFRR2dRSUVSQVNHZ1FJRXhBVUdnUUlGUkFXR2dRSUZ4QVlHZ1FJR1JBYUdnUUlHeEFjR2dRSUhSQWVHZ1FJSHhBZ0dnUUlJUkFpR2dRSUl4QWtHZ1FJSlJBbUdnUUlKeEFvR2dRSUtSQXFHZ1FJS3hBc0dnUUlMUkF1R2dRSUx4QXdHZ1FJTVJBeUdnUUlNeEEwR2dRSU5SQTJLaFlBQ2c4UkV4VVhHUnNkSHlFakpTY3BLeTB2TVRNMWoPd2F0Y2gtbmV4dC1mZWVk",
+            "request": "CONTINUATION_REQUEST_TYPE_WATCH_NEXT"
+           }
+          }
+         }
+        }
+       }
+      }
+     ]
+    }
+   }
+  }
+ }
+}

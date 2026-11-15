@@ -1,0 +1,1765 @@
+{
+ "contents": [
+  {
+   "videoRenderer": {
+    "videoId": "6C6xOz-6ET4",
+    "thumbnail": {
+     "thumbnails": [
+      {
+       "url": "https://i.ytimg.com/vi/6C6xOz-6ET4/hq720.jpg?sqp=-oaymwEjCOgCEMoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLC5Wi6PB9zdL72C_1XC5tKqaHqBOQ",
+       "width": 360,
+       "height": 202
+      },
+      {
+       "url": "https://i.ytimg.com/vi/6C6xOz-6ET4/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCI_XQBKzC_TcCxzyGRsNT16Ck5Yg",
+       "width": 720,
+       "height": 404
+      }
+     ]
+    },
+    "title": {
+     "runs": [
+      {
+       "text": "Nhạc Trẻ Ballad Hot Trend 2026  ♫ Top 20 Ca Khúc Về Nỗi Đau Tình Yêu - Không Môn Đăng Hộ Đối"
+      }
+     ],
+     "accessibility": {
+      "accessibilityData": {
+       "label": "Nhạc Trẻ Ballad Hot Trend 2026  ♫ Top 20 Ca Khúc Về Nỗi Đau Tình Yêu - Không Môn Đăng Hộ Đối 1 giờ, 21 phút"
+      }
+     }
+    },
+    "longBylineText": {
+     "runs": [
+      {
+       "text": "Mộng Mơ Ballad",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@mongmoballad",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UCP7iucvn_NtNbqIucAoiIaQ",
+         "canonicalBaseUrl": "/@mongmoballad"
+        }
+       }
+      }
+     ]
+    },
+    "publishedTimeText": {
+     "simpleText": "2 ngày trước"
+    },
+    "lengthText": {
+     "accessibility": {
+      "accessibilityData": {
+       "label": "1 giờ, 21 phút, 40 giây"
+      }
+     },
+     "simpleText": "1:21:40"
+    },
+    "viewCountText": {
+     "simpleText": "166.370 lượt xem"
+    },
+    "navigationEndpoint": {
+     "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9AyBnNlYXJjaFIIbmhhYyB0cmWaAQMQ9CTKAQQIt8nF",
+     "commandMetadata": {
+      "webCommandMetadata": {
+       "url": "/watch?v=6C6xOz-6ET4&list=RD6C6xOz-6ET4&start_radio=1&pp=ygUIbmhhYyB0cmWgBwE%3D",
+       "webPageType": "WEB_PAGE_TYPE_WATCH",
+       "rootVe": 3832
+      }
+     },
+     "watchEndpoint": {
+      "videoId": "6C6xOz-6ET4",
+      "playlistId": "RD6C6xOz-6ET4",
+      "params": "wAEBqgMIbmhhYyB0cmW6AwoImpSjkorGlZ0lugMKCPj66t-A4uPVc7oDCgjy0Nqkre6-pFK6AwoIqu6D7o6-6O5UugMLCP-xg4G8_LGj0AG6AwoI0OXY08uLpYY1ugMLCKejo67A04z6yAG6AwsIudjl2tGVld_pAboDCgiW2f-Gjbn0rhO6AwsI3-qt8ty6j7PAAboDCgieko-6w---yiG6AwsI9KSpmeiP3sr9AboDCgjmiuTXkJ3-5x-6AwsIjY2Ww_vOuaOkAboDCgjp7aCau_jR-gq6AwoIvrKSmN2NsusXugMLCOGIz8aqt-HlkwG6AwsIgaP5-53Ty8bHAboDCgiRx-KEkanIvkDyAwUNMThGP7gFAQ%3D%3D",
+      "playerParams": "ygUIbmhhYyB0cmWgBwE%3D",
+      "loggingContext": {
+       "vssLoggingContext": {
+        "serializedContextData": "Gg1SRDZDNnhPei02RVQ0"
+       }
+      },
+      "watchEndpointSupportedOnesieConfig": {
+       "html5PlaybackOnesieConfig": {
+        "commonConfig": {
+         "url": "https://rr1---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=e82eb13b3fba113e&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+        }
+       }
+      }
+     }
+    },
+    "badges": [
+     {
+      "metadataBadgeRenderer": {
+       "style": "BADGE_STYLE_TYPE_SIMPLE",
+       "label": "Mới",
+       "trackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9A="
+      }
+     }
+    ],
+    "ownerText": {
+     "runs": [
+      {
+       "text": "Mộng Mơ Ballad",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@mongmoballad",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UCP7iucvn_NtNbqIucAoiIaQ",
+         "canonicalBaseUrl": "/@mongmoballad"
+        }
+       }
+      }
+     ]
+    },
+    "shortBylineText": {
+     "runs": [
+      {
+       "text": "Mộng Mơ Ballad",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@mongmoballad",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UCP7iucvn_NtNbqIucAoiIaQ",
+         "canonicalBaseUrl": "/@mongmoballad"
+        }
+       }
+      }
+     ]
+    },
+    "trackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9BAvqLo_bOnrJfoAQ==",
+    "showActionMenu": false,
+    "shortViewCountText": {
+     "accessibility": {
+      "accessibilityData": {
+       "label": "166 nghìn lượt xem"
+      }
+     },
+     "simpleText": "166 N lượt xem"
+    },
+    "menu": {
+     "menuRenderer": {
+      "items": [
+       {
+        "menuServiceItemRenderer": {
+         "text": {
+          "runs": [
+           {
+            "text": "Thêm vào danh sách chờ"
+           }
+          ]
+         },
+         "icon": {
+          "iconType": "ADD_TO_QUEUE_TAIL"
+         },
+         "serviceEndpoint": {
+          "clickTrackingParams": "CMACEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "sendPost": true
+           }
+          },
+          "signalServiceEndpoint": {
+           "signal": "CLIENT_SIGNAL",
+           "actions": [
+            {
+             "clickTrackingParams": "CMACEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+             "addToPlaylistCommand": {
+              "openMiniplayer": true,
+              "videoId": "6C6xOz-6ET4",
+              "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+              "onCreateListCommand": {
+               "clickTrackingParams": "CMACEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+               "commandMetadata": {
+                "webCommandMetadata": {
+                 "sendPost": true,
+                 "apiUrl": "/youtubei/v1/playlist/create"
+                }
+               },
+               "createPlaylistServiceEndpoint": {
+                "videoIds": [
+                 "6C6xOz-6ET4"
+                ],
+                "params": "CAQ%3D"
+               }
+              },
+              "videoIds": [
+               "6C6xOz-6ET4"
+              ],
+              "videoCommand": {
+               "clickTrackingParams": "CMACEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+               "commandMetadata": {
+                "webCommandMetadata": {
+                 "url": "/watch?v=6C6xOz-6ET4",
+                 "webPageType": "WEB_PAGE_TYPE_WATCH",
+                 "rootVe": 3832
+                }
+               },
+               "watchEndpoint": {
+                "videoId": "6C6xOz-6ET4",
+                "watchEndpointSupportedOnesieConfig": {
+                 "html5PlaybackOnesieConfig": {
+                  "commonConfig": {
+                   "url": "https://rr1---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=e82eb13b3fba113e&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+                  }
+                 }
+                }
+               }
+              }
+             }
+            }
+           ]
+          }
+         },
+         "trackingParams": "CMACEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQ"
+        }
+       },
+       {
+        "menuServiceItemRenderer": {
+         "text": {
+          "runs": [
+           {
+            "text": "Chia sẻ"
+           }
+          ]
+         },
+         "icon": {
+          "iconType": "SHARE"
+         },
+         "serviceEndpoint": {
+          "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "sendPost": true,
+            "apiUrl": "/youtubei/v1/share/get_share_panel"
+           }
+          },
+          "shareEntityServiceEndpoint": {
+           "serializedShareEntity": "Cgs2QzZ4T3otNkVUNA%3D%3D",
+           "commands": [
+            {
+             "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+             "openPopupAction": {
+              "popup": {
+               "unifiedSharePanelRenderer": {
+                "trackingParams": "CL8CEI5iIhMItsar6-uImAMVVrQpAx2N9wPQ",
+                "showLoadingSpinner": true
+               }
+              },
+              "popupType": "DIALOG",
+              "beReused": true
+             }
+            }
+           ]
+          }
+         },
+         "trackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9A=",
+         "hasSeparator": true
+        }
+       }
+      ],
+      "trackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9A=",
+      "accessibility": {
+       "accessibilityData": {
+        "label": "Menu tác vụ"
+       }
+      }
+     }
+    },
+    "channelThumbnailSupportedRenderers": {
+     "channelThumbnailWithLinkRenderer": {
+      "thumbnail": {
+       "thumbnails": [
+        {
+         "url": "https://yt3.ggpht.com/equBFpyqRudG6liuQFmpmI8H83W4ct2RW0F4C0nX26TpyX9bjyKPGeMJegFAXLxYJgAorPN6PQ=s68-c-k-c0x00ffffff-no-rj",
+         "width": 68,
+         "height": 68
+        }
+       ]
+      },
+      "navigationEndpoint": {
+       "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@mongmoballad",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UCP7iucvn_NtNbqIucAoiIaQ",
+        "canonicalBaseUrl": "/@mongmoballad"
+       }
+      },
+      "accessibility": {
+       "accessibilityData": {
+        "label": "Chuyển đến kênh Mộng Mơ Ballad"
+       }
+      }
+     }
+    },
+    "thumbnailOverlays": [
+     {
+      "thumbnailOverlayResumePlaybackRenderer": {
+       "percentDurationWatched": 0,
+       "videoPlaybackPositionToggleEntityKey": "Egs2QzZ4T3otNkVUNCDpAigB"
+      }
+     },
+     {
+      "thumbnailOverlayTimeStatusRenderer": {
+       "text": {
+        "accessibility": {
+         "accessibilityData": {
+          "label": "1 giờ, 21 phút, 40 giây"
+         }
+        },
+        "simpleText": "1:21:40"
+       },
+       "style": "DEFAULT",
+       "icon": {
+        "iconType": "MUSIC"
+       }
+      }
+     },
+     {
+      "thumbnailOverlayToggleButtonRenderer": {
+       "isToggled": false,
+       "untoggledIcon": {
+        "iconType": "WATCH_LATER"
+       },
+       "toggledIcon": {
+        "iconType": "CHECK"
+       },
+       "untoggledTooltip": "Xem sau",
+       "toggledTooltip": "Đã thêm",
+       "untoggledServiceEndpoint": {
+        "clickTrackingParams": "CL4CEPnnAxgDIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true,
+          "apiUrl": "/youtubei/v1/browse/edit_playlist"
+         }
+        },
+        "playlistEditEndpoint": {
+         "playlistId": "WL",
+         "actions": [
+          {
+           "addedVideoId": "6C6xOz-6ET4",
+           "action": "ACTION_ADD_VIDEO"
+          }
+         ]
+        }
+       },
+       "toggledServiceEndpoint": {
+        "clickTrackingParams": "CL4CEPnnAxgDIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true,
+          "apiUrl": "/youtubei/v1/browse/edit_playlist"
+         }
+        },
+        "playlistEditEndpoint": {
+         "playlistId": "WL",
+         "actions": [
+          {
+           "action": "ACTION_REMOVE_VIDEO_BY_VIDEO_ID",
+           "removedVideoId": "6C6xOz-6ET4"
+          }
+         ]
+        }
+       },
+       "untoggledAccessibility": {
+        "accessibilityData": {
+         "label": "Xem sau"
+        }
+       },
+       "toggledAccessibility": {
+        "accessibilityData": {
+         "label": "Đã thêm"
+        }
+       },
+       "trackingParams": "CL4CEPnnAxgDIhMItsar6-uImAMVVrQpAx2N9wPQ"
+      }
+     },
+     {
+      "thumbnailOverlayToggleButtonRenderer": {
+       "untoggledIcon": {
+        "iconType": "ADD_TO_QUEUE_TAIL"
+       },
+       "toggledIcon": {
+        "iconType": "PLAYLIST_ADD_CHECK"
+       },
+       "untoggledTooltip": "Thêm vào danh sách chờ",
+       "toggledTooltip": "Đã thêm",
+       "untoggledServiceEndpoint": {
+        "clickTrackingParams": "CL0CEMfsBBgEIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true
+         }
+        },
+        "signalServiceEndpoint": {
+         "signal": "CLIENT_SIGNAL",
+         "actions": [
+          {
+           "clickTrackingParams": "CL0CEMfsBBgEIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+           "addToPlaylistCommand": {
+            "openMiniplayer": true,
+            "videoId": "6C6xOz-6ET4",
+            "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+            "onCreateListCommand": {
+             "clickTrackingParams": "CL0CEMfsBBgEIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+             "commandMetadata": {
+              "webCommandMetadata": {
+               "sendPost": true,
+               "apiUrl": "/youtubei/v1/playlist/create"
+              }
+             },
+             "createPlaylistServiceEndpoint": {
+              "videoIds": [
+               "6C6xOz-6ET4"
+              ],
+              "params": "CAQ%3D"
+             }
+            },
+            "videoIds": [
+             "6C6xOz-6ET4"
+            ]
+           }
+          }
+         ]
+        }
+       },
+       "untoggledAccessibility": {
+        "accessibilityData": {
+         "label": "Thêm vào danh sách chờ"
+        }
+       },
+       "toggledAccessibility": {
+        "accessibilityData": {
+         "label": "Đã thêm"
+        }
+       },
+       "trackingParams": "CL0CEMfsBBgEIhMItsar6-uImAMVVrQpAx2N9wPQ"
+      }
+     },
+     {
+      "thumbnailOverlayNowPlayingRenderer": {
+       "text": {
+        "runs": [
+         {
+          "text": "Đang phát"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "thumbnailOverlayLoadingPreviewRenderer": {
+       "text": {
+        "runs": [
+         {
+          "text": "Tiếp tục di chuột để phát"
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "detailedMetadataSnippets": [
+     {
+      "snippetText": {
+       "runs": [
+        {
+         "text": "mongmoballad #nganngancover #nganngan #ballad #balladnhenhang #balladbuon #nhactreballad "
+        },
+        {
+         "text": "Nhạc Trẻ",
+         "bold": true
+        },
+        {
+         "text": " Ballad Hot Trend ..."
+        }
+       ]
+      },
+      "snippetHoverText": {
+       "runs": [
+        {
+         "text": "Thông tin trong phần mô tả video"
+        }
+       ]
+      },
+      "maxOneLine": false
+     }
+    ],
+    "inlinePlaybackEndpoint": {
+     "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9AyBnNlYXJjaFIIbmhhYyB0cmWaAQMQ9CTKAQQIt8nF",
+     "commandMetadata": {
+      "webCommandMetadata": {
+       "url": "/watch?v=6C6xOz-6ET4&pp=YAHIAQGiBhUBAym6i2LSGkj5BQ38YTd8135cz7k%3D",
+       "webPageType": "WEB_PAGE_TYPE_WATCH",
+       "rootVe": 3832
+      }
+     },
+     "watchEndpoint": {
+      "videoId": "6C6xOz-6ET4",
+      "params": "qgMIbmhhYyB0cmW6AwoImpSjkorGlZ0lugMKCPj66t-A4uPVc7oDCgjy0Nqkre6-pFK6AwoIqu6D7o6-6O5UugMLCP-xg4G8_LGj0AG6AwoI0OXY08uLpYY1ugMLCKejo67A04z6yAG6AwsIudjl2tGVld_pAboDCgiW2f-Gjbn0rhO6AwsI3-qt8ty6j7PAAboDCgieko-6w---yiG6AwsI9KSpmeiP3sr9AboDCgjmiuTXkJ3-5x-6AwsIjY2Ww_vOuaOkAboDCgjp7aCau_jR-gq6AwoIvrKSmN2NsusXugMLCOGIz8aqt-HlkwG6AwsIgaP5-53Ty8bHAboDCgiRx-KEkanIvkDyAwUNMThGPw%3D%3D",
+      "playerParams": "YAHIAQGiBhUBAym6i2LSGkj5BQ38YTd8135cz7k%3D",
+      "playerExtraUrlParams": [
+       {
+        "key": "inline",
+        "value": "1"
+       }
+      ],
+      "watchEndpointSupportedOnesieConfig": {
+       "html5PlaybackOnesieConfig": {
+        "commonConfig": {
+         "url": "https://rr1---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=e82eb13b3fba113e&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+        }
+       }
+      }
+     }
+    },
+    "searchVideoResultEntityKey": "Egs2QzZ4T3otNkVUNCDnAigB",
+    "avatar": {
+     "decoratedAvatarViewModel": {
+      "avatar": {
+       "avatarViewModel": {
+        "image": {
+         "sources": [
+          {
+           "url": "https://yt3.ggpht.com/equBFpyqRudG6liuQFmpmI8H83W4ct2RW0F4C0nX26TpyX9bjyKPGeMJegFAXLxYJgAorPN6PQ=s68-c-k-c0x00ffffff-no-rj",
+           "width": 68,
+           "height": 68
+          }
+         ]
+        },
+        "avatarImageSize": "AVATAR_SIZE_M"
+       }
+      },
+      "a11yLabel": "Chuyển đến kênh Mộng Mơ Ballad",
+      "rendererContext": {
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CLwCENwwGAAiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/@mongmoballad",
+            "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+            "rootVe": 3611,
+            "apiUrl": "/youtubei/v1/browse"
+           }
+          },
+          "browseEndpoint": {
+           "browseId": "UCP7iucvn_NtNbqIucAoiIaQ",
+           "canonicalBaseUrl": "/@mongmoballad"
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "videoRenderer": {
+    "videoId": "JTpWMKJIyho",
+    "thumbnail": {
+     "thumbnails": [
+      {
+       "url": "https://i.ytimg.com/vi/JTpWMKJIyho/hq720.jpg?sqp=-oaymwEjCOgCEMoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLDn1gT4KNqYp_vQHD92HLeWb0sjTw",
+       "width": 360,
+       "height": 202
+      },
+      {
+       "url": "https://i.ytimg.com/vi/JTpWMKJIyho/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCWj2nlm_PjW-AOQAwUBTVBW2YV0A",
+       "width": 720,
+       "height": 404
+      }
+     ]
+    },
+    "title": {
+     "runs": [
+      {
+       "text": "Không Môn Đăng Hộ Đối Remix ♫ BXH Nhạc Trẻ Remix Hay Nhất - Top 15 Bản EDM Hot Trend TRIỆU VIEW 2026"
+      }
+     ],
+     "accessibility": {
+      "accessibilityData": {
+       "label": "Không Môn Đăng Hộ Đối Remix ♫ BXH Nhạc Trẻ Remix Hay Nhất - Top 15 Bản EDM Hot Trend TRIỆU VIEW 2026 57 phút"
+      }
+     }
+    },
+    "longBylineText": {
+     "runs": [
+      {
+       "text": "H Club Music",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@hclubmusic-network",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UClrpomd3S1R4Q_ydQdZ2loA",
+         "canonicalBaseUrl": "/@hclubmusic-network"
+        }
+       }
+      }
+     ]
+    },
+    "publishedTimeText": {
+     "simpleText": "1 ngày trước"
+    },
+    "lengthText": {
+     "accessibility": {
+      "accessibilityData": {
+       "label": "57 phút, 31 giây"
+      }
+     },
+     "simpleText": "57:31"
+    },
+    "viewCountText": {
+     "simpleText": "35.972 lượt xem"
+    },
+    "navigationEndpoint": {
+     "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9AyBnNlYXJjaFIIbmhhYyB0cmWaAQMQ9CTKAQQIt8nF",
+     "commandMetadata": {
+      "webCommandMetadata": {
+       "url": "/watch?v=JTpWMKJIyho&list=RDJTpWMKJIyho&start_radio=1&pp=ygUIbmhhYyB0cmWgBwE%3D",
+       "webPageType": "WEB_PAGE_TYPE_WATCH",
+       "rootVe": 3832
+      }
+     },
+     "watchEndpoint": {
+      "videoId": "JTpWMKJIyho",
+      "playlistId": "RDJTpWMKJIyho",
+      "params": "wAEBqgMIbmhhYyB0cmW6AwsIvqLo_bOnrJfoAboDCgj4-urfgOLj1XO6AwoI8tDapK3uvqRSugMKCKrug-6OvujuVLoDCwj_sYOBvPyxo9ABugMKCNDl2NPLi6WGNboDCwino6OuwNOM-sgBugMLCLnY5drRlZXf6QG6AwoIltn_ho259K4TugMLCN_qrfLcuo-zwAG6AwoInpKPusPvvsohugMLCPSkqZnoj97K_QG6AwoI5ork15Cd_ucfugMLCI2NlsP7zrmjpAG6AwoI6e2gmrv40foKugMKCL6ykpjdjbLrF7oDCwjhiM_Gqrfh5ZMBugMLCIGj-fud08vGxwG6AwoIkcfihJGpyL5A8gMFDTE4Rj-4BQE%3D",
+      "playerParams": "ygUIbmhhYyB0cmWgBwE%3D",
+      "loggingContext": {
+       "vssLoggingContext": {
+        "serializedContextData": "Gg1SREpUcFdNS0pJeWhv"
+       }
+      },
+      "watchEndpointSupportedOnesieConfig": {
+       "html5PlaybackOnesieConfig": {
+        "commonConfig": {
+         "url": "https://rr3---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=253a5630a248ca1a&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+        }
+       }
+      }
+     }
+    },
+    "badges": [
+     {
+      "metadataBadgeRenderer": {
+       "style": "BADGE_STYLE_TYPE_SIMPLE",
+       "label": "Mới",
+       "trackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9A="
+      }
+     }
+    ],
+    "ownerText": {
+     "runs": [
+      {
+       "text": "H Club Music",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@hclubmusic-network",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UClrpomd3S1R4Q_ydQdZ2loA",
+         "canonicalBaseUrl": "/@hclubmusic-network"
+        }
+       }
+      }
+     ]
+    },
+    "shortBylineText": {
+     "runs": [
+      {
+       "text": "H Club Music",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@hclubmusic-network",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UClrpomd3S1R4Q_ydQdZ2loA",
+         "canonicalBaseUrl": "/@hclubmusic-network"
+        }
+       }
+      }
+     ]
+    },
+    "trackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9BAmpSjkorGlZ0l",
+    "showActionMenu": false,
+    "shortViewCountText": {
+     "accessibility": {
+      "accessibilityData": {
+       "label": "35 nghìn lượt xem"
+      }
+     },
+     "simpleText": "35 N lượt xem"
+    },
+    "menu": {
+     "menuRenderer": {
+      "items": [
+       {
+        "menuServiceItemRenderer": {
+         "text": {
+          "runs": [
+           {
+            "text": "Thêm vào danh sách chờ"
+           }
+          ]
+         },
+         "icon": {
+          "iconType": "ADD_TO_QUEUE_TAIL"
+         },
+         "serviceEndpoint": {
+          "clickTrackingParams": "CLsCEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "sendPost": true
+           }
+          },
+          "signalServiceEndpoint": {
+           "signal": "CLIENT_SIGNAL",
+           "actions": [
+            {
+             "clickTrackingParams": "CLsCEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+             "addToPlaylistCommand": {
+              "openMiniplayer": true,
+              "videoId": "JTpWMKJIyho",
+              "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+              "onCreateListCommand": {
+               "clickTrackingParams": "CLsCEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+               "commandMetadata": {
+                "webCommandMetadata": {
+                 "sendPost": true,
+                 "apiUrl": "/youtubei/v1/playlist/create"
+                }
+               },
+               "createPlaylistServiceEndpoint": {
+                "videoIds": [
+                 "JTpWMKJIyho"
+                ],
+                "params": "CAQ%3D"
+               }
+              },
+              "videoIds": [
+               "JTpWMKJIyho"
+              ],
+              "videoCommand": {
+               "clickTrackingParams": "CLsCEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+               "commandMetadata": {
+                "webCommandMetadata": {
+                 "url": "/watch?v=JTpWMKJIyho",
+                 "webPageType": "WEB_PAGE_TYPE_WATCH",
+                 "rootVe": 3832
+                }
+               },
+               "watchEndpoint": {
+                "videoId": "JTpWMKJIyho",
+                "watchEndpointSupportedOnesieConfig": {
+                 "html5PlaybackOnesieConfig": {
+                  "commonConfig": {
+                   "url": "https://rr3---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=253a5630a248ca1a&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+                  }
+                 }
+                }
+               }
+              }
+             }
+            }
+           ]
+          }
+         },
+         "trackingParams": "CLsCEP6YBBgQIhMItsar6-uImAMVVrQpAx2N9wPQ"
+        }
+       },
+       {
+        "menuServiceItemRenderer": {
+         "text": {
+          "runs": [
+           {
+            "text": "Chia sẻ"
+           }
+          ]
+         },
+         "icon": {
+          "iconType": "SHARE"
+         },
+         "serviceEndpoint": {
+          "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "sendPost": true,
+            "apiUrl": "/youtubei/v1/share/get_share_panel"
+           }
+          },
+          "shareEntityServiceEndpoint": {
+           "serializedShareEntity": "CgtKVHBXTUtKSXlobw%3D%3D",
+           "commands": [
+            {
+             "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+             "openPopupAction": {
+              "popup": {
+               "unifiedSharePanelRenderer": {
+                "trackingParams": "CLoCEI5iIhMItsar6-uImAMVVrQpAx2N9wPQ",
+                "showLoadingSpinner": true
+               }
+              },
+              "popupType": "DIALOG",
+              "beReused": true
+             }
+            }
+           ]
+          }
+         },
+         "trackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9A=",
+         "hasSeparator": true
+        }
+       }
+      ],
+      "trackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9A=",
+      "accessibility": {
+       "accessibilityData": {
+        "label": "Menu tác vụ"
+       }
+      }
+     }
+    },
+    "channelThumbnailSupportedRenderers": {
+     "channelThumbnailWithLinkRenderer": {
+      "thumbnail": {
+       "thumbnails": [
+        {
+         "url": "https://yt3.ggpht.com/YvbVU5rd1VOhCLd4kv0X2kU1DpCetF5uC48Iq-aYOsJI-FZMQ324iZK9WSBcNMPxmm3l6qiDEA=s68-c-k-c0x00ffffff-no-rj",
+         "width": 68,
+         "height": 68
+        }
+       ]
+      },
+      "navigationEndpoint": {
+       "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@hclubmusic-network",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UClrpomd3S1R4Q_ydQdZ2loA",
+        "canonicalBaseUrl": "/@hclubmusic-network"
+       }
+      },
+      "accessibility": {
+       "accessibilityData": {
+        "label": "Chuyển đến kênh H Club Music"
+       }
+      }
+     }
+    },
+    "thumbnailOverlays": [
+     {
+      "thumbnailOverlayResumePlaybackRenderer": {
+       "percentDurationWatched": 0,
+       "videoPlaybackPositionToggleEntityKey": "EgtKVHBXTUtKSXlobyDpAigB"
+      }
+     },
+     {
+      "thumbnailOverlayTimeStatusRenderer": {
+       "text": {
+        "accessibility": {
+         "accessibilityData": {
+          "label": "57 phút, 31 giây"
+         }
+        },
+        "simpleText": "57:31"
+       },
+       "style": "DEFAULT",
+       "icon": {
+        "iconType": "MUSIC"
+       }
+      }
+     },
+     {
+      "thumbnailOverlayToggleButtonRenderer": {
+       "isToggled": false,
+       "untoggledIcon": {
+        "iconType": "WATCH_LATER"
+       },
+       "toggledIcon": {
+        "iconType": "CHECK"
+       },
+       "untoggledTooltip": "Xem sau",
+       "toggledTooltip": "Đã thêm",
+       "untoggledServiceEndpoint": {
+        "clickTrackingParams": "CLkCEPnnAxgDIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true,
+          "apiUrl": "/youtubei/v1/browse/edit_playlist"
+         }
+        },
+        "playlistEditEndpoint": {
+         "playlistId": "WL",
+         "actions": [
+          {
+           "addedVideoId": "JTpWMKJIyho",
+           "action": "ACTION_ADD_VIDEO"
+          }
+         ]
+        }
+       },
+       "toggledServiceEndpoint": {
+        "clickTrackingParams": "CLkCEPnnAxgDIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true,
+          "apiUrl": "/youtubei/v1/browse/edit_playlist"
+         }
+        },
+        "playlistEditEndpoint": {
+         "playlistId": "WL",
+         "actions": [
+          {
+           "action": "ACTION_REMOVE_VIDEO_BY_VIDEO_ID",
+           "removedVideoId": "JTpWMKJIyho"
+          }
+         ]
+        }
+       },
+       "untoggledAccessibility": {
+        "accessibilityData": {
+         "label": "Xem sau"
+        }
+       },
+       "toggledAccessibility": {
+        "accessibilityData": {
+         "label": "Đã thêm"
+        }
+       },
+       "trackingParams": "CLkCEPnnAxgDIhMItsar6-uImAMVVrQpAx2N9wPQ"
+      }
+     },
+     {
+      "thumbnailOverlayToggleButtonRenderer": {
+       "untoggledIcon": {
+        "iconType": "ADD_TO_QUEUE_TAIL"
+       },
+       "toggledIcon": {
+        "iconType": "PLAYLIST_ADD_CHECK"
+       },
+       "untoggledTooltip": "Thêm vào danh sách chờ",
+       "toggledTooltip": "Đã thêm",
+       "untoggledServiceEndpoint": {
+        "clickTrackingParams": "CLgCEMfsBBgEIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true
+         }
+        },
+        "signalServiceEndpoint": {
+         "signal": "CLIENT_SIGNAL",
+         "actions": [
+          {
+           "clickTrackingParams": "CLgCEMfsBBgEIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+           "addToPlaylistCommand": {
+            "openMiniplayer": true,
+            "videoId": "JTpWMKJIyho",
+            "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+            "onCreateListCommand": {
+             "clickTrackingParams": "CLgCEMfsBBgEIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+             "commandMetadata": {
+              "webCommandMetadata": {
+               "sendPost": true,
+               "apiUrl": "/youtubei/v1/playlist/create"
+              }
+             },
+             "createPlaylistServiceEndpoint": {
+              "videoIds": [
+               "JTpWMKJIyho"
+              ],
+              "params": "CAQ%3D"
+             }
+            },
+            "videoIds": [
+             "JTpWMKJIyho"
+            ]
+           }
+          }
+         ]
+        }
+       },
+       "untoggledAccessibility": {
+        "accessibilityData": {
+         "label": "Thêm vào danh sách chờ"
+        }
+       },
+       "toggledAccessibility": {
+        "accessibilityData": {
+         "label": "Đã thêm"
+        }
+       },
+       "trackingParams": "CLgCEMfsBBgEIhMItsar6-uImAMVVrQpAx2N9wPQ"
+      }
+     },
+     {
+      "thumbnailOverlayNowPlayingRenderer": {
+       "text": {
+        "runs": [
+         {
+          "text": "Đang phát"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "thumbnailOverlayLoadingPreviewRenderer": {
+       "text": {
+        "runs": [
+         {
+          "text": "Tiếp tục di chuột để phát"
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "detailedMetadataSnippets": [
+     {
+      "snippetText": {
+       "runs": [
+        {
+         "text": "nhạcedm #nhactreedm #hclubmusic #nhạctrẻremix 00:00 môn đăng hộ đối Không Môn Đăng Hộ Đối Remix ♫ BXH "
+        },
+        {
+         "text": "Nhạc Trẻ",
+         "bold": true
+        },
+        {
+         "text": " ..."
+        }
+       ]
+      },
+      "snippetHoverText": {
+       "runs": [
+        {
+         "text": "Thông tin trong phần mô tả video"
+        }
+       ]
+      },
+      "maxOneLine": false
+     }
+    ],
+    "inlinePlaybackEndpoint": {
+     "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9AyBnNlYXJjaFIIbmhhYyB0cmWaAQMQ9CTKAQQIt8nF",
+     "commandMetadata": {
+      "webCommandMetadata": {
+       "url": "/watch?v=JTpWMKJIyho&pp=YAHIAQGiBhUBAym6i3aRkPmlJYFRGjudJ-eL61E%3D",
+       "webPageType": "WEB_PAGE_TYPE_WATCH",
+       "rootVe": 3832
+      }
+     },
+     "watchEndpoint": {
+      "videoId": "JTpWMKJIyho",
+      "params": "qgMIbmhhYyB0cmW6AwsIvqLo_bOnrJfoAboDCgj4-urfgOLj1XO6AwoI8tDapK3uvqRSugMKCKrug-6OvujuVLoDCwj_sYOBvPyxo9ABugMKCNDl2NPLi6WGNboDCwino6OuwNOM-sgBugMLCLnY5drRlZXf6QG6AwoIltn_ho259K4TugMLCN_qrfLcuo-zwAG6AwoInpKPusPvvsohugMLCPSkqZnoj97K_QG6AwoI5ork15Cd_ucfugMLCI2NlsP7zrmjpAG6AwoI6e2gmrv40foKugMKCL6ykpjdjbLrF7oDCwjhiM_Gqrfh5ZMBugMLCIGj-fud08vGxwG6AwoIkcfihJGpyL5A8gMFDTE4Rj8%3D",
+      "playerParams": "YAHIAQGiBhUBAym6i3aRkPmlJYFRGjudJ-eL61E%3D",
+      "playerExtraUrlParams": [
+       {
+        "key": "inline",
+        "value": "1"
+       }
+      ],
+      "watchEndpointSupportedOnesieConfig": {
+       "html5PlaybackOnesieConfig": {
+        "commonConfig": {
+         "url": "https://rr3---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=253a5630a248ca1a&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+        }
+       }
+      }
+     }
+    },
+    "searchVideoResultEntityKey": "EgtKVHBXTUtKSXlobyDnAigB",
+    "avatar": {
+     "decoratedAvatarViewModel": {
+      "avatar": {
+       "avatarViewModel": {
+        "image": {
+         "sources": [
+          {
+           "url": "https://yt3.ggpht.com/YvbVU5rd1VOhCLd4kv0X2kU1DpCetF5uC48Iq-aYOsJI-FZMQ324iZK9WSBcNMPxmm3l6qiDEA=s68-c-k-c0x00ffffff-no-rj",
+           "width": 68,
+           "height": 68
+          }
+         ]
+        },
+        "avatarImageSize": "AVATAR_SIZE_M"
+       }
+      },
+      "a11yLabel": "Chuyển đến kênh H Club Music",
+      "rendererContext": {
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CLcCENwwGAEiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/@hclubmusic-network",
+            "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+            "rootVe": 3611,
+            "apiUrl": "/youtubei/v1/browse"
+           }
+          },
+          "browseEndpoint": {
+           "browseId": "UClrpomd3S1R4Q_ydQdZ2loA",
+           "canonicalBaseUrl": "/@hclubmusic-network"
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "videoRenderer": {
+    "videoId": "c6uPEAv6vXg",
+    "thumbnail": {
+     "thumbnails": [
+      {
+       "url": "https://i.ytimg.com/vi/c6uPEAv6vXg/hq720.jpg?sqp=-oaymwEjCOgCEMoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLBoQOFeFPufMVC67fjq66VrwNqUVQ",
+       "width": 360,
+       "height": 202
+      },
+      {
+       "url": "https://i.ytimg.com/vi/c6uPEAv6vXg/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBBdfbKigOU1RpnqQfAqO1k3YtvNw",
+       "width": 720,
+       "height": 404
+      }
+     ]
+    },
+    "title": {
+     "runs": [
+      {
+       "text": "NHẠC TRẺ BALLAD HOT TREND 2026 🎵 TOP 12 Ca Khúc Về Nỗi Đau Tình Yêu Hay Nhất - DUYÊN TÌNH TAN VỠ"
+      }
+     ],
+     "accessibility": {
+      "accessibilityData": {
+       "label": "NHẠC TRẺ BALLAD HOT TREND 2026 🎵 TOP 12 Ca Khúc Về Nỗi Đau Tình Yêu Hay Nhất - DUYÊN TÌNH TAN VỠ 1 giờ, 5 phút"
+      }
+     }
+    },
+    "longBylineText": {
+     "runs": [
+      {
+       "text": "Phan Music",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@H%C3%A0L%C5%A9-d9o",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UC7LbQLOOhta187-Fwc2cvGQ",
+         "canonicalBaseUrl": "/@H%C3%A0L%C5%A9-d9o"
+        }
+       }
+      }
+     ]
+    },
+    "publishedTimeText": {
+     "simpleText": "1 ngày trước"
+    },
+    "lengthText": {
+     "accessibility": {
+      "accessibilityData": {
+       "label": "1 giờ, 5 phút, 54 giây"
+      }
+     },
+     "simpleText": "1:05:54"
+    },
+    "viewCountText": {
+     "simpleText": "3.730 lượt xem"
+    },
+    "navigationEndpoint": {
+     "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9AyBnNlYXJjaFIIbmhhYyB0cmWaAQMQ9CTKAQQIt8nF",
+     "commandMetadata": {
+      "webCommandMetadata": {
+       "url": "/watch?v=c6uPEAv6vXg&list=RDc6uPEAv6vXg&start_radio=1&pp=ygUIbmhhYyB0cmWgBwE%3D",
+       "webPageType": "WEB_PAGE_TYPE_WATCH",
+       "rootVe": 3832
+      }
+     },
+     "watchEndpoint": {
+      "videoId": "c6uPEAv6vXg",
+      "playlistId": "RDc6uPEAv6vXg",
+      "params": "wAEBqgMIbmhhYyB0cmW6AwsIvqLo_bOnrJfoAboDCgialKOSisaVnSW6AwoI8tDapK3uvqRSugMKCKrug-6OvujuVLoDCwj_sYOBvPyxo9ABugMKCNDl2NPLi6WGNboDCwino6OuwNOM-sgBugMLCLnY5drRlZXf6QG6AwoIltn_ho259K4TugMLCN_qrfLcuo-zwAG6AwoInpKPusPvvsohugMLCPSkqZnoj97K_QG6AwoI5ork15Cd_ucfugMLCI2NlsP7zrmjpAG6AwoI6e2gmrv40foKugMKCL6ykpjdjbLrF7oDCwjhiM_Gqrfh5ZMBugMLCIGj-fud08vGxwG6AwoIkcfihJGpyL5A8gMFDTE4Rj-4BQE%3D",
+      "playerParams": "ygUIbmhhYyB0cmWgBwE%3D",
+      "loggingContext": {
+       "vssLoggingContext": {
+        "serializedContextData": "Gg1SRGM2dVBFQXY2dlhn"
+       }
+      },
+      "watchEndpointSupportedOnesieConfig": {
+       "html5PlaybackOnesieConfig": {
+        "commonConfig": {
+         "url": "https://rr3---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=73ab8f100bfabd78&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+        }
+       }
+      }
+     }
+    },
+    "badges": [
+     {
+      "metadataBadgeRenderer": {
+       "style": "BADGE_STYLE_TYPE_SIMPLE",
+       "label": "Mới",
+       "trackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9A="
+      }
+     }
+    ],
+    "ownerText": {
+     "runs": [
+      {
+       "text": "Phan Music",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@H%C3%A0L%C5%A9-d9o",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UC7LbQLOOhta187-Fwc2cvGQ",
+         "canonicalBaseUrl": "/@H%C3%A0L%C5%A9-d9o"
+        }
+       }
+      }
+     ]
+    },
+    "shortBylineText": {
+     "runs": [
+      {
+       "text": "Phan Music",
+       "navigationEndpoint": {
+        "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "url": "/@H%C3%A0L%C5%A9-d9o",
+          "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+          "rootVe": 3611,
+          "apiUrl": "/youtubei/v1/browse"
+         }
+        },
+        "browseEndpoint": {
+         "browseId": "UC7LbQLOOhta187-Fwc2cvGQ",
+         "canonicalBaseUrl": "/@H%C3%A0L%C5%A9-d9o"
+        }
+       }
+      }
+     ]
+    },
+    "trackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9BA-Prq34Di49Vz",
+    "showActionMenu": false,
+    "shortViewCountText": {
+     "accessibility": {
+      "accessibilityData": {
+       "label": "3,7 nghìn lượt xem"
+      }
+     },
+     "simpleText": "3,7 N lượt xem"
+    },
+    "menu": {
+     "menuRenderer": {
+      "items": [
+       {
+        "menuServiceItemRenderer": {
+         "text": {
+          "runs": [
+           {
+            "text": "Thêm vào danh sách chờ"
+           }
+          ]
+         },
+         "icon": {
+          "iconType": "ADD_TO_QUEUE_TAIL"
+         },
+         "serviceEndpoint": {
+          "clickTrackingParams": "CLYCEP6YBBgOIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "sendPost": true
+           }
+          },
+          "signalServiceEndpoint": {
+           "signal": "CLIENT_SIGNAL",
+           "actions": [
+            {
+             "clickTrackingParams": "CLYCEP6YBBgOIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+             "addToPlaylistCommand": {
+              "openMiniplayer": true,
+              "videoId": "c6uPEAv6vXg",
+              "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+              "onCreateListCommand": {
+               "clickTrackingParams": "CLYCEP6YBBgOIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+               "commandMetadata": {
+                "webCommandMetadata": {
+                 "sendPost": true,
+                 "apiUrl": "/youtubei/v1/playlist/create"
+                }
+               },
+               "createPlaylistServiceEndpoint": {
+                "videoIds": [
+                 "c6uPEAv6vXg"
+                ],
+                "params": "CAQ%3D"
+               }
+              },
+              "videoIds": [
+               "c6uPEAv6vXg"
+              ],
+              "videoCommand": {
+               "clickTrackingParams": "CLYCEP6YBBgOIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+               "commandMetadata": {
+                "webCommandMetadata": {
+                 "url": "/watch?v=c6uPEAv6vXg",
+                 "webPageType": "WEB_PAGE_TYPE_WATCH",
+                 "rootVe": 3832
+                }
+               },
+               "watchEndpoint": {
+                "videoId": "c6uPEAv6vXg",
+                "watchEndpointSupportedOnesieConfig": {
+                 "html5PlaybackOnesieConfig": {
+                  "commonConfig": {
+                   "url": "https://rr3---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=73ab8f100bfabd78&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+                  }
+                 }
+                }
+               }
+              }
+             }
+            }
+           ]
+          }
+         },
+         "trackingParams": "CLYCEP6YBBgOIhMItsar6-uImAMVVrQpAx2N9wPQ"
+        }
+       },
+       {
+        "menuServiceItemRenderer": {
+         "text": {
+          "runs": [
+           {
+            "text": "Chia sẻ"
+           }
+          ]
+         },
+         "icon": {
+          "iconType": "SHARE"
+         },
+         "serviceEndpoint": {
+          "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "sendPost": true,
+            "apiUrl": "/youtubei/v1/share/get_share_panel"
+           }
+          },
+          "shareEntityServiceEndpoint": {
+           "serializedShareEntity": "CgtjNnVQRUF2NnZYZw%3D%3D",
+           "commands": [
+            {
+             "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+             "openPopupAction": {
+              "popup": {
+               "unifiedSharePanelRenderer": {
+                "trackingParams": "CLUCEI5iIhMItsar6-uImAMVVrQpAx2N9wPQ",
+                "showLoadingSpinner": true
+               }
+              },
+              "popupType": "DIALOG",
+              "beReused": true
+             }
+            }
+           ]
+          }
+         },
+         "trackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9A=",
+         "hasSeparator": true
+        }
+       }
+      ],
+      "trackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9A=",
+      "accessibility": {
+       "accessibilityData": {
+        "label": "Menu tác vụ"
+       }
+      }
+     }
+    },
+    "channelThumbnailSupportedRenderers": {
+     "channelThumbnailWithLinkRenderer": {
+      "thumbnail": {
+       "thumbnails": [
+        {
+         "url": "https://yt3.ggpht.com/HMEOILOkDjypvi6aUcvMxgj3U7CQHLVUo5pDy0sivzepslbrLRPKSL08lV95blvhweJVLkiOtQ=s68-c-k-c0x00ffffff-no-rj",
+         "width": 68,
+         "height": 68
+        }
+       ]
+      },
+      "navigationEndpoint": {
+       "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+       "commandMetadata": {
+        "webCommandMetadata": {
+         "url": "/@H%C3%A0L%C5%A9-d9o",
+         "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+         "rootVe": 3611,
+         "apiUrl": "/youtubei/v1/browse"
+        }
+       },
+       "browseEndpoint": {
+        "browseId": "UC7LbQLOOhta187-Fwc2cvGQ",
+        "canonicalBaseUrl": "/@H%C3%A0L%C5%A9-d9o"
+       }
+      },
+      "accessibility": {
+       "accessibilityData": {
+        "label": "Chuyển đến kênh Phan Music"
+       }
+      }
+     }
+    },
+    "thumbnailOverlays": [
+     {
+      "thumbnailOverlayTimeStatusRenderer": {
+       "text": {
+        "accessibility": {
+         "accessibilityData": {
+          "label": "1 giờ, 5 phút, 54 giây"
+         }
+        },
+        "simpleText": "1:05:54"
+       },
+       "style": "DEFAULT",
+       "icon": {
+        "iconType": "MUSIC"
+       }
+      }
+     },
+     {
+      "thumbnailOverlayToggleButtonRenderer": {
+       "isToggled": false,
+       "untoggledIcon": {
+        "iconType": "WATCH_LATER"
+       },
+       "toggledIcon": {
+        "iconType": "CHECK"
+       },
+       "untoggledTooltip": "Xem sau",
+       "toggledTooltip": "Đã thêm",
+       "untoggledServiceEndpoint": {
+        "clickTrackingParams": "CLQCEPnnAxgCIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true,
+          "apiUrl": "/youtubei/v1/browse/edit_playlist"
+         }
+        },
+        "playlistEditEndpoint": {
+         "playlistId": "WL",
+         "actions": [
+          {
+           "addedVideoId": "c6uPEAv6vXg",
+           "action": "ACTION_ADD_VIDEO"
+          }
+         ]
+        }
+       },
+       "toggledServiceEndpoint": {
+        "clickTrackingParams": "CLQCEPnnAxgCIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true,
+          "apiUrl": "/youtubei/v1/browse/edit_playlist"
+         }
+        },
+        "playlistEditEndpoint": {
+         "playlistId": "WL",
+         "actions": [
+          {
+           "action": "ACTION_REMOVE_VIDEO_BY_VIDEO_ID",
+           "removedVideoId": "c6uPEAv6vXg"
+          }
+         ]
+        }
+       },
+       "untoggledAccessibility": {
+        "accessibilityData": {
+         "label": "Xem sau"
+        }
+       },
+       "toggledAccessibility": {
+        "accessibilityData": {
+         "label": "Đã thêm"
+        }
+       },
+       "trackingParams": "CLQCEPnnAxgCIhMItsar6-uImAMVVrQpAx2N9wPQ"
+      }
+     },
+     {
+      "thumbnailOverlayToggleButtonRenderer": {
+       "untoggledIcon": {
+        "iconType": "ADD_TO_QUEUE_TAIL"
+       },
+       "toggledIcon": {
+        "iconType": "PLAYLIST_ADD_CHECK"
+       },
+       "untoggledTooltip": "Thêm vào danh sách chờ",
+       "toggledTooltip": "Đã thêm",
+       "untoggledServiceEndpoint": {
+        "clickTrackingParams": "CLMCEMfsBBgDIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+        "commandMetadata": {
+         "webCommandMetadata": {
+          "sendPost": true
+         }
+        },
+        "signalServiceEndpoint": {
+         "signal": "CLIENT_SIGNAL",
+         "actions": [
+          {
+           "clickTrackingParams": "CLMCEMfsBBgDIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+           "addToPlaylistCommand": {
+            "openMiniplayer": true,
+            "videoId": "c6uPEAv6vXg",
+            "listType": "PLAYLIST_EDIT_LIST_TYPE_QUEUE",
+            "onCreateListCommand": {
+             "clickTrackingParams": "CLMCEMfsBBgDIhMItsar6-uImAMVVrQpAx2N9wPQygEECLfJxQ==",
+             "commandMetadata": {
+              "webCommandMetadata": {
+               "sendPost": true,
+               "apiUrl": "/youtubei/v1/playlist/create"
+              }
+             },
+             "createPlaylistServiceEndpoint": {
+              "videoIds": [
+               "c6uPEAv6vXg"
+              ],
+              "params": "CAQ%3D"
+             }
+            },
+            "videoIds": [
+             "c6uPEAv6vXg"
+            ]
+           }
+          }
+         ]
+        }
+       },
+       "untoggledAccessibility": {
+        "accessibilityData": {
+         "label": "Thêm vào danh sách chờ"
+        }
+       },
+       "toggledAccessibility": {
+        "accessibilityData": {
+         "label": "Đã thêm"
+        }
+       },
+       "trackingParams": "CLMCEMfsBBgDIhMItsar6-uImAMVVrQpAx2N9wPQ"
+      }
+     },
+     {
+      "thumbnailOverlayNowPlayingRenderer": {
+       "text": {
+        "runs": [
+         {
+          "text": "Đang phát"
+         }
+        ]
+       }
+      }
+     },
+     {
+      "thumbnailOverlayLoadingPreviewRenderer": {
+       "text": {
+        "runs": [
+         {
+          "text": "Tiếp tục di chuột để phát"
+         }
+        ]
+       }
+      }
+     }
+    ],
+    "detailedMetadataSnippets": [
+     {
+      "snippetText": {
+       "runs": [
+        {
+         "text": "NHẠC TRẺ",
+         "bold": true
+        },
+        {
+         "text": " BALLAD HOT TREND 2026 TOP 12 Ca Khúc Về Nỗi Đau Tình Yêu Hay Nhất - DUYÊN TÌNH TAN VỠ ..."
+        }
+       ]
+      },
+      "snippetHoverText": {
+       "runs": [
+        {
+         "text": "Thông tin trong phần mô tả video"
+        }
+       ]
+      },
+      "maxOneLine": false
+     }
+    ],
+    "inlinePlaybackEndpoint": {
+     "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9AyBnNlYXJjaFIIbmhhYyB0cmWaAQMQ9CTKAQQIt8nF",
+     "commandMetadata": {
+      "webCommandMetadata": {
+       "url": "/watch?v=c6uPEAv6vXg&pp=YAHIAQGiBhUBAym6i8P1hKGoNH3zIO7NGsyusvc%3D",
+       "webPageType": "WEB_PAGE_TYPE_WATCH",
+       "rootVe": 3832
+      }
+     },
+     "watchEndpoint": {
+      "videoId": "c6uPEAv6vXg",
+      "params": "qgMIbmhhYyB0cmW6AwsIvqLo_bOnrJfoAboDCgialKOSisaVnSW6AwoI8tDapK3uvqRSugMKCKrug-6OvujuVLoDCwj_sYOBvPyxo9ABugMKCNDl2NPLi6WGNboDCwino6OuwNOM-sgBugMLCLnY5drRlZXf6QG6AwoIltn_ho259K4TugMLCN_qrfLcuo-zwAG6AwoInpKPusPvvsohugMLCPSkqZnoj97K_QG6AwoI5ork15Cd_ucfugMLCI2NlsP7zrmjpAG6AwoI6e2gmrv40foKugMKCL6ykpjdjbLrF7oDCwjhiM_Gqrfh5ZMBugMLCIGj-fud08vGxwG6AwoIkcfihJGpyL5A8gMFDTE4Rj8%3D",
+      "playerParams": "YAHIAQGiBhUBAym6i8P1hKGoNH3zIO7NGsyusvc%3D",
+      "playerExtraUrlParams": [
+       {
+        "key": "inline",
+        "value": "1"
+       }
+      ],
+      "watchEndpointSupportedOnesieConfig": {
+       "html5PlaybackOnesieConfig": {
+        "commonConfig": {
+         "url": "https://rr3---sn-8pxuuxa-8jar.googlevideo.com/initplayback?source=youtube&oeis=1&c=WEB&oad=3200&ovd=3200&oaad=11000&oavd=11000&ocs=700&oewis=1&oputc=1&epbp=1&msp=1&odepv=1&id=73ab8f100bfabd78&ip=203.0.113.7&initcwndbps=3134375&mt=1794706192&oweuc="
+        }
+       }
+      }
+     }
+    },
+    "searchVideoResultEntityKey": "EgtjNnVQRUF2NnZYZyDnAigB",
+    "avatar": {
+     "decoratedAvatarViewModel": {
+      "avatar": {
+       "avatarViewModel": {
+        "image": {
+         "sources": [
+          {
+           "url": "https://yt3.ggpht.com/HMEOILOkDjypvi6aUcvMxgj3U7CQHLVUo5pDy0sivzepslbrLRPKSL08lV95blvhweJVLkiOtQ=s68-c-k-c0x00ffffff-no-rj",
+           "width": 68,
+           "height": 68
+          }
+         ]
+        },
+        "avatarImageSize": "AVATAR_SIZE_M"
+       }
+      },
+      "a11yLabel": "Chuyển đến kênh Phan Music",
+      "rendererContext": {
+       "commandContext": {
+        "onTap": {
+         "innertubeCommand": {
+          "clickTrackingParams": "CLICENwwGAIiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+          "commandMetadata": {
+           "webCommandMetadata": {
+            "url": "/@H%C3%A0L%C5%A9-d9o",
+            "webPageType": "WEB_PAGE_TYPE_CHANNEL",
+            "rootVe": 3611,
+            "apiUrl": "/youtubei/v1/browse"
+           }
+          },
+          "browseEndpoint": {
+           "browseId": "UC7LbQLOOhta187-Fwc2cvGQ",
+           "canonicalBaseUrl": "/@H%C3%A0L%C5%A9-d9o"
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "continuation": {
+  "continuationItemRenderer": {
+   "trigger": "CONTINUATION_TRIGGER_ON_ITEM_SHOWN",
+   "continuationEndpoint": {
+    "clickTrackingParams": "CD0Qt6kLGAEiEwi2xqvr64iYAxVWtCkDHY33A9DKAQQIt8nF",
+    "commandMetadata": {
+     "webCommandMetadata": {
+      "sendPost": true,
+      "apiUrl": "/youtubei/v1/search"
+     }
+    },
+    "continuationCommand": {
+     "token": "EqEDEghuaGFjIHRyZRqUA0VnSVFBVWdVZ2dFTE5rTTJlRTk2TFRaRlZEU0NBUXRLVkhCWFRVdEtTWGxvYjRJQkMyTTJkVkJGUVhZMmRsaG5nZ0VMVld0cU4yTjBVMWR4U0VtQ0FRdFdUakpvT0U4elFUbDViNElCQ3pCRllrZzBPRUZuTWxBNGdnRUxUbEY1VlZoTWNESk5kRUdDQVF0NVVGRjVia0ZZU1RCaFk0SUJDelppTlZWeVVuUmFZa1JyZ2dFTFJURXpVbmxPUkdZM1NsbUNBUXQzUjFrNU1XTTFUR1JXT0lJQkMwbGFWRGRtUkdSRWVWSTBnZ0VMWDFwV05HWnZUWEZWYmxHQ0FRdElPRjgwTmxGeU5VSlhXWUlCQzNCRlltMWtOMmhzYUc4d2dnRUxRM1pXU0hjM1RrbE9kV3VDQVF0R09XSkpZbVJOUlcxVU5JSUJDMnM0ZFVaMWNXcFVlRWRGZ2dFTGVEUXdkVzFrT1MxVldVV0NBUXRSU0RCb1UxSkRXVzgxUmJJQkJnb0VDQlFRQXZBQkFRJTNEJTNEGIHg6BgiC3NlYXJjaC1mZWVk",
+     "request": "CONTINUATION_REQUEST_TYPE_SEARCH"
+    }
+   },
+   "loggingDirectives": {
+    "trackingParams": "CD0Qt6kLGAEiEwi2xqvr64iYAxVWtCkDHY33A9A="
+   }
+  }
+ }
+}
