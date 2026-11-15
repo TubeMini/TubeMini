@@ -121,6 +121,18 @@ pub fn filter_master(master: &str, max_res: u32, max_fps: f64) -> Option<String>
     Some(out)
 }
 
+/// Short-side resolution of the best variant in a (filtered) master playlist, e.g. 720.
+pub fn best_height(playlist: &str) -> Option<u32> {
+    playlist
+        .lines()
+        .filter_map(|l| l.strip_prefix("#EXT-X-STREAM-INF:"))
+        .filter_map(|list| {
+            let (w, h) = attr(&attributes(list), "RESOLUTION")?.split_once('x')?;
+            Some(w.parse::<u32>().ok()?.min(h.parse().ok()?))
+        })
+        .max()
+}
+
 /// Removes a `SUBTITLES="..."` attribute (its renditions are dropped).
 fn strip_subtitles(inf: &str) -> String {
     match inf.find(",SUBTITLES=\"") {
@@ -218,6 +230,25 @@ mod tests {
         assert!(filter_master("<html>", 720, 30.0).is_none());
         let vp9 = "#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1,CODECS=\"vp09.00.31.08,mp4a.40.2\",RESOLUTION=1280x720\nhttps://x\n";
         assert!(filter_master(vp9, 720, 30.0).is_none());
+    }
+
+    #[test]
+    fn best_height_of_filtered_playlists() {
+        assert_eq!(
+            best_height(&filter_master(MASTER_MUSIC, 720, 30.0).unwrap()),
+            Some(720)
+        );
+        assert_eq!(
+            best_height(&filter_master(MASTER_BBB, 720, 30.0).unwrap()),
+            Some(480)
+        );
+        assert_eq!(
+            best_height(
+                "#EXTM3U
+"
+            ),
+            None
+        );
     }
 
     #[test]

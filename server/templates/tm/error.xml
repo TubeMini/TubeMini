@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tm:error xmlns:tm="urn:tubemini:1" code="{{ code }}" message="{{ message }}"/>

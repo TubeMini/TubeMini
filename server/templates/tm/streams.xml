@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tm:streams xmlns:tm="urn:tubemini:1" video_id="{{ video_id }}" expire="{{ expire }}" available_in="{{ available_in }}">
+{%- for s in streams %}
+  <tm:stream quality="{{ s.quality }}" kind="{{ s.kind }}" url="{{ s.url }}"/>
+{%- endfor %}
+</tm:streams>

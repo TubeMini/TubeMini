@@ -3,6 +3,7 @@
 
 mod config;
 mod debug;
+mod ext;
 mod gdata;
 mod state;
 mod video;
@@ -87,13 +88,15 @@ async fn main() -> Result<()> {
     tools.log();
 
     let listen = cfg.listen.clone();
+    let state = AppState::new(cfg, tools)?;
     let router = Router::new()
         .merge(debug::routes())
         .merge(gdata::routes())
         .merge(video::routes())
+        .merge(ext::routes(state.clone()))
         .layer(axum::middleware::from_fn(log_request))
         .layer(CompressionLayer::new().gzip(true))
-        .with_state(AppState::new(cfg, tools)?);
+        .with_state(state);
     // The resolution prefix must be stripped before routing, so it wraps the whole router
     let app = tower::util::MapRequestLayer::new(gdata::strip_res_prefix).layer(router);
 

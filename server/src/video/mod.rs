@@ -131,7 +131,7 @@ async fn getvideo(
 }
 
 /// Downloads YouTube's master playlist (a few KB) and filters it; cached per (video, res).
-async fn hls_playlist(
+pub(crate) async fn hls_playlist(
     st: &AppState,
     id: &VideoId,
     streams: &StreamInfo,
