@@ -168,20 +168,18 @@ def normal(sd, x, y, h=0.002):
 # ---------- shading ----------
 
 def copper(u, v):
-    """Turned copper with rust patina, before the bevel."""
+    """Turned copper with a light, broad patina, before the bevel. No speckles or per-pixel grain: at the
+    72 px the iPad mini shows, they turn into noise (the user found the textured version "rỗ")."""
     s = u * 0.45 + v * 0.55
-    c = ramp([(0.12, (255, 200, 150)), (0.42, (222, 112, 50)), (0.7, (168, 66, 26)), (0.92, (84, 30, 10))], s)
+    c = ramp([(0.12, (255, 206, 160)), (0.42, (228, 120, 54)), (0.7, (176, 70, 28)), (0.92, (92, 34, 12))], s)
     # Turned metal: bright lobe facing the light, a weaker one opposite, dark sides in between
     ang = math.atan2(v - 0.5, u - 0.5) - math.atan2(LIGHT[1], LIGHT[0])
-    lobe = 0.55 * max(0.0, math.cos(ang)) ** 6 + 0.22 * max(0.0, -math.cos(ang)) ** 8
+    lobe = 0.38 * max(0.0, math.cos(ang)) ** 6 + 0.16 * max(0.0, -math.cos(ang)) ** 8
     c = mix(c, (255, 236, 205), lobe)
     c = scale(c, 1 - 0.18 * abs(math.sin(ang)) ** 4)
-    # Rust: dark patches and orange flakes
-    patch = smoothstep(0.50, 0.66, fbm(u * 6.5, v * 6.5, 11))
-    c = mix(c, ramp([(0, (84, 30, 14)), (1, (126, 46, 18))], fbm(u * 14, v * 14, 5)), 0.7 * patch)
-    flakes = smoothstep(0.62, 0.76, fbm(u * 24, v * 24, 29))
-    c = mix(c, (214, 92, 30), 0.6 * flakes)
-    return scale(c, 0.94 + 0.12 * hash2(int(u * 4096), int(v * 4096), 7))
+    # Patina: a few large, soft, darker areas (rust, without the pitting)
+    patch = smoothstep(0.52, 0.72, fbm(u * 3.0, v * 3.0, 11, octaves=2))
+    return mix(c, (118, 46, 20), 0.32 * patch)
 
 
 def bevel(c, d, n, width, strength=0.6, highlight=(255, 232, 205)):
@@ -234,6 +232,8 @@ def render(size, background=None):
             shadow = 0.5 * (1 - smoothstep(-0.01, 0.04, sd_cog(u, v, 0.02)))
             d_cog = sd_cog(u, v)
             cog = cover(d_cog)
+            # Thin dark outline just outside the cog: a crisp edge on any wallpaper
+            shadow = max(shadow, 0.55 * cover(d_cog - pw))
             if background:
                 c = mix(c, (0, 0, 0), shadow)
             if d_cog < pw:
@@ -241,8 +241,8 @@ def render(size, background=None):
                 m = bevel(m, d_cog, normal(sd_cog, u, v), 0.03, 0.8)
                 c = mix(c, m, cover(d_cog))
 
-            # Rivets
-            for rx, ry in RIVETS:
+            # Rivets: only where they are more than a dot (they read as pits at 72 px)
+            for rx, ry in RIVETS if size >= 100 else ():
                 d_r = math.hypot(u - rx, v - ry) - RIVET_R
                 if d_r < 0.02:
                     c = mix(c, (40, 14, 4), 0.5 * (1 - smoothstep(-0.004, 0.012, math.hypot(u - rx, v - ry - 0.006) - RIVET_R)))

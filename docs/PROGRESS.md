@@ -270,6 +270,7 @@
   sau khi respring.
 - [x] **Icon nền trong suốt** (anh yêu cầu): bỏ nền tối quanh bánh răng. Trên iPad, sau bánh răng vẫn thấy ô bóng mờ mà SpringBoard
   iOS 6 vẽ dưới mọi icon (D27); anh chọn giữ bản trong suốt.
+- [x] **Icon nét hơn ở 72 px** (anh thấy "rỗ"): bỏ vân gỉ lấm tấm và nhiễu hạt, bỏ đinh tán ở cỡ nhỏ, thêm viền tối mảnh (D27).
 
 
 ## Giai đoạn 5 — Mở rộng (15/11/2026)

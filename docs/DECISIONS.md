@@ -348,6 +348,9 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
     được nếu không có theme / tweak. Em đưa anh ba phương án (trong suốt, nhôm xước sáng, xanh trời); anh chọn giữ trong suốt.
     Hai nền kia vẫn vẽ được: `python scripts/make-icons.py --background silver` (hoặc `sky`).
   - Bản trước có nền xanh thép và góc bo vẽ sẵn: SpringBoard để icon cũ của app này (cài bằng `.deb`) vuông góc.
+- **Làm sạch cho cỡ 72 px** (anh thấy icon "rỗ", không nét): iPad mini 1 hiển thị icon đúng 72×72, nên các chi tiết nhỏ hơn 2–3 px
+  thành hạt lấm tấm. Đã bỏ nhiễu hạt từng điểm ảnh và vảy gỉ nhỏ, chỉ giữ vài mảng xỉn lớn và nhạt; bỏ đinh tán ở cỡ nhỏ hơn 100 px;
+  thêm viền tối mảnh 1 px quanh bánh răng để mép sắc trên mọi hình nền; giảm ánh phản chiếu để đồng không bị chói.
 - Đổi icon xong, `uicache` chưa đủ: SpringBoard giữ icon trong bộ nhớ, phải respring (`killall SpringBoard`).
 
 ## D28. Giai đoạn 5: chỉ nghe, tải về, proxy dự phòng, mDNS, VPS — 15/11/2026
