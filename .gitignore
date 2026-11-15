@@ -6,6 +6,10 @@
 /server/data/
 /data/
 /server/config.toml
+/tubemini-data/
+
+# Release archives (scripts/make-release.sh)
+/dist/
 
 # Reference IPAs (Google binaries, not ours to distribute)
 /ipa tham khao/

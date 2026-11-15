@@ -421,3 +421,30 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
   Ctrl+C, nên `docker stop` phải đợi 10 giây rồi giết; nay xử lý cả SIGTERM. Đã xoá image thử, giữ nguyên image của dự án khác.
 - Một lần em sửa template bằng script Python mở file ở chế độ ghi trước khi đọc, làm `streams.xml` rỗng; `INSTA_UPDATE=always` còn
   ghi snapshot rỗng theo. Clippy (trường không dùng) phát hiện, đã khôi phục từ git. Từ nay đọc xong mới ghi.
+
+## D30. Cài server trên Ubuntu bằng một script: Docker hoặc service — 15/11/2026
+
+- Anh muốn người dùng chọn một trong hai cách và cài nhanh bằng một script trên Ubuntu. Có `scripts/install.sh`:
+  - menu chọn 1) Docker / 2) Service, hỏi cổng và mã truy cập; có cờ để cài không cần hỏi, `--status`, `--uninstall [--purge]`;
+  - chạy lại là cập nhật, giữ `config.toml` và dữ liệu. Hai cách dùng chung `/opt/tubemini`; cài cách này thì tắt cách kia để
+    trả cổng.
+  - **Docker:** dùng Docker nếu có; máy chỉ có Podman thì dùng Podman với một unit systemd riêng (`tubemini-container`); không có gì
+    thì hỏi rồi cài `docker.io` từ kho Ubuntu. Container dùng mạng của máy (`--network host`): không cần ánh xạ cổng, và mDNS tới
+    được mạng nhà. Hẹn giờ hằng ngày chạy `yt-dlp -U` trong container. Dockerfile chọn bản yt-dlp / Deno theo CPU (x86_64, ARM64).
+  - **Service:** cài những gì thiếu (công cụ build, Rust, yt-dlp, Deno), build trong `/opt/tubemini/src` (giữ cache build giữa
+    các lần cập nhật), unit `tubemini` + hẹn giờ cập nhật yt-dlp. `deploy-server.sh` giờ chỉ gửi mã nguồn rồi gọi
+    `install.sh --service`, nên chỉ còn một nơi định nghĩa cách cài.
+  - `scripts/make-release.sh` đóng gói `dist/tubemini-server-<phiên bản>.tar.gz` (khoảng 140 KB). Repo không có remote, nên chưa có
+    lệnh `curl … | bash` hay image trên Docker Hub (đẩy lên mạng là việc anh quyết).
+  - `docker-compose.yml` cho Windows / macOS (Docker Desktop).
+- **Đã thử:**
+  - Service: cập nhật máy chủ thật .192 qua `deploy-server.sh` mới; `config.toml` không đổi (cùng md5), dữ liệu còn đủ (3 kênh,
+    13 mục lịch sử), service và hẹn giờ chạy.
+  - Docker (Podman) trên máy build Ubuntu 26.04, từ gói phát hành, thư mục `/opt/tubemini-test`, cổng 18080:
+    - cài mới khoảng 3 phút 40 giây; `--status` đúng;
+    - khởi động lại unit vẫn chạy; hẹn giờ `yt-dlp -U` chạy thành công;
+    - máy PC truy cập được, và thấy cùng lúc hai máy chủ qua mDNS;
+    - gỡ với `--purge` xoá sạch unit, thư mục, container, image.
+  - Lỗi tìm ra khi thử: mỗi lần build để lại một image trung gian khoảng 1,6 GB. Nay hai tầng của Dockerfile mang nhãn
+    `org.tubemini.image`, và script dọn image cũ mang nhãn đó sau mỗi lần build và khi gỡ.
+  - Sau khi thử, đã xoá mọi image Podman của root trên máy build (trước đó trống); image của dự án khác không đụng tới.

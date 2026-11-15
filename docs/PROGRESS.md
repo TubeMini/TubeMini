@@ -334,3 +334,7 @@
   (94,5 MB), phát từ trong máy (127.0.0.1), tua tới giây 300 có ngay.
 - [x] **Docker image** build thử bằng Podman trên máy build: chạy được; server giờ tắt êm khi nhận SIGTERM (`docker stop` 0,13
   giây thay vì 10 giây).
+- [x] **Cài trên Ubuntu bằng một script** (D30): `install.sh` cho chọn 1) Docker (Docker / Podman) hoặc 2) service systemd, tự khởi
+  động cùng máy, tự cập nhật yt-dlp; cập nhật bằng cách chạy lại, có `--status`, `--uninstall [--purge]`. Gói phát hành
+  `scripts/make-release.sh` (khoảng 140 KB), `docker-compose.yml` cho Windows / macOS. Đã thử service trên máy .192 (giữ nguyên
+  cấu hình và dữ liệu), Docker bằng Podman trên máy build (cài, khởi động lại, cập nhật, gỡ sạch).

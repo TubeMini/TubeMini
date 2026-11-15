@@ -1,0 +1,16 @@
+# TubeMini server with Docker Compose — any OS with Docker (Windows / macOS: Docker Desktop).
+#   docker compose up -d --build      start (and again after updating the sources)
+#   docker compose logs -f            log
+#   docker compose down               stop
+# Config and data (subscriptions, history): ./tubemini-data (config.toml is created on first start).
+# On Ubuntu, scripts/install.sh does all this with autostart and a daily yt-dlp update.
+services:
+  tubemini:
+    build: ./server
+    image: tubemini:latest
+    container_name: tubemini
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./tubemini-data:/data

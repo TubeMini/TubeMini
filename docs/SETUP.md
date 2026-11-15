@@ -126,35 +126,48 @@ systemctl enable --now tuberepair
 
 Hiện chỉ phần bình luận của nó còn chạy (D7).
 
-## 7. Chạy server trên máy Linux (máy LXC 192.168.1.192)
+## 7. Cài server trên Ubuntu: Docker hoặc service hệ thống
 
-Server chính hiện chạy ở `http://192.168.1.192:8080`, không cần bật PC. PC vẫn dùng để phát triển và thử.
+Một script `install.sh` cài theo một trong hai cách. Hai cách dùng chung cấu hình và dữ liệu ở `/opt/tubemini`, nên đổi cách không
+mất kênh theo dõi hay lịch sử.
 
-Cài một lần trên máy đích (Ubuntu 24.04, chạy bằng root):
+| | 1) Docker | 2) Service |
+| --- | --- | --- |
+| Chạy bằng | container (Docker; máy chỉ có Podman thì dùng Podman) | dịch vụ systemd `tubemini` |
+| Cần cài thêm | Docker (script hỏi rồi cài `docker.io` nếu chưa có) | công cụ build, Rust, yt-dlp, Deno (script tự cài) |
+| Lần đầu | khoảng 4 phút (build image) | 5–10 phút (build từ mã nguồn) |
+| Tự khởi động cùng máy | có | có |
+| Cập nhật yt-dlp | mỗi lần container chạy + mỗi ngày | mỗi ngày |
+| Log | `docker logs -f tubemini` | `journalctl -u tubemini -f` |
+
+Gói cài đặt: trên PC chạy `bash scripts/make-release.sh`, được `dist/tubemini-server-<phiên bản>.tar.gz` (khoảng 140 KB: mã nguồn
+server, `install.sh`, `docker-compose.yml`, `HUONG-DAN.txt`). Chép sang máy Ubuntu rồi:
 
 ```sh
-apt-get install -y build-essential pkg-config unzip git curl
-curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
-curl -L -o /usr/local/bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp && chmod +x /usr/local/bin/yt-dlp
-curl -L -o /tmp/deno.zip https://github.com/denoland/deno/releases/latest/download/deno-x86_64-unknown-linux-gnu.zip   && unzip -o /tmp/deno.zip -d /usr/local/bin
+tar xzf tubemini-server-0.5.0.tar.gz && cd tubemini-server-0.5.0
+sudo ./install.sh                     # hỏi: 1) Docker hay 2) Service, cổng (8080), mã truy cập
 ```
 
-Deploy (và cả mỗi lần cập nhật) từ PC bằng Git Bash:
+Không hỏi gì: `sudo ./install.sh --docker --yes` hoặc `sudo ./install.sh --service --port 8080 --token <mã> --yes`.
+Trong thư mục repo thì chạy `sudo scripts/install.sh` cũng được.
+
+- **Cập nhật:** giải nén bản mới, chạy lại `install.sh` (giữ `config.toml` và dữ liệu). Kiểu Docker tự xoá image cũ sau khi build.
+- **Trạng thái:** `./install.sh --status`. **Gỡ:** `sudo ./install.sh --uninstall` (giữ dữ liệu), thêm `--purge` để xoá luôn.
+- Cấu hình: `/opt/tubemini/config.toml` (sửa xong thì chạy lại `install.sh`, hoặc `systemctl restart tubemini` /
+  `docker restart tubemini`). Dữ liệu: `/opt/tubemini/data/tubemini.db` (SQLite). Muốn giữ thì sao lưu file này.
+- Kiểu Docker dùng mạng của máy (`--network host`), nên mDNS chạy được: app tìm thấy máy chủ trong mạng nhà.
+
+**Máy chủ hiện tại (LXC 192.168.1.192)** cài kiểu service. Cập nhật từ PC bằng Git Bash:
 
 ```sh
 TM_SERVER_HOST=root@192.168.1.192 TM_SERVER_PASS=<mật khẩu root> scripts/deploy-server.sh
 ```
 
-Script làm các việc sau:
+Script gửi `server/` và `install.sh` sang máy đó, rồi chạy `install.sh --service --yes`.
 
-- gửi `server/` lên `/opt/tubemini/src` và build trên chính máy đó (binary khớp glibc của máy);
-- cài `/opt/tubemini/tubemini-server`, tạo `/opt/tubemini/config.toml` nếu chưa có (sửa tay ở đó, deploy sau không ghi đè);
-- tạo user hệ thống `tubemini`, unit systemd `tubemini`, và timer `tubemini-ytdlp-update` chạy `yt-dlp -U` mỗi ngày.
-
-Xem log: `journalctl -u tubemini -f`. Khởi động lại: `systemctl restart tubemini`.
-
-Kênh đã theo dõi và lịch sử xem nằm trong `/opt/tubemini/data/tubemini.db` (SQLite; deploy không đụng tới thư mục `data`). Muốn
-giữ lại thì sao lưu file này. Trên Windows thì file nằm trong thư mục `data` cạnh `config.toml`.
+**Windows / macOS (Docker Desktop):** ở thư mục repo (hoặc thư mục giải nén), chạy `docker compose up -d --build`. Dữ liệu nằm ở
+`./tubemini-data`. Trên Windows cũng có thể chạy thẳng `tubemini-server.exe` (mục 1). Trên Windows, file dữ liệu nằm trong thư mục
+`data` cạnh `config.toml`.
 
 ## 8. Xem ngoài mạng nhà (4G, Wi-Fi khác)
 
@@ -183,16 +196,13 @@ Lưu ý: mã truy cập chỉ bảo vệ `/tm/v1`. Lớp GData (tìm kiếm, tra
 server sinh. Vì vậy cách 1 an toàn hơn. Nếu phép thử 4G cho thấy link dùng được từ IP khác, thì chỉ cần chuyển cổng, không cần bật
 proxy.
 
-## 9. Triển khai lên VPS (Docker)
+## 9. Triển khai lên VPS
 
-```sh
-docker build -t tubemini server/
-docker run -d --name tubemini -p 8080:8080 -v tubemini-data:/data --restart unless-stopped tubemini
-docker exec -it tubemini sh -c 'vi /data/config.toml'   # đặt auth_token, region = "VN"; rồi docker restart tubemini
-```
+VPS chạy Ubuntu thì cài như mục 7, **có mã truy cập**: `sudo ./install.sh --docker --token <mã dài, ngẫu nhiên> --yes`.
+VPS khác (hoặc chỉ có Docker): `docker compose up -d --build`, rồi sửa `./tubemini-data/config.toml` và `docker compose restart`.
 
-- Image gồm tubemini-server, yt-dlp (bản chạy độc lập) và Deno. Mỗi lần container khởi động thì yt-dlp tự cập nhật. Dữ liệu (kênh
-  theo dõi, lịch sử, config) nằm ở volume `/data`.
+- Image gồm tubemini-server, yt-dlp (bản chạy độc lập) và Deno, cho CPU x86_64 và ARM64. Mỗi lần container khởi động thì yt-dlp
+  tự cập nhật.
 - **Bắt buộc đặt `auth_token`** khi server ra Internet.
 - Link đi theo quốc gia của server: nên thuê VPS ở Việt Nam để video không bị chặn theo vùng. IP trung tâm dữ liệu cũng dễ bị
   YouTube đòi xác minh "không phải bot" hơn IP nhà, nên yt-dlp có thể lỗi thường xuyên hơn.
@@ -201,5 +211,4 @@ docker exec -it tubemini sh -c 'vi /data/config.toml'   # đặt auth_token, reg
 - **HTTPS và iOS 6:** chứng chỉ Let's Encrypt **không chạy** trên iOS 6, vì máy không có gốc ISRG Root X1 (mới có từ 2015).
   Muốn HTTPS thì cần chứng chỉ nối tới một gốc mà iOS 6 tin (ví dụ GlobalSign Root CA R1, DigiCert Global Root CA). Em chưa thử
   cách này. Cách đơn giản hơn: VPS chạy HTTP + mã truy cập, và iPad vào qua VPN (dựng L2TP/IPsec trên chính VPS).
-- Đã build thử bằng Podman trên máy build Ubuntu (khoảng 4 phút): container chạy, `ping` và tìm kiếm trả kết quả, `docker stop` tắt
-  ngay (server xử lý SIGTERM).
+- Đã thử cả hai cách trên máy thật (D30): service trên máy LXC .192, Docker bằng Podman trên máy build Ubuntu 26.04.
