@@ -116,9 +116,9 @@ Danh mục tĩnh (Film, Music, Games, News, Sports), `application/atomcat+xml`.
 Đăng nhập giả để app bỏ qua bước đăng nhập (giống TubeRepair). Trả text lần lượt là `r2=<k>\nhmackr2=<k>`, `Auth=<k>` và
 `DeviceId=<k>\nDeviceKey=<k>`. Khóa `<k>` là chuỗi hex ngẫu nhiên, tạo một lần mỗi khi server khởi động.
 
-### `GET /getvideo/<id>[?fresh=1]` (và `GET /video/sd/<id>`)
+### `GET /getvideo/<id>[?fresh=1][&proxy=1]` (và `GET /video/sd/<id>`)
 
-Link phát. Server không chuyển tiếp dữ liệu video.
+Link phát. Server không chuyển tiếp dữ liệu video (trừ chế độ proxy dự phòng, xem `/proxy` bên dưới).
 
 - Không có tiền tố độ phân giải (và `medium_quality = true`): **307** sang link MP4 progressive ≤ 360p (H.264 + AAC, thường là itag
   18) trên googlevideo. Video không có định dạng này, **hoặc MP4 mang tiếng lồng tiếng AI** (D23), thì trả HLS 360p đã lọc như
@@ -137,7 +137,31 @@ Link phát. Server không chuyển tiếp dữ liệu video.
 - Link lấy bằng `yt-dlp --force-ipv4 -J`, cache 5 phút. Các request trùng nhau cho cùng một video dùng chung một lần chạy. Server
   lấy link trước khi app mở trang video (`/feeds/player/videos/<id>`, liên quan).
 - `fresh=1` bỏ qua cache (app gọi khi thử lại sau lỗi 403).
+- `proxy=1` và config có `proxy_fallback = true`: link MP4 và mọi URL trong playlist HLS trỏ về `/proxy` của server. Config tắt thì
+  tham số này bị bỏ qua.
 - Không lấy được link: `502`. ID sai: `404`.
+
+### `GET /getaudio/<id>[?fresh=1][&proxy=1]`
+
+Chỉ tiếng (nghe khi tắt màn hình, tiết kiệm mạng). **200**, `application/vnd.apple.mpegurl`: playlist HLS master có đúng một biến
+thể chỉ có tiếng (`CODECS="mp4a.40.2"`), trỏ thẳng tới rendition tiếng của YouTube.
+
+- Chọn nhóm AAC-LC 128 kbit/s (itag 234), không có thì HE-AAC (233). Trong nhóm, chọn track tiếng gốc như `/getvideo` (D23).
+- Segment là AAC đóng gói ("packed audio"), iOS 6 phát được. Vẫn tải thẳng từ googlevideo.
+- Chờ quảng cáo, `fresh`, `proxy` giống `/getvideo`. Video không có HLS: `502`.
+
+### `GET /proxy/<sig>/<payload>` (chỉ khi `proxy_fallback = true`)
+
+Chuyển tiếp dữ liệu từ googlevideo qua server, cho lúc iPad ở ngoài mạng nhà mà link googlevideo không dùng được từ IP khác (link
+gắn với IP của server). Mặc định **tắt**: config `proxy_fallback = false` thì route trả `404`.
+
+- URL do server tự sinh (trong `/getvideo?proxy=1`, `/getaudio?proxy=1`, `streams?proxy=1`). `<payload>` là URL đích mã base64url
+  kèm đuôi gợi ý (`.mp4`, `.m3u8`, `.ts`). `<sig>` là chữ ký (SipHash với khóa ngẫu nhiên mỗi lần server khởi động), nên không ai
+  dùng route này làm proxy mở được. Chỉ nhận đích `https://*.googlevideo.com`.
+- Chuyển tiếp header `Range`; trả lại `200`/`206` kèm `Content-Type`, `Content-Length`, `Content-Range`, `Accept-Ranges`, nên tua
+  được.
+- Playlist HLS (con) thì server tải về và viết lại mọi URL bên trong thành URL `/proxy`.
+- Sai chữ ký hoặc sai đích: `403`. googlevideo lỗi: trả nguyên mã lỗi.
 - `/video/sd/<id>` là link `<content src>` trong feed của app classic, xử lý giống `/getvideo/<id>`.
 
 ### `GET /feeds/api/channels?q=<từ khóa>`
@@ -229,14 +253,15 @@ Quy ước:
 Trạng thái server, dùng cho nút "Kiểm tra kết nối" trong Cài đặt.
 
 ```xml
-<tm:ping xmlns:tm="urn:tubemini:1" server="0.3.0" yt_dlp="2026.10.26" deno="deno 2.9.8 (stable, release, x86_64-pc-windows-msvc)"
-         time="1794709999" auth="off"/>
+<tm:ping xmlns:tm="urn:tubemini:1" server="0.5.0" yt_dlp="2026.10.26" deno="deno 2.9.8 (stable, release, x86_64-pc-windows-msvc)"
+         time="1794709999" auth="off" proxy="off"/>
 ```
 
 - `yt_dlp` / `deno`: phiên bản, hoặc rỗng nếu thiếu (app báo "Máy chủ thiếu yt-dlp" hoặc "thiếu Deno").
 - `time`: giờ server (Unix giây). `auth`: `on` hoặc `off`.
+- `proxy`: `on` khi config bật `proxy_fallback` (app mới cho bật "Phát qua máy chủ").
 
-### `GET /tm/v1/videos/<id>/streams[?fresh=1]`
+### `GET /tm/v1/videos/<id>/streams[?fresh=1][&proxy=1]`
 
 Các lựa chọn chất lượng, gọi ngay trước khi phát.
 
@@ -245,6 +270,8 @@ Các lựa chọn chất lượng, gọi ngay trước khi phát.
   <tm:stream quality="360" kind="mp4" url="https://rr3---sn-....googlevideo.com/videoplayback?..."/>
   <tm:stream quality="720" kind="hls" url="http://192.168.1.10:8080/720/getvideo/dQw4w9WgXcQ"/>
   <tm:stream quality="1080" kind="hls" url="http://192.168.1.10:8080/1080/getvideo/dQw4w9WgXcQ"/>
+  <tm:audio url="http://192.168.1.10:8080/getaudio/dQw4w9WgXcQ"/>
+  <tm:download url="https://rr3---sn-....googlevideo.com/videoplayback?..." quality="360" dubbed="0"/>
 </tm:streams>
 ```
 
@@ -261,6 +288,12 @@ Các lựa chọn chất lượng, gọi ngay trước khi phát.
 - `expire`: Unix giây lúc link hết hạn. Link được cache 5 phút. Phát lỗi (403 hoặc hết hạn) thì gọi lại với `fresh=1` một lần.
 - Thứ tự: `quality` tăng dần. App chọn mục có `quality` lớn nhất mà không vượt chất lượng người dùng chọn (360 / 720 / 1080);
   không có mục nào như vậy thì lấy mục nhỏ nhất.
+- `tm:audio` (có khi video có HLS): link `/getaudio` để chỉ nghe tiếng.
+- `tm:download` (có khi video có MP4 progressive): link MP4 360p để app tải về xem offline. App tải bằng request `Range`, nên tải
+  tiếp được khi đứt mạng; link hết hạn thì gọi lại `streams?fresh=1`. `dubbed="1"`: tiếng trong MP4 là bản lồng tiếng AI (D23),
+  app báo trước cho người dùng.
+- `proxy=1` và config có `proxy_fallback = true`: mọi URL trên trỏ về server (`/proxy`, hoặc `/getvideo` / `/getaudio` có
+  `proxy=1`), và `tm:streams` có thêm `proxy="1"`. Config tắt thì tham số bị bỏ qua (không có `proxy="1"`).
 
 ### `GET /tm/v1/subscriptions`
 
@@ -337,3 +370,13 @@ Trả về `<tm:history …/>` như trên. App gửi khoảng 15 giây một l�
 ### `DELETE /tm/v1/history/<id>` và `DELETE /tm/v1/history`
 
 Xóa một video khỏi lịch sử, hoặc xóa hết. Trả `<tm:ok xmlns:tm="urn:tubemini:1"/>`.
+
+## Tìm server trong mạng nhà (mDNS / Bonjour)
+
+Server quảng bá dịch vụ `_tubemini._tcp.local` (config `mdns = true`, mặc định bật):
+
+- tên dịch vụ: `TubeMini (<tên máy>)`; cổng: cổng HTTP của server; bản ghi A: IPv4 của máy trong mạng nhà;
+- TXT: `v=<phiên bản server>`, `path=/`.
+
+App dò bằng `NSNetServiceBrowser` (Cài đặt → "Tìm máy chủ trong mạng"). mDNS chỉ chạy trong cùng một mạng con (multicast
+`224.0.0.251:5353` không qua router); iPad và server ở hai mạng khác nhau thì vẫn nhập địa chỉ bằng tay.
