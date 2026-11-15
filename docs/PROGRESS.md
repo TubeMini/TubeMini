@@ -262,3 +262,9 @@
 - Không có tài khoản: mọi máy dùng chung server thì chung kênh theo dõi và lịch sử.
 - App YouTube cũ chưa tự theo dõi kênh được (nút đăng ký của nó cần đăng nhập Google); chỉ xem được feed.
 - Trình phát vẫn là MPMoviePlayerViewController toàn màn hình.
+
+### Bổ sung sau Giai đoạn 4 (anh yêu cầu, 15/11/2026)
+
+- [x] **Icon mới** (D27): bánh răng đồng gỉ sét (Rust), màn hình ống đỏ có nút play (một chút YouTube), chất liệu thật và lớp bóng
+  kiểu iOS 6. Có đủ các cỡ 72 / 144 (màn hình chính), 50 / 100 (Spotlight), 29 / 58 (Cài đặt). Đã thấy trên màn hình chính iPad
+  sau khi respring.

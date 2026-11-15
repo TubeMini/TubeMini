@@ -1,5 +1,7 @@
 # TubeMini
 
+<img src="docs/icon.png" width="128" alt="Icon TubeMini">
+
 Xem YouTube trên iPad mini 1 (iOS 6, đã jailbreak), gồm hai phần:
 
 - **`server/` — tubemini-server** (Rust): chạy trên PC Windows trong nhà. Giả lập API GData cũ để app YouTube cũ cùng tweak

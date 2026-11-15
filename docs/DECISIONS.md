@@ -331,3 +331,17 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
     đổi "Xem tiếp" ngay khi đóng trình phát, không cần hỏi lại server.
 - **App YouTube cũ:** `home_feed = "subscriptions"` áp cho các feed không có hậu tố danh mục (`most_popular`, `recently_featured`…).
   Chưa theo dõi kênh nào hoặc feed lỗi thì vẫn trả feed phổ biến.
+
+## D27. Icon app: bánh răng gỉ sét + màn hình ống đỏ, phong cách iOS 6 — 15/11/2026
+
+- Anh yêu cầu icon hợp tên TubeMini, mang phong cách iOS 6, phong cách Rust và một chút YouTube:
+  - **Rust:** bánh răng 12 răng bằng đồng, có vân gỉ (mảng xỉn và vảy cam) và 4 đinh tán;
+  - **YouTube:** màn hình đỏ bo góc với nút play trắng. Chỉ gợi nhớ, không chép logo YouTube hay Rust;
+  - **iOS 6:** chất liệu thật, kim loại tiện tròn có ánh phản chiếu, viền vát sáng ở trên trái và tối ở dưới phải, đổ bóng, phản
+    chiếu trên mặt kính CRT, lớp bóng cong cổ điển trên cả icon;
+  - "Tube" + "Mini": một chiếc TV ống nhỏ.
+- `scripts/make-icons.py` vẽ bằng Python thuần (không Pillow, không trình render SVG; cài thêm công cụ trên PC bị chặn). Mọi hình là
+  signed distance field, nên viền mịn và mỗi cỡ được vẽ trực tiếp, không bị mờ do thu nhỏ. Vẽ hết các cỡ mất khoảng 15 giây.
+- **Góc bo vẽ sẵn trong PNG** (ngoài góc trong suốt, bán kính 10/57 cỡ icon): SpringBoard iOS 6 để icon cũ của app này (cài vào
+  `/Applications` bằng `.deb`) vuông góc. `UIPrerenderedIcon = true` giữ nguyên, để iOS không phủ thêm lớp bóng của nó.
+- Đổi icon xong, `uicache` chưa đủ: SpringBoard giữ icon trong bộ nhớ, phải respring (`killall SpringBoard`).
