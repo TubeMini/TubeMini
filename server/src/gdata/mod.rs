@@ -15,6 +15,9 @@ use axum::routing::{get, post};
 mod channels;
 mod comments;
 
+pub(crate) use channels::channel_list;
+
+use crate::config::HomeFeed;
 use crate::state::AppState;
 use crate::youtube::{Category, Page, SearchFilter, Video, VideoId, is_channel_id, parse};
 
@@ -113,7 +116,7 @@ impl Ctx {
             .map_or(25, |n: usize| n.clamp(1, 50))
     }
 
-    fn self_url(&self) -> String {
+    pub(crate) fn self_url(&self) -> String {
         let mut url = format!("{}{}", self.base, self.path);
         if !self.query.is_empty() {
             url.push('?');
@@ -140,7 +143,13 @@ impl Ctx {
         let mut query: Vec<(String, String)> = self
             .query
             .iter()
-            .filter(|(k, _)| k != "continuation" && k != "start-index" && k != "skip")
+            // `fresh` (reload everything) only applies to the first page
+            .filter(|(k, _)| {
+                !matches!(
+                    k.as_str(),
+                    "continuation" | "start-index" | "skip" | "fresh"
+                )
+            })
             .cloned()
             .collect();
         query.push((
@@ -348,7 +357,7 @@ fn feed_for_app(
     .render())
 }
 
-fn feed(ctx: &Ctx, feed_id: &str, title: &str, page: &Page) -> Response {
+pub(crate) fn feed(ctx: &Ctx, feed_id: &str, title: &str, page: &Page) -> Response {
     xml(render_feed(ctx, feed_id, title, page, parse::now()))
 }
 
@@ -393,9 +402,29 @@ async fn standard_feed_region(
     home(st, ctx, &feed).await
 }
 
-/// Home / standard feeds. `home_feed = "subscriptions"` is handled in Phase 4.
+/// Home / standard feeds. With `home_feed = "subscriptions"` the feeds without a category show the
+/// subscription feed (popular again while nothing is subscribed or the feed fails).
 async fn home(State(st): State<AppState>, ctx: Ctx, name: &str) -> Response {
     let category = Category::from_feed(name);
+    if st.cfg.home_feed == HomeFeed::Subscriptions && category == Category::All {
+        match crate::feed::subscription_feed(&st, false).await {
+            Ok(videos) if !videos.is_empty() => {
+                let page = Page {
+                    videos: videos.to_vec(),
+                    continuation: None,
+                };
+                return feed_for_app(
+                    &ctx,
+                    "standardfeed:subscriptions",
+                    "Kênh đã theo dõi",
+                    &page,
+                    15,
+                );
+            }
+            Ok(_) => {}
+            Err(e) => tracing::warn!("home: subscription feed: {e:#}"),
+        }
+    }
     match st.meta.popular(category).await {
         Ok(page) => feed_for_app(&ctx, &format!("standardfeed:{name}"), "Phổ biến", &page, 15),
         Err(e) => upstream_error("popular", &e),

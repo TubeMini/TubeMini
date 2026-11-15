@@ -381,6 +381,15 @@ impl MetadataProvider for InnerTube {
         Box::pin(self.cached(key, self.uploads_page(channel_id, continuation)))
     }
 
+    fn forget_uploads<'a>(&'a self, channel_id: &'a str) -> BoxFut<'a, ()> {
+        Box::pin(async move {
+            self.cache
+                .invalidate(&format!("uploads|{channel_id}|"))
+                .await;
+            Ok(())
+        })
+    }
+
     fn popular(&self, category: Category) -> BoxFut<'_, Page> {
         let key = format!("popular|{category:?}");
         Box::pin(self.cached(key, self.popular_page(category)))

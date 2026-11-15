@@ -8,11 +8,12 @@ use std::time::Duration;
 use anyhow::Result;
 
 use crate::config::Config;
+use crate::store::Store;
 use crate::youtube::fallback::{Fallback, YtDlpMeta};
 use crate::youtube::innertube::InnerTube;
 use crate::youtube::streams::{StreamResolver, YtDlpResolver};
 use crate::youtube::ytdlp::{ToolStatus, YtDlp};
-use crate::youtube::{MetadataProvider, VideoId};
+use crate::youtube::{MetadataProvider, Video, VideoId};
 
 #[derive(Clone)]
 pub struct AppState(Arc<Inner>);
@@ -29,10 +30,20 @@ pub struct Inner {
     pub playlists: moka::future::Cache<(VideoId, u32), Arc<String>>,
     /// Random key returned by the fake login routes (one per server start, like TubeRepair).
     pub device_key: String,
+    /// Subscriptions and watch history (SQLite).
+    pub store: Store,
+    /// The merged subscription feed ([`crate::feed`]); a single entry.
+    pub feed: moka::future::Cache<(), Arc<Vec<Video>>>,
 }
 
 impl AppState {
+    /// State with the SQLite store in `cfg.data_dir`.
     pub fn new(cfg: Config, tools: ToolStatus) -> Result<Self> {
+        let store = Store::open(&cfg.data_dir)?;
+        Self::with_store(cfg, tools, store)
+    }
+
+    pub fn with_store(cfg: Config, tools: ToolStatus, store: Store) -> Result<Self> {
         let ytdlp = YtDlp::new(&cfg);
         let meta = Box::new(Fallback::new(
             InnerTube::new(&cfg)?,
@@ -55,6 +66,11 @@ impl AppState {
                 .time_to_live(crate::video::PLAYLIST_TTL)
                 .build(),
             device_key: random_hex(),
+            store,
+            feed: moka::future::Cache::builder()
+                .max_capacity(1)
+                .time_to_live(crate::feed::FEED_TTL)
+                .build(),
         })))
     }
 }

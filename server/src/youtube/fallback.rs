@@ -203,6 +203,10 @@ impl MetadataProvider for Fallback {
         })
     }
 
+    fn forget_uploads<'a>(&'a self, channel_id: &'a str) -> BoxFut<'a, ()> {
+        self.primary.forget_uploads(channel_id)
+    }
+
     fn popular(&self, category: Category) -> BoxFut<'_, Page> {
         self.primary.popular(category)
     }

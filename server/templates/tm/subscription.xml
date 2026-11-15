@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tm:subscription xmlns:tm="urn:tubemini:1" channel_id="{{ channel_id }}" name="{{ name }}" avatar="{{ avatar }}"/>

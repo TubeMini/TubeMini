@@ -208,6 +208,10 @@ pub trait MetadataProvider: Send + Sync {
         channel_id: &'a str,
         continuation: Option<&'a str>,
     ) -> BoxFut<'a, Page>;
+    /// Drops the cached first page of a channel's uploads (pull to refresh of the subscription feed).
+    fn forget_uploads<'a>(&'a self, _channel_id: &'a str) -> BoxFut<'a, ()> {
+        Box::pin(async { Ok(()) })
+    }
     fn popular(&self, category: Category) -> BoxFut<'_, Page>;
     /// Channel page header (name, avatar, subscribers, description).
     fn channel<'a>(&'a self, channel_id: &'a str) -> BoxFut<'a, Channel>;

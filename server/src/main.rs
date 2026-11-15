@@ -4,8 +4,10 @@
 mod config;
 mod debug;
 mod ext;
+mod feed;
 mod gdata;
 mod state;
+mod store;
 mod video;
 mod youtube;
 
@@ -89,6 +91,7 @@ async fn main() -> Result<()> {
 
     let listen = cfg.listen.clone();
     let state = AppState::new(cfg, tools)?;
+    tracing::info!("data: {}", state.cfg.data_dir.join("tubemini.db").display());
     let router = Router::new()
         .merge(debug::routes())
         .merge(gdata::routes())

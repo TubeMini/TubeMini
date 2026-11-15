@@ -72,6 +72,21 @@ async fn channel_info(State(st): State<AppState>, ctx: Ctx, Path(id): Path<Strin
     }
 }
 
+/// A complete channel list in one GData feed (no paging), e.g. the subscriptions.
+pub(crate) fn channel_list(ctx: &Ctx, title: &str, items: &[Channel]) -> Response {
+    xml(ChannelsFeed {
+        base: &ctx.base,
+        title,
+        updated: parse::iso8601(parse::now()),
+        self_url: ctx.self_url(),
+        next: None,
+        total: items.len(),
+        start_index: 1,
+        items,
+    }
+    .render())
+}
+
 fn channels_feed(
     ctx: &Ctx,
     title: &str,

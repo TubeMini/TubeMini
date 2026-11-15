@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<tm:history xmlns:tm="urn:tubemini:1" video_id="{{ video_id }}" position="{{ position }}" duration="{{ duration }}" watched="{{ watched }}"/>

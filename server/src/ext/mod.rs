@@ -1,6 +1,6 @@
 //! `/tm/v1` — extension API for the TubeMini app (docs/API.md). XML with `xmlns:tm="urn:tubemini:1"`;
 //! errors are a single `<tm:error code message/>` with a Vietnamese message the app shows as is.
-//! Video lists still come from the GData layer.
+//! Lists (subscriptions, feed, history) reuse the GData Atom formats.
 
 use askama::Template;
 use axum::Router;
@@ -8,8 +8,10 @@ use axum::extract::{Path, Query, Request, State};
 use axum::http::{HeaderMap, StatusCode, header};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
-use axum::routing::get;
+use axum::routing::{any, get};
 use serde::Deserialize;
+
+mod library;
 
 use crate::gdata::base_url;
 use crate::state::AppState;
@@ -19,7 +21,26 @@ pub fn routes(st: AppState) -> Router<AppState> {
     Router::new()
         .route("/tm/v1/ping", get(ping))
         .route("/tm/v1/videos/{id}/streams", get(streams))
-        .route("/tm/v1/{*rest}", get(unknown))
+        .route(
+            "/tm/v1/subscriptions",
+            get(library::subscriptions).post(library::subscribe),
+        )
+        .route(
+            "/tm/v1/subscriptions/{id}",
+            axum::routing::delete(library::unsubscribe),
+        )
+        .route("/tm/v1/feed", get(library::feed))
+        .route(
+            "/tm/v1/history",
+            get(library::history)
+                .post(library::save_position)
+                .delete(library::clear_history),
+        )
+        .route(
+            "/tm/v1/history/{id}",
+            get(library::history_entry).delete(library::forget),
+        )
+        .route("/tm/v1/{*rest}", any(unknown))
         .route_layer(axum::middleware::from_fn_with_state(st, require_token))
 }
 
@@ -239,8 +260,7 @@ mod tests {
         assert!(xml.contains("Lỗi &#34;lạ&#34; &#60;x&#62; &#38; y"));
     }
 
-    async fn call(token: &str, header_value: Option<&str>, path: &str) -> (StatusCode, String) {
-        use tower::ServiceExt;
+    fn app(token: &str) -> Router {
         let cfg = crate::config::Config {
             auth_token: token.into(),
             ..Default::default()
@@ -249,21 +269,41 @@ mod tests {
             yt_dlp: Ok("2026.10.26".into()),
             deno: Err("missing".into()),
         };
-        let st = AppState::new(cfg, tools).unwrap();
-        let app = routes(st.clone()).with_state(st);
-        let mut req = axum::http::Request::get(path);
-        if let Some(v) = header_value {
+        let store = crate::store::Store::memory().unwrap();
+        let st = AppState::with_store(cfg, tools, store).unwrap();
+        routes(st.clone()).with_state(st)
+    }
+
+    /// One request; `body` is sent as a form.
+    async fn send(
+        app: &Router,
+        method: &str,
+        path: &str,
+        token: Option<&str>,
+        body: &str,
+    ) -> (StatusCode, String) {
+        use tower::ServiceExt;
+        let mut req = axum::http::Request::builder().method(method).uri(path);
+        if let Some(v) = token {
             req = req.header("X-Auth-Token", v);
         }
+        if !body.is_empty() {
+            req = req.header(header::CONTENT_TYPE, "application/x-www-form-urlencoded");
+        }
         let resp = app
-            .oneshot(req.body(axum::body::Body::empty()).unwrap())
+            .clone()
+            .oneshot(req.body(axum::body::Body::from(body.to_owned())).unwrap())
             .await
             .unwrap();
         let status = resp.status();
-        let body = axum::body::to_bytes(resp.into_body(), 1 << 16)
+        let body = axum::body::to_bytes(resp.into_body(), 1 << 20)
             .await
             .unwrap();
         (status, String::from_utf8_lossy(&body).into_owned())
+    }
+
+    async fn call(token: &str, header_value: Option<&str>, path: &str) -> (StatusCode, String) {
+        send(&app(token), "GET", path, header_value, "").await
     }
 
     #[tokio::test]
@@ -291,9 +331,94 @@ mod tests {
         let (s, body) = call("", None, "/tm/v1/videos/nope/streams").await;
         assert_eq!(s, StatusCode::BAD_REQUEST);
         assert!(body.contains("code=\"bad_request\""));
-        let (s, body) = call("", None, "/tm/v1/subscriptions").await;
+        let (s, body) = call("", None, "/tm/v1/watch-later").await;
         assert_eq!(s, StatusCode::NOT_FOUND);
         assert!(body.contains("code=\"not_found\""));
+        let (s, _) = send(&app(""), "POST", "/tm/v1/nothing", None, "a=1").await;
+        assert_eq!(s, StatusCode::NOT_FOUND);
+    }
+
+    #[tokio::test]
+    async fn history_roundtrip() {
+        let app = app("");
+        // Never watched: position 0, still 200
+        let (s, body) = send(&app, "GET", "/tm/v1/history/dQw4w9WgXcQ", None, "").await;
+        assert_eq!(s, StatusCode::OK);
+        assert!(
+            body.contains("position=\"0\" duration=\"0\" watched=\"\""),
+            "{body}"
+        );
+
+        // The app sends the title, so no YouTube lookup happens here
+        let form = "video_id=dQw4w9WgXcQ&position=754.4&duration=1347&title=B%E1%BA%A3n+tin+%26+%3C60s%3E&author=HTV&author_id=UCabcdefghijklmnopqrstuv";
+        let (s, body) = send(&app, "POST", "/tm/v1/history", None, form).await;
+        assert_eq!(s, StatusCode::OK, "{body}");
+        assert!(body.contains("video_id=\"dQw4w9WgXcQ\" position=\"754\" duration=\"1347\""));
+        let (_, body) = send(&app, "GET", "/tm/v1/history/dQw4w9WgXcQ", None, "").await;
+        assert!(body.contains("position=\"754\""));
+
+        let (s, feed) = send(&app, "GET", "/tm/v1/history", None, "").await;
+        assert_eq!(s, StatusCode::OK);
+        assert!(feed.contains("xmlns:tm='urn:tubemini:1'"));
+        assert!(
+            feed.contains("<title>Bản tin &#38; &#60;60s&#62;</title>"),
+            "{feed}"
+        );
+        assert!(feed.contains("<tm:position seconds='754'/>"));
+        assert!(feed.contains("<yt:duration seconds='1347'/>"));
+        assert!(feed.contains("<tm:watched>20"));
+
+        let (s, body) = send(&app, "DELETE", "/tm/v1/history/dQw4w9WgXcQ", None, "").await;
+        assert_eq!(s, StatusCode::OK);
+        assert!(body.contains("<tm:ok"));
+        let (_, feed) = send(&app, "GET", "/tm/v1/history", None, "").await;
+        assert!(!feed.contains("<entry"));
+        let (s, _) = send(&app, "DELETE", "/tm/v1/history", None, "").await;
+        assert_eq!(s, StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn history_rejects_bad_input() {
+        let app = app("");
+        for form in [
+            "",
+            "video_id=nope&position=1",
+            "video_id=dQw4w9WgXcQ",
+            "video_id=dQw4w9WgXcQ&position=-5",
+            "video_id=dQw4w9WgXcQ&position=abc",
+        ] {
+            let (s, body) = send(&app, "POST", "/tm/v1/history", None, form).await;
+            assert_eq!(s, StatusCode::BAD_REQUEST, "{form}");
+            assert!(body.contains("code=\"bad_request\""));
+        }
+    }
+
+    #[tokio::test]
+    async fn subscriptions_without_network() {
+        let app = app("");
+        let (s, body) = send(&app, "GET", "/tm/v1/subscriptions", None, "").await;
+        assert_eq!(s, StatusCode::OK);
+        assert!(body.contains("#channel") && !body.contains("<entry"));
+        // Nothing subscribed: empty feed, no YouTube call
+        let (s, body) = send(&app, "GET", "/tm/v1/feed?fresh=1", None, "").await;
+        assert_eq!(s, StatusCode::OK);
+        assert!(body.contains("tm:feed") && !body.contains("<entry"));
+        let (s, body) = send(&app, "POST", "/tm/v1/subscriptions", None, "channel_id=xyz").await;
+        assert_eq!(s, StatusCode::BAD_REQUEST);
+        assert!(body.contains("code=\"bad_request\""));
+        let (s, body) = send(
+            &app,
+            "DELETE",
+            "/tm/v1/subscriptions/UCabcdefghijklmnopqrstuv",
+            None,
+            "",
+        )
+        .await;
+        assert_eq!(s, StatusCode::OK);
+        assert!(body.contains("<tm:ok"));
+        // Token applies to the new routes too
+        let (s, _) = send(&self::tests::app("k"), "GET", "/tm/v1/history", None, "").await;
+        assert_eq!(s, StatusCode::UNAUTHORIZED);
     }
 
     #[test]
