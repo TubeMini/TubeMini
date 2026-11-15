@@ -4,15 +4,17 @@
 The design, in iOS 6 style (real materials, bevels, a glossy finish):
   - a copper cog with rust patina and rivets (Rust),
   - a red rounded "tube" screen with a white play triangle in its bezel (a little YouTube),
-  - a small CRT reflection on the glass and the classic iOS gloss arc over the whole icon.
+  - a small CRT reflection on the glass and the classic iOS gloss arc over the cog.
 
-Every shape is a signed distance field, so edges are anti-aliased analytically and each size is drawn
-natively (no downscaling blur). The rounded corners are baked in (transparent outside): SpringBoard on
-iOS 6 left the old icon of this /Applications app square. UIPrerenderedIcon=true in Info.plist keeps it
-from adding its own gloss on top of ours.
+The background is transparent (the cog and its soft shadow float on the wallpaper; the user asked for
+no dark frame). Every shape is a signed distance field, so edges are anti-aliased analytically and each
+size is drawn natively (no downscaling blur). Layers are composited over black, which gives
+premultiplied colour, then divided by the alpha. UIPrerenderedIcon=true in Info.plist keeps iOS from
+adding its own gloss on top of ours.
 
     python scripts/make-icons.py                 # icons into ios/TubeMini/Resources/, docs/icon.png
-    python scripts/make-icons.py --preview DIR   # also DIR/icon-preview.png (rounded, on dark linen)
+    python scripts/make-icons.py --preview DIR   # also DIR/icon-preview.png (on a wallpaper-like gradient)
+    python scripts/make-icons.py --background silver|sky   # opaque rounded square instead of transparent
 """
 import math
 import struct
@@ -165,12 +167,6 @@ def normal(sd, x, y, h=0.002):
 
 # ---------- shading ----------
 
-def background(u, v):
-    t = clamp(math.hypot(u - 0.28, v - 0.12) / 1.05)
-    c = ramp([(0, (58, 84, 112)), (0.55, (24, 36, 52)), (1, (9, 13, 20))], t)
-    return scale(c, 0.97 + 0.06 * hash2(int(u * 4096), int(v * 4096), 3))
-
-
 def copper(u, v):
     """Turned copper with rust patina, before the bevel."""
     s = u * 0.45 + v * 0.55
@@ -199,13 +195,28 @@ def bevel(c, d, n, width, strength=0.6, highlight=(255, 232, 205)):
     return scale(c, 1 + strength * 0.8 * lit * e)
 
 
+SCALE = 0.94  # artwork size within the image: leaves room for the cog's shadow
 CORNER = 10.0 / 57.0  # iOS 6 icon corner radius relative to the size
 
 
-def render(size, rounded=True):
-    """Rows of RGBA pixels (PNG filter byte first). `rounded` makes the corners transparent."""
-    pw = 1.0 / size  # one pixel in icon units
-    mask_box = (0.5, 0.5, 0.5, 0.5, CORNER)
+def bg_silver(u, v):
+    """Brushed aluminium, light (iOS 6 style): vertical gradient with horizontal grain."""
+    c = ramp([(0, (242, 243, 245)), (0.55, (214, 217, 222)), (1, (170, 175, 184))], v)
+    return scale(c, 0.97 + 0.05 * hash2(int(v * 1024), int(u * 24), 5))
+
+
+def bg_sky(u, v):
+    """iOS 6 blue: light top, deep bottom."""
+    return ramp([(0, (142, 206, 250)), (0.5, (62, 146, 228)), (1, (22, 88, 186))], v)
+
+
+BACKGROUNDS = {"transparent": None, "silver": bg_silver, "sky": bg_sky}
+
+
+def render(size, background=None):
+    """Rows of RGBA pixels (PNG filter byte first). `background(u, v)` gives an opaque rounded
+    square; None = transparent (the cog and its shadow only)."""
+    pw = 1.0 / (size * SCALE)  # one pixel in icon units
 
     def cover(d, soft=1.0):
         return clamp(0.5 - d / (pw * soft))
@@ -213,14 +224,18 @@ def render(size, rounded=True):
     rows = []
     for py in range(size):
         row = bytearray([0])  # PNG filter: none
-        v = (py + 0.5) / size
+        v = 0.5 + ((py + 0.5) / size - 0.5) / SCALE
         for px in range(size):
-            u = (px + 0.5) / size
-            c = background(u, v)
+            u = 0.5 + ((px + 0.5) / size - 0.5) / SCALE
+            # Over black the result is premultiplied colour (transparent); else over the background
+            c = background(u, v) if background else (0.0, 0.0, 0.0)
 
-            # Cog with its drop shadow
-            c = mix(c, (0, 0, 0), 0.55 * (1 - smoothstep(-0.01, 0.05, sd_cog(u, v, 0.024))))
+            # Cog with its drop shadow (the shadow is all alpha: black adds nothing)
+            shadow = 0.5 * (1 - smoothstep(-0.01, 0.04, sd_cog(u, v, 0.02)))
             d_cog = sd_cog(u, v)
+            cog = cover(d_cog)
+            if background:
+                c = mix(c, (0, 0, 0), shadow)
             if d_cog < pw:
                 m = copper(u, v)
                 m = bevel(m, d_cog, normal(sd_cog, u, v), 0.03, 0.8)
@@ -268,14 +283,21 @@ def render(size, rounded=True):
                 refl = cover(sd_ellipse(u, v, 0.43, 0.335, 0.33, 0.155), 1.5)
                 c = mix(c, (255, 255, 255), 0.30 * (1 - smoothstep(0.33, 0.47, v)) * glass * refl)
 
-            # The iOS gloss arc over the whole icon
-            g = cover(sd_ellipse(u, v, 0.5, -0.31, 1.02, 0.79), 1.2)
+            # The iOS gloss arc, on the cog only
+            g = cover(sd_ellipse(u, v, 0.5, -0.31, 1.02, 0.79), 1.2) * (1.0 if background else cog)
             if g > 0:
                 c = mix(c, (255, 255, 255), g * (0.27 - 0.20 * clamp(v / 0.48)))
 
-            alpha = cover(sd_round_rect(u, v, mask_box)) if rounded else 1.0
+            if background:
+                # Rounded corners in image space (the artwork is scaled, the icon square is not)
+                iu, iv = (px + 0.5) / size, (py + 0.5) / size
+                alpha = clamp(0.5 - sd_round_rect(iu, iv, (0.5, 0.5, 0.5, 0.5, CORNER)) * size)
+            else:
+                alpha = cog + shadow * (1 - cog)
+                if alpha > 0.002:
+                    c = scale(c, 1 / alpha)
             row += bytes(int(clamp(ch / 255.0) * 255 + 0.5) for ch in c)
-            row.append(int(alpha * 255 + 0.5))
+            row.append(int(clamp(alpha) * 255 + 0.5))
         rows.append(bytes(row))
     return rows
 
@@ -295,10 +317,10 @@ def write_png(path, width, height, rows, alpha=False):
     Path(path).write_bytes(png)
 
 
-def preview(out_dir, big):
-    """The icons as the iPad shows them, on a dark linen-like background."""
+def preview(out_dir, big, background=None):
+    """The icons on a wallpaper-like gradient (sky to grass), to see the transparency."""
     sizes = [big, 144, 72]
-    icons = {s: render(s) for s in sizes}
+    icons = {s: render(s, background) for s in sizes}
     pad = 40
     width = sum(sizes) + pad * (len(sizes) + 1)
     height = big + 2 * pad
@@ -306,8 +328,9 @@ def preview(out_dir, big):
     for y in range(height):
         line = []
         for x in range(width):
-            n = 0.85 + 0.15 * (hash2(x, y, 41) * 0.5 + 0.5 * (((x + y) % 3) == 0))
-            line.append([int(46 * n), int(48 * n), int(52 * n)])
+            t = y / max(height - 1, 1)
+            sky, grass = (96, 140, 196), (86, 140, 52)
+            line.append([int(sky[i] + (grass[i] - sky[i]) * t) for i in range(3)])
         canvas.append(line)
     x0 = pad
     for s in sizes:
@@ -328,14 +351,15 @@ def preview(out_dir, big):
 
 
 def main():
+    bg = BACKGROUNDS[sys.argv[sys.argv.index("--background") + 1]] if "--background" in sys.argv else None
     for name, size in SIZES.items():
-        write_png(RES / name, size, size, render(size), alpha=True)
+        write_png(RES / name, size, size, render(size, bg), alpha=True)
         print(f"{name}: {size}x{size}")
-    write_png(ROOT / "docs" / "icon.png", 256, 256, render(256), alpha=True)
+    write_png(ROOT / "docs" / "icon.png", 256, 256, render(256, bg), alpha=True)
     print("docs/icon.png: 256x256")
     if "--preview" in sys.argv:
         out = sys.argv[sys.argv.index("--preview") + 1]
-        preview(out, 384)
+        preview(out, 384, bg)
         print(f"{out}/icon-preview.png")
 
 

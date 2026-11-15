@@ -268,3 +268,5 @@
 - [x] **Icon mới** (D27): bánh răng đồng gỉ sét (Rust), màn hình ống đỏ có nút play (một chút YouTube), chất liệu thật và lớp bóng
   kiểu iOS 6. Có đủ các cỡ 72 / 144 (màn hình chính), 50 / 100 (Spotlight), 29 / 58 (Cài đặt). Đã thấy trên màn hình chính iPad
   sau khi respring.
+- [x] **Icon nền trong suốt** (anh yêu cầu): bỏ nền tối quanh bánh răng. Trên iPad, sau bánh răng vẫn thấy ô bóng mờ mà SpringBoard
+  iOS 6 vẽ dưới mọi icon (D27); anh chọn giữ bản trong suốt.

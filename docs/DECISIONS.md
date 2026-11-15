@@ -342,6 +342,10 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
   - "Tube" + "Mini": một chiếc TV ống nhỏ.
 - `scripts/make-icons.py` vẽ bằng Python thuần (không Pillow, không trình render SVG; cài thêm công cụ trên PC bị chặn). Mọi hình là
   signed distance field, nên viền mịn và mỗi cỡ được vẽ trực tiếp, không bị mờ do thu nhỏ. Vẽ hết các cỡ mất khoảng 15 giây.
-- **Góc bo vẽ sẵn trong PNG** (ngoài góc trong suốt, bán kính 10/57 cỡ icon): SpringBoard iOS 6 để icon cũ của app này (cài vào
-  `/Applications` bằng `.deb`) vuông góc. `UIPrerenderedIcon = true` giữ nguyên, để iOS không phủ thêm lớp bóng của nó.
+- **Nền trong suốt** (anh yêu cầu bỏ viền tối): chỉ còn bánh răng và bóng đổ mềm, thu nhỏ 6% để bóng không bị cắt. Màu ghép trên nền
+  đen (ra màu premultiplied) rồi chia cho alpha. `UIPrerenderedIcon = true` giữ nguyên, để iOS không phủ thêm lớp bóng của nó.
+  - SpringBoard iOS 6 luôn vẽ một ô bóng tối mờ (bo góc) dưới mọi icon app. Icon đặc che nó, icon trong suốt thì lộ ra. Không tắt
+    được nếu không có theme / tweak. Em đưa anh ba phương án (trong suốt, nhôm xước sáng, xanh trời); anh chọn giữ trong suốt.
+    Hai nền kia vẫn vẽ được: `python scripts/make-icons.py --background silver` (hoặc `sky`).
+  - Bản trước có nền xanh thép và góc bo vẽ sẵn: SpringBoard để icon cũ của app này (cài bằng `.deb`) vuông góc.
 - Đổi icon xong, `uicache` chưa đủ: SpringBoard giữ icon trong bộ nhớ, phải respring (`killall SpringBoard`).
