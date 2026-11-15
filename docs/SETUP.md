@@ -103,3 +103,25 @@ Các gói, theo thứ tự cài, đều là `.deb` lấy từ repo gốc. Dòng 
     (có `http://`, không có `/` ở cuối; thêm `/720` nếu muốn HLS), chủ sở hữu `mobile`.
 - Tweak chỉ đọc cài đặt lúc app khởi động, nên đổi xong thì tắt hẳn app (`killall -9 YouTube`).
 - Mở app từ SSH: `cblaunch launch com.google.ios.youtube`. Mở một video: `uiopen 'vnd.youtube://<id>'`.
+
+### App classic (iOS 5, app YouTube có sẵn của Apple)
+
+- Cần Substrate 0.9.6301, PreferenceLoader và tweak TubeRepair (cùng các gói ở trên). Không cần AppSync hay IPA.
+- Ghi `URLEndpoint` như trên. Tweak tự ghi `ConfiguredServiceHost` (chỉ có host, không có `http://`) vào
+  `com.apple.youtubeframework.plist` khi được nạp. Mở app hai lần: lần đầu để tweak ghi khóa, lần sau app đọc khóa.
+- Mở app từ SSH: `uiopen youtube://`.
+
+## 6. Server TubeRepair làm mốc so sánh
+
+Chạy trên máy LXC 192.168.1.192, cổng 4000, unit systemd `tuberepair`:
+
+```sh
+mkdir -p /opt/tuberepair && cd /opt/tuberepair
+git clone https://github.com/kevinf100/tuberepair.uptimetrackers.com.git upstream
+python3 -m venv venv && ./venv/bin/pip install -r upstream/requirements.txt
+# /etc/systemd/system/tuberepair.service: WorkingDirectory=/opt/tuberepair/upstream/tuberepair,
+#   Environment=DEBUG=False SPYING=False PORT=4000, ExecStart=/opt/tuberepair/venv/bin/python main.py
+systemctl enable --now tuberepair
+```
+
+Hiện chỉ phần bình luận của nó còn chạy (D7).

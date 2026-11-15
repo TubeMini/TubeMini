@@ -1,5 +1,6 @@
 //! Everything that talks to YouTube: metadata providers and stream resolvers.
 
+pub mod fallback;
 pub mod innertube;
 pub mod parse;
 pub mod streams;

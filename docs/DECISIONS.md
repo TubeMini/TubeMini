@@ -66,8 +66,8 @@ Mỗi mục ghi: quyết định, lý do, bằng chứng (nếu có). Mới nh�
 
 ## D7. Không dựa vào Invidious; mốc TubeRepair hiện không dùng được — 15/11/2026
 
-- Đã dựng TubeRepair bản cuối (repo bị archive ngày 21/04/2026) trên máy Ubuntu, `http://192.168.1.101:4000`, chạy bằng
-  `systemd-run --user --unit=tuberepair`.
+- Đã dựng TubeRepair bản cuối (repo bị archive ngày 21/04/2026). Ban đầu chạy trên máy Ubuntu 192.168.1.101. Từ 15/11/2026, theo yêu cầu
+  của anh, chuyển sang máy LXC `http://192.168.1.192:4000`, chạy bằng unit systemd `tuberepair` (`/opt/tuberepair`).
 - Kết quả: trang chủ, tìm kiếm, liên quan, kênh, video của kênh, `/getvideo` và `/720/getvideo` đều trả 500. **Chỉ bình luận còn
   chạy.** Nguyên nhân: Invidious mặc định (`inv.nadeko.net`) đã tắt API ("Endpoint disabled", 403), và InnerTube IOS/ANDROID không
   còn trả link (D5).
@@ -165,3 +165,63 @@ Spike rustypipe 0.11.4 (chạy thật, vùng VN):
 
 - `ios/tools/tmshot` (cài vào `/usr/bin` của iPad) gọi `CARenderServerRenderDisplay` + IOSurface, tra bằng `dlsym`. Cách này chụp
   được mọi app đang ở trước, **kể cả khung hình video**, không như `UIGetScreenImage` trong app (D10).
+
+## D17. Video có quảng cáo đầu: phải chờ YouTube mở link — 15/11/2026
+
+- Triệu chứng: app YouTube cũ báo "Playback error" với nhiều video nhạc. Riêng Big Buck Bunny thì chạy.
+- Nguyên nhân: video có quảng cáo đầu (pre-roll) thì googlevideo trả **403** cho tới khi quảng cáo lẽ ra đã hết, hoặc tới lúc được bấm
+  "bỏ qua". yt-dlp tính thời điểm đó từ `adPlacements` / `adSlots` trong phản hồi player (`_get_available_at_timestamp` trong
+  `yt_dlp/extractor/youtube/_video.py`) và ghi vào trường `available_at` của từng định dạng. yt-dlp tự chờ khi tải về, nhưng `-J` hay
+  `-g` thì không chờ.
+- Đo được: với video có quảng cáo, link format 18 hợp lệ từ khoảng **8 giây** sau lúc bắt đầu chạy yt-dlp. Video không có quảng cáo thì
+  dùng được ngay.
+- Cách sửa:
+  - `/getvideo` giữ request tới đúng `available_at` (cộng 0,3 giây, tối đa 30 giây) rồi mới trả 307 hoặc playlist;
+  - server lấy link trước ở chế độ chạy nền khi app mở trang video (`/feeds/player/videos/{id}`, liên quan);
+  - các lần lấy link trùng nhau cho cùng một video dùng chung một lần chạy yt-dlp.
+- Đã kiểm chứng trên iPad: cả trình phát iOS lẫn app YouTube 1.3.0 đều phát được video có quảng cáo ngay lần đầu.
+- `/tm/v1/videos/{id}/streams` (Giai đoạn 3) phải trả cả `available_at` để app TubeMini tự chờ.
+
+## D18. Tốc độ yt-dlp: đổi máy không giúp được — 15/11/2026
+
+| Máy | Khởi động `yt-dlp --version` | Lấy link một video |
+| --- | --- | --- |
+| PC Windows (yt-dlp.exe) | 1,17 s | 3,9–4,4 s |
+| Máy ảo Ubuntu 192.168.1.101 (CPU ảo, không AVX) | 0,74 s | 4,2–4,9 s |
+| LXC 192.168.1.192 (Xeon E-2176M, 2 nhân) | 0,66 s | 4,5–5,0 s |
+
+Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
+
+| Bước | Thời gian |
+| --- | --- |
+| Khởi động Python | 1,06 s |
+| Trang xem video | 0,8 s |
+| Gọi API player (2 client) | 0,6 s |
+| Tải lại file JS của player | 0,37 s |
+| Deno giải JS challenge | 1,17 s |
+| Thông tin m3u8 | 0,4 s |
+
+- Phần lớn là các lượt gọi mạng tới YouTube và Deno, nên đổi máy không nhanh hơn.
+- Với video có quảng cáo, mốc mở link tính từ lúc gọi API player (D17). Vì vậy dù yt-dlp nhanh hơn thì tổng thời gian chờ vẫn khoảng 7–8
+  giây.
+- Hướng có thể làm sau nếu cần: bỏ bước m3u8 khi chỉ cần 360p (`youtube:skip=hls`), hoặc giữ một tiến trình yt-dlp chạy sẵn để bỏ khâu
+  khởi động.
+
+## D19. Dự phòng metadata bằng yt-dlp — 15/11/2026
+
+- `src/youtube/fallback.rs`: dùng InnerTube trước; nếu lỗi **hoặc trang đầu trả về rỗng** thì chuyển sang
+  `yt-dlp --flat-playlist -J`. Trang rỗng là dấu hiệu thường gặp khi YouTube đổi bố cục làm bộ đọc không còn tìm thấy gì.
+- Phủ được: tìm kiếm (`ytsearchN:`), một video (`-J`), video của kênh (tab `/videos`), playlist. Mỗi trang 20 mục, token trang sau
+  dạng `ytdlp:<start>`. Không có ngày đăng, bỏ qua bộ lọc tìm kiếm, và chậm hơn (vài giây mỗi lần).
+- Không phủ (vẫn chỉ dùng InnerTube): video liên quan, trang chủ, kênh, playlist của kênh, bình luận.
+
+## D20. HLS cho iOS 6 và app classic — 15/11/2026
+
+- `/{res}/getvideo` trả playlist đã lọc (D6, API.md). Đã kiểm trên iPad:
+  - trình phát iOS chạy biến thể 1280×720 avc1 24fps, tua tới giây 1800 được, không khựng;
+  - AVPlayer báo có cả track hình lẫn track tiếng;
+  - app YouTube 1.3.0 với Custom URL `…/720` phát HLS 720p.
+- Bỏ biến thể trên 30fps như TubeRepair, nên video chỉ có 720p60 (Big Buck Bunny) sẽ xuống 480p30. Chưa thử 720p60 trên A5.
+- App classic (iPad 1, iOS 5.1.1, `Apple iPad v5.1.1 YouTube v1.0.0.9B206`): đã cài tweak TubeRepair. App gọi đăng nhập giả rồi
+  `/feeds/api/standardfeeds/US/recently_featured`, server trả feed định dạng classic (200). `tmshot` không chạy trên iOS 5 (build iOS
+  6 dùng `LC_MAIN`), nên phần hiển thị cần anh xem trực tiếp.

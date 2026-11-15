@@ -8,6 +8,7 @@
 #import <ImageIO/ImageIO.h>
 #include <dlfcn.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef void *IOSurfaceRef;
 
@@ -83,12 +84,14 @@ static CGImageRef grabUIKit(void) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "usage: tmshot <out.png> [width height]\n");
+        fprintf(stderr, "usage: tmshot <out.png> [width height] | tmshot <out.png> --uikit\n");
         return 2;
     }
+    // --uikit: skip the render server (its signature differs on iOS 5 and crashes there)
+    int uikitOnly = argc > 2 && strcmp(argv[2], "--uikit") == 0;
     int width = argc > 3 ? atoi(argv[2]) : 768;
     int height = argc > 3 ? atoi(argv[3]) : 1024;
-    CGImageRef img = grabRenderServer(width, height);
+    CGImageRef img = uikitOnly ? NULL : grabRenderServer(width, height);
     const char *how = "render server";
     if (!img) {
         img = grabUIKit();

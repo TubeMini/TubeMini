@@ -8,13 +8,14 @@ param(
 $ErrorActionPreference = "Stop"
 $failed = 0
 
-function Check([string]$Name, [string]$Path, [int]$Status = 200, [string]$Contains = "", [string]$Method = "GET") {
+function Check([string]$Name, [string]$Path, [int]$Status = 200, [string]$Contains = "", [string]$Method = "GET", [string]$Agent = "YouTube/1.3.0") {
     $url = "$Base$Path"
     $sw = [Diagnostics.Stopwatch]::StartNew()
     try {
-        $r = Invoke-WebRequest -Uri $url -Method $Method -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 60 -ErrorAction Stop
+        $r = Invoke-WebRequest -Uri $url -Method $Method -UserAgent $Agent -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 60 -ErrorAction Stop
         $code = [int]$r.StatusCode
-        $body = $r.Content
+        # Non-text types (e.g. application/vnd.apple.mpegurl) come back as bytes
+        $body = if ($r.Content -is [byte[]]) { [Text.Encoding]::UTF8.GetString($r.Content) } else { $r.Content }
     } catch {
         $resp = $_.Exception.Response
         if ($null -eq $resp) { $code = 0; $body = "$_" } else { $code = [int]$resp.StatusCode; $body = "" }
@@ -39,8 +40,16 @@ Check "search no q"         "/feeds/api/videos"                              404
 Check "single video"        "/feeds/player/videos/aqz-KE-bpKQ"               200 "<yt:videoid>aqz-KE-bpKQ</yt:videoid>"
 Check "related"             "/feeds/api/videos/aqz-KE-bpKQ/related"          200 "<entry"
 Check "channel uploads"     "/feeds/api/users/UCSMOQeBJ2RAnuFungnQOxLg/uploads" 200 "<entry"
+Check "channel info"        "/feeds/api/channels/UCSMOQeBJ2RAnuFungnQOxLg"   200 "<yt:channelStatistics"
+Check "channel search"      "/feeds/api/channels?q=vtv"                      200 "<yt:channelId>"
+Check "channel playlists"   "/feeds/api/users/UCSMOQeBJ2RAnuFungnQOxLg/playlists" 200 "<yt:playlistId>"
+Check "playlist search"     "/feeds/api/playlists/snippets?q=nhac+tre"       200 "<yt:playlistId>"
+Check "playlist videos"     "/feeds/api/playlists/PLa1F2ddGya_-I9y1nXALrBqrZNdlUE012" 200 "skip=25"
+Check "comments"            "/api/videos/aqz-KE-bpKQ/comments"               200 "<yt:replyCount>"
+Check "comments (feeds)"    "/feeds/api/videos/aqz-KE-bpKQ/comments"         200 "<entry"
+Check "classic app home"    "/feeds/api/standardfeeds/US/recently_featured"  200 "/video/sd/" "GET" "Apple iPad v5.1.1 YouTube v1.0.0.9B206"
 Check "getvideo 360p"       "/getvideo/aqz-KE-bpKQ"                          307
-Check "getvideo HLS"        "/720/getvideo/aqz-KE-bpKQ"                      307
+Check "getvideo HLS 720"    "/720/getvideo/6C6xOz-6ET4"                      200 "#EXT-X-STREAM-INF"
 Check "getvideo bad id"     "/getvideo/xyz"                                  404
 
 if ($failed -gt 0) { "`n$failed check(s) failed"; exit 1 } else { "`nall checks passed" }

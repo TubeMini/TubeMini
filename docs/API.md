@@ -2,8 +2,8 @@
 
 Đây là hợp đồng giữa server và các app. **Đổi API thì sửa file này trước.**
 
-Trạng thái: Giai đoạn 1. Đã có trang debug và lớp GData tối thiểu. Phần GData còn lại thuộc Giai đoạn 2, lớp `/tm/v1` thuộc Giai
-đoạn 3–4.
+Trạng thái: Giai đoạn 2. Lớp GData đã đủ cho app YouTube cũ: video, kênh, playlist, bình luận, HLS, app classic. Lớp `/tm/v1`
+thuộc Giai đoạn 3–4.
 
 ## Quy ước chung
 
@@ -60,8 +60,14 @@ Một entry gồm:
 - `yt:statistics viewCount='<số>'`, `gd:comments` trỏ tới `<base>/api/videos/<id>/comments`;
 - link `related` trỏ tới `<base>/feeds/api/videos/<id>/related`.
 
-Phân trang: còn trang sau thì có `<link rel='next' href='…?start-index=<n>&continuation=<token>'>`. App gọi lại đúng link đó, server
-dùng `continuation` để lấy trang tiếp. `openSearch:totalResults` là số giả lớn (cộng thêm 1000) khi còn trang sau.
+Phân trang: còn trang sau thì có `<link rel='next' href='…'>`, app gọi lại đúng link đó.
+
+- `skip=<n>`: một trang của YouTube dài hơn `max-results` (playlist trả tới 100 video một lần, tab Videos của kênh trả 30) thì được
+  chia thành nhiều trang GData. `skip` là số mục của trang YouTube hiện tại đã hiện ở các trang GData trước.
+- `continuation=<token>`: hết trang YouTube thì chuyển sang trang YouTube tiếp theo. Token bắt đầu bằng `ytdlp:` là của nhánh dự phòng
+  yt-dlp (D19).
+- `start-index` chỉ tăng để hiển thị. `openSearch:totalResults` là số giả lớn (cộng thêm 1000) khi còn trang sau.
+- Các danh sách khác (kênh, playlist, bình luận) phân trang theo cùng cách.
 
 ### `GET /feeds/api/standardfeeds/[<region>/]<feed>`
 
@@ -106,21 +112,83 @@ Danh mục tĩnh (Film, Music, Games, News, Sports), `application/atomcat+xml`.
 Đăng nhập giả để app bỏ qua bước đăng nhập (giống TubeRepair). Trả text lần lượt là `r2=<k>\nhmackr2=<k>`, `Auth=<k>` và
 `DeviceId=<k>\nDeviceKey=<k>`. Khóa `<k>` là chuỗi hex ngẫu nhiên, tạo một lần mỗi khi server khởi động.
 
-### `GET /getvideo/<id>[?fresh=1]`
+### `GET /getvideo/<id>[?fresh=1]` (và `GET /video/sd/<id>`)
 
 Link phát. Server không chuyển tiếp dữ liệu video.
 
 - Không có tiền tố độ phân giải (và `medium_quality = true`): **307** sang link MP4 progressive ≤ 360p (H.264 + AAC, thường là itag
-  18) trên googlevideo. Video không có định dạng này thì trả HLS.
-- Có tiền tố (`/720/getvideo/<id>`) hoặc `medium_quality = false`: **307** sang manifest HLS master của YouTube.
-  - Giai đoạn 1 chưa lọc manifest; iOS 6 tự bỏ qua các biến thể VP9.
-  - Giai đoạn 2 sẽ trả playlist đã lọc (avc1 + AAC, ≤ res, ≤ 30fps), `Content-Type: application/vnd.apple.mpegurl`.
-- Link lấy bằng `yt-dlp --force-ipv4 -J`, cache 5 phút. `fresh=1` bỏ qua cache (app gọi khi thử lại sau lỗi 403).
+  18) trên googlevideo. Video không có định dạng này thì trả HLS như bên dưới.
+- Có tiền tố (`/720/getvideo/<id>`) hoặc `medium_quality = false`: **200**, `Content-Type: application/vnd.apple.mpegurl`, là
+  playlist HLS master của YouTube **đã lọc cho iOS 6**. Cách lọc giống TubeRepair:
+  - chỉ giữ biến thể chỉ gồm avc1 + mp4a, tối đa 30fps, cạnh ngắn ≤ `res`;
+  - sau đó chỉ giữ mức độ phân giải cao nhất còn lại;
+  - rendition tiếng giữ nhóm đang được dùng, bỏ phụ đề.
+
+  Playlist con và segment vẫn là URL googlevideo. Không có biến thể nào dùng được thì trả 307 sang MP4 progressive. `res` không có
+  tiền tố thì lấy `hls_resolution` trong config, và luôn được kẹp trong khoảng 144–2160.
+- **Chờ quảng cáo (D17):** video có quảng cáo đầu thì googlevideo trả 403 tới mốc `available_at` mà yt-dlp báo. Server giữ request
+  tới mốc đó (tối đa 30 giây) rồi mới trả, nên request đầu tiên có thể mất 7–8 giây.
+- Link lấy bằng `yt-dlp --force-ipv4 -J`, cache 5 phút. Các request trùng nhau cho cùng một video dùng chung một lần chạy. Server
+  lấy link trước khi app mở trang video (`/feeds/player/videos/<id>`, liên quan).
+- `fresh=1` bỏ qua cache (app gọi khi thử lại sau lỗi 403).
 - Không lấy được link: `502`. ID sai: `404`.
+- `/video/sd/<id>` là link `<content src>` trong feed của app classic, xử lý giống `/getvideo/<id>`.
 
-### Chưa làm (Giai đoạn 2)
+### `GET /feeds/api/channels?q=<từ khóa>`
 
-`/feeds/api/channels?q=` (tìm kênh), `/feeds/api/channels/<id>` (thông tin kênh, avatar), bình luận (`/api/videos/<id>/comments`),
-playlist, lọc HLS, phân biệt User-Agent (app 1.0.0 / classic).
+Tìm kênh, có phân trang. Mỗi entry gồm:
+
+- `id` (`tag:youtube.com,2008:channel:<id>`), `title`, `summary` (mô tả), `author` / `yt:userId`, `yt:channelId`;
+- `yt:channelStatistics subscriberCount='<số>'`. Kênh VEVO: YouTube không hiện số người đăng ký nên là 0;
+- `gd:feedLink rel='…#channel.content'` trỏ tới `<base>/feeds/api/users/<id>/uploads`, `countHint` là số video;
+- `media:thumbnail url='https://yt3…=s88…'`: avatar JPEG cỡ nhỏ.
+
+Thiếu `q` thì `404`.
+
+### `GET /feeds/api/channels/<channel id>` và `GET /feeds/api/users/<channel id>`
+
+Một entry kênh (gốc là `<entry>` có khai báo namespace), cùng trường như trên. App cũ gọi route này cho từng kênh trong danh sách để
+lấy avatar, nên được cache 60 phút.
+
+### `GET /feeds/api/users/<channel id>/playlists`
+
+Playlist của kênh, có phân trang. `params` của tab Playlist được đọc từ chính phản hồi trang kênh, vì YouTube đổi giá trị này. Mỗi
+entry gồm:
+
+- `title`, `author`, `yt:playlistId`, `yt:countHint` (số video);
+- `gd:feedLink rel='…#playlist'` trỏ tới `<base>/feeds/api/playlists/<id>`;
+- `media:thumbnail` là ảnh của video đầu playlist.
+
+### `GET /feeds/api/playlists/snippets?q=<từ khóa>`
+
+Tìm playlist, cùng định dạng như trên. Thiếu `q` thì `404`.
+
+### `GET /feeds/api/playlists/<playlist id>`
+
+Video trong playlist (feed video), có phân trang bằng `skip` / `continuation`. `max-results=0` thì `404`, giống TubeRepair.
+
+### `GET /feeds/api/videos/<id>/comments` và `GET /api/videos/<id>/comments`
+
+Bình luận cấp cao nhất, chỉ đọc, có phân trang. Mỗi entry gồm:
+
+- `id` (`tag:youtube.com,2008:video:<id>:comment:<comment id>`), `published` (ước lượng từ "3 năm trước");
+- `content` (nội dung), `author` (`name`, `yt:userId`), `yt:channelId`, `yt:replyCount`.
+
+Video tắt bình luận thì trả feed rỗng.
+
+### App "classic" (User-Agent chứa `YouTube v1.0.0` hoặc `youtube/1.0.0`)
+
+App YouTube có sẵn của Apple trên iOS 5 trở về trước. Giống TubeRepair, trang chủ, tìm kiếm và liên quan trả định dạng riêng:
+
+- namespace `yt` chuẩn (`http://gdata.youtube.com/schemas/2007`);
+- `<content type='video/mp4' src='<base>/video/sd/<id>'>`;
+- trang chủ tối đa 15 video, không có `rel='next'`.
+
+App này đọc địa chỉ server từ khóa `ConfiguredServiceHost` (tweak TubeRepair tự ghi).
+
+### Không làm
+
+Đăng nhập thật, thích / không thích, viết bình luận, upload, `/feeds/api/partners/<id>/branding/default` (banner kênh; app vẫn chạy
+khi route này trả 404).
 
 ## Lớp mở rộng `/tm/v1` — chưa làm (Giai đoạn 3–4)

@@ -43,10 +43,22 @@ async fn log_request(req: Request, next: Next) -> Response {
         .and_then(|r| r.0)
         .map(|r| format!("/{r}"))
         .unwrap_or_default();
+    // Short User-Agent ("YouTube/1.3.0", "YouTube v1.0.0", "TubeMini/0.1") tells which app asked
+    let agent: String = req
+        .headers()
+        .get(axum::http::header::USER_AGENT)
+        .and_then(|h| h.to_str().ok())
+        .unwrap_or("-")
+        .split(" CFNetwork")
+        .next()
+        .unwrap_or("-")
+        .chars()
+        .take(40)
+        .collect();
     let t0 = Instant::now();
     let resp = next.run(req).await;
     tracing::info!(
-        "{method} {res}{path} → {} ({} ms)",
+        "{method} {res}{path} → {} ({} ms) [{agent}]",
         resp.status().as_u16(),
         t0.elapsed().as_millis()
     );

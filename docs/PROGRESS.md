@@ -96,3 +96,47 @@
 - Bản dự phòng lấy metadata bằng yt-dlp (mục 4.1): để sang Giai đoạn 2.
 - Route của Giai đoạn 2 mà app đang gọi: `/feeds/api/channels/{id}` (avatar kênh, app gọi mỗi kênh một lần), bình luận.
 - RSS của YouTube hỏng (D13), nên Giai đoạn 4 sẽ dùng tab Videos thay cho RSS.
+
+## Giai đoạn 2 — Server: hoàn thiện lớp GData (15/11/2026)
+
+### Đã làm
+
+- [x] **HLS 720p** qua tiền tố `/{res}/`: playlist master lọc cho iOS 6 (D20, API.md).
+- [x] **Tìm kênh, thông tin kênh** (avatar JPEG `=s88`, số người đăng ký, số video), `/feeds/api/users/{id}`.
+- [x] **Playlist**: playlist của kênh (đọc `params` của tab từ phản hồi), tìm playlist, video trong playlist.
+- [x] **Bình luận** (định dạng mới `commentEntityPayload`, có dự phòng định dạng cũ), có phân trang.
+- [x] **Phân biệt User-Agent**: app classic `YouTube v1.0.0` nhận feed classic. Thêm route `/video/sd/{id}`.
+- [x] Phân trang `skip`: trang YouTube dài (playlist 100 video, kênh 30 video) không còn bị mất mục.
+- [x] **Sửa "Playback error"** ở video có quảng cáo đầu: chờ tới mốc `available_at`, lấy link trước, gộp các lần lấy trùng (D17).
+- [x] Dự phòng metadata bằng yt-dlp (D19, chuyển từ Giai đoạn 1).
+- [x] Log mỗi request có User-Agent rút gọn, để biết app nào đang gọi.
+- [x] Đo tốc độ yt-dlp trên PC, máy ảo Ubuntu và máy LXC 192.168.1.192 (D18). Chuyển TubeRepair sang máy LXC (cổng 4000, systemd).
+- [x] TubeMini (bản debug): thêm lệnh `avplay` / `avstatus` để kiểm track hình và tiếng của HLS.
+- [x] Test: 44 unit test (bộ lọc HLS trên 2 manifest thật, parser kênh / tìm kênh / playlist / bình luận trên fixture thật, phân
+  trang `skip`, feed classic, nhánh dự phòng) và 3 test `#[ignore]` gọi YouTube thật đều qua. `smoke.ps1`: 23/23 mục.
+
+### Kết quả nghiệm thu
+
+| Tiêu chí | Kết quả |
+| --- | --- |
+| Custom URL `/720`, phát 720p ổn định | **Đạt.** App YouTube 1.3.0 phát HLS 720p (ảnh chụp). Trình phát iOS chạy biến thể 1280×720, tua tới giây 1800, không khựng, có track tiếng |
+| Video có quảng cáo phát được | **Đạt** (sau khi sửa D17). Despacito và Gangnam Style phát ngay lần đầu, cả trong app YouTube lẫn trình phát iOS |
+| Avatar và số người đăng ký của kênh | **Đạt.** Ảnh chụp trang video có avatar kênh và "31.100 subscribers" |
+| Bình luận, trang kênh, playlist của kênh, tìm kênh trong app | **Server đạt** (smoke test, XML hợp lệ). Hiển thị trong app cần anh bấm thử, vì em không chạm màn hình được |
+| App classic (iPad 1 iOS 5) | **Server đạt:** app gọi tới và nhận feed classic. Phần hiển thị cần anh xem |
+| So với server TubeRepair công khai | TubeRepair hiện hỏng gần hết (D7). Server nhà làm được mọi màn hình mà TubeRepair từng hỗ trợ, cộng thêm trang video theo ID (1.3.0), lọc 60fps, chờ quảng cáo |
+
+### Anh kiểm tra bằng cách nào
+
+1. iPad mini: app YouTube đang trỏ về `http://192.168.1.24:8080/720` (HD). Mở vài video (nhất là video nhạc có quảng cáo), bấm tab
+   **Comments**, bấm vào tên kênh để xem trang kênh và tab playlist, tìm thử kênh. Muốn về 360p thì sửa Custom URL trong Cài đặt →
+   TubeRepair, bỏ `/720`, rồi tắt hẳn app YouTube.
+2. iPad 1 (iOS 5): mở app YouTube có sẵn, xem trang chủ có video không và mở thử một video.
+3. Trên PC: `powershell -File scripts\smoke.ps1`.
+
+### Còn tồn
+
+- Các màn hình cần chạm (bình luận, trang kênh, playlist, tìm kênh) chưa được em tự kiểm trong app, chỉ kiểm phía server.
+- Video có quảng cáo phải chờ khoảng 7–8 giây trước khi phát (giới hạn của YouTube, D17/D18).
+- 720p60 bị bỏ (giống TubeRepair). Có thể thử bật sau nếu A5 chạy mượt.
+- Phép thử khác IP / 4G: anh làm sau.

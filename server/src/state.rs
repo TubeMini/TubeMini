@@ -8,6 +8,7 @@ use std::time::Duration;
 use anyhow::Result;
 
 use crate::config::Config;
+use crate::youtube::fallback::{Fallback, YtDlpMeta};
 use crate::youtube::innertube::InnerTube;
 use crate::youtube::streams::{StreamResolver, YtDlpResolver};
 use crate::youtube::ytdlp::{ToolStatus, YtDlp};
@@ -33,7 +34,10 @@ pub struct Inner {
 impl AppState {
     pub fn new(cfg: Config, tools: ToolStatus) -> Result<Self> {
         let ytdlp = YtDlp::new(&cfg);
-        let meta = Box::new(InnerTube::new(&cfg)?);
+        let meta = Box::new(Fallback::new(
+            InnerTube::new(&cfg)?,
+            YtDlpMeta::new(ytdlp.clone()),
+        ));
         let streams = Box::new(YtDlpResolver::new(ytdlp.clone()));
         let mut http = reqwest::Client::builder().timeout(Duration::from_secs(15));
         if cfg.force_ipv4 {
