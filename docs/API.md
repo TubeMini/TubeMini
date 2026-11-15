@@ -268,8 +268,8 @@ Các lựa chọn chất lượng, gọi ngay trước khi phát.
 ```xml
 <tm:streams xmlns:tm="urn:tubemini:1" video_id="dQw4w9WgXcQ" expire="1794730000" available_in="4">
   <tm:stream quality="360" kind="mp4" url="https://rr3---sn-....googlevideo.com/videoplayback?..."/>
-  <tm:stream quality="720" kind="hls" url="http://192.168.1.10:8080/720/getvideo/dQw4w9WgXcQ"/>
-  <tm:stream quality="1080" kind="hls" url="http://192.168.1.10:8080/1080/getvideo/dQw4w9WgXcQ"/>
+  <tm:stream quality="720" kind="hls" url="http://192.168.1.10:8080/720/getvideo/dQw4w9WgXcQ" bandwidth="2566654"/>
+  <tm:stream quality="1080" kind="hls" url="http://192.168.1.10:8080/1080/getvideo/dQw4w9WgXcQ" bandwidth="4690053"/>
   <tm:audio url="http://192.168.1.10:8080/getaudio/dQw4w9WgXcQ"/>
   <tm:download url="https://rr3---sn-....googlevideo.com/videoplayback?..." quality="360" dubbed="0"/>
 </tm:streams>
@@ -283,13 +283,17 @@ Các lựa chọn chất lượng, gọi ngay trước khi phát.
   - `quality` là độ phân giải thật của biến thể còn lại sau khi lọc, có thể nhỏ hơn mức xin. Ví dụ video chỉ có 720p60 thì mức
     720 là 480. Hai mục có cùng `quality` thì chỉ giữ mục đầu (video không có 1080p30 thì không có mục 1080).
   - Không có HLS dùng được thì không có phần tử này.
+  - `bandwidth`: BANDWIDTH (bit/s) của biến thể còn lại, tức đỉnh của hình + tiếng. App dùng để ước lượng dung lượng tải về
+    (`bandwidth × thời lượng / 8`, thường hơi dư). Mục MP4 không có thuộc tính này.
 - `available_in`: **số giây app phải chờ** rồi mới bắt đầu phát (D17: video có quảng cáo đầu bị khóa link tới lúc đó); 0 là phát được
   ngay. App hiện đếm ngược. URL HLS trỏ về `/getvideo` của server nên server cũng tự chờ.
 - `expire`: Unix giây lúc link hết hạn. Link được cache 5 phút. Phát lỗi (403 hoặc hết hạn) thì gọi lại với `fresh=1` một lần.
 - Thứ tự: `quality` tăng dần. App chọn mục có `quality` lớn nhất mà không vượt chất lượng người dùng chọn (360 / 720 / 1080);
   không có mục nào như vậy thì lấy mục nhỏ nhất.
 - `tm:audio` (có khi video có HLS): link `/getaudio` để chỉ nghe tiếng.
-- `tm:download` (có khi video có MP4 progressive): link MP4 360p để app tải về xem offline. App tải bằng request `Range`, nên tải
+- `tm:download` (có khi video có MP4 progressive): link MP4 360p để app tải về xem offline. Muốn tải 720p / 1080p thì app tải
+  chính playlist HLS của mục `tm:stream` tương ứng: playlist master trên server, rồi playlist con và segment trên googlevideo. Tải
+  hết segment hình và tiếng về máy, rồi phát qua máy chủ HTTP nhỏ trong app (D29). App tải bằng request `Range`, nên tải
   tiếp được khi đứt mạng; link hết hạn thì gọi lại `streams?fresh=1`. `dubbed="1"`: tiếng trong MP4 là bản lồng tiếng AI (D23),
   app báo trước cho người dùng.
 - `proxy=1` và config có `proxy_fallback = true`: mọi URL trên trỏ về server (`/proxy`, hoặc `/getvideo` / `/getaudio` có
