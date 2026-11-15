@@ -2,6 +2,8 @@
 
 <img src="docs/icon.png" width="128" alt="Icon TubeMini">
 
+[![Nhóm Telegram](https://img.shields.io/badge/Telegram-t.me%2Ftivikit-26A5E4?logo=telegram&logoColor=white)](https://t.me/tivikit)
+
 Xem YouTube trên iPad mini 1 (iOS 6, đã jailbreak), gồm hai phần:
 
 - **`server/` — tubemini-server** (Rust): chạy trên PC Windows trong nhà. Giả lập API GData cũ để app YouTube cũ cùng tweak
@@ -14,6 +16,7 @@ Xem YouTube trên iPad mini 1 (iOS 6, đã jailbreak), gồm hai phần:
 
 - Trang giới thiệu: **https://tubemini.github.io/** · Nguồn Cydia: `https://tubemini.github.io/cydia/` ·
   Bản phát hành: https://github.com/TubeMini/TubeMini/releases
+- Nhóm Telegram (hỏi đáp, báo lỗi, góp ý): **https://t.me/tivikit**
 
 Tài liệu:
 
@@ -40,6 +43,11 @@ Mở cổng 8080 trên Windows Firewall (xem SETUP mục 1.5), rồi trên iPad 
 **Ubuntu:** `sudo scripts/install.sh` (hoặc gói `dist/tubemini-server-*.tar.gz` từ `scripts/make-release.sh`) cài theo một trong
 hai cách: **Docker** (container, Docker hoặc Podman) hoặc **service systemd**; tự khởi động cùng máy, tự cập nhật yt-dlp. Xem SETUP
 mục 7. **Windows / macOS** có Docker Desktop: `docker compose up -d --build`. Server trong nhà hiện chạy ở `http://192.168.1.192:8080`.
+
+## Cộng đồng
+
+Hỏi cách cài, báo lỗi, góp ý tính năng, nhận tin bản mới: nhóm Telegram **[t.me/tivikit](https://t.me/tivikit)**. Báo lỗi kèm log cũng có thể
+mở issue trên GitHub.
 
 ## Giấy phép
 
