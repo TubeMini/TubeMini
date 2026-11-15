@@ -1,4 +1,6 @@
 #import "TMGridViewController.h"
+#import "TMAudioBar.h"
+#import "TMAudioPlayer.h"
 #import "TMCells.h"
 #import "TMFormat.h"
 #import "TMImageLoader.h"
@@ -137,6 +139,11 @@ static const CGFloat kGap = 14, kTextH = 74;
                                              selector:@selector(themeChanged)
                                                  name:TMThemeDidChangeNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(audioChanged)
+                                                 name:TMAudioPlayerDidChangeNotification
+                                               object:nil];
+    [self audioChanged];
     self.collectionView.backgroundColor = [TMTheme current].background;
     [self reload];
 }
@@ -260,6 +267,11 @@ static const CGFloat kGap = 14, kTextH = 74;
     if (index < 0 || index >= (NSInteger)_items.count) return;
     [self.navigationController pushViewController:[[TMVideoViewController alloc] initWithVideo:_items[(NSUInteger)index]]
                                          animated:YES];
+}
+
+/// Room for the "Chỉ nghe" bar under the last rows.
+- (void)audioChanged {
+    [TMAudioBar applyInsetTo:self.collectionView];
 }
 
 @end

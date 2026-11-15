@@ -359,6 +359,18 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
     app. Màn hình khoá hiện tiêu đề, kênh, ảnh (`MPNowPlayingInfoCenter`); nút phát / dừng ở màn hình khoá và tai nghe chuyển tới
     trình phát.
   - Chế độ video thì vẫn tạm dừng khi app xuống nền (MPMoviePlayerController làm vậy với video). Muốn nghe nền thì dùng "Chỉ nghe".
+  - **Thanh nghe nhạc thu nhỏ** (anh hỏi cách tua / dừng khi rời trình phát): "Chỉ nghe" giờ dùng AVPlayer chạy ngầm
+    (`TMAudioPlayer`), không mở trình phát toàn màn hình. Thanh nằm trên thanh tab ở mọi màn hình, có:
+    - thanh tua kéo được, ảnh, tên bài, thời gian;
+    - nút ↺15, ❚❚ / ►, 15↻, ✕;
+    - chạm tên bài để mở trang video.
+
+    Thanh gắn vào view của tab bar controller (view xoay theo màn hình trên iOS 6). Các danh sách được chừa khoảng trống phía dưới
+    để hàng cuối không bị che.
+  - **Màn hình khoá iOS 6 không có thanh tiến trình** (anh đã thử: không thấy). Thanh này chỉ có từ iOS 7; kéo để tua trên màn
+    hình khoá phải iOS 9.1 (`MPRemoteCommandCenter`). Trên iOS 6, màn hình khoá và thanh đa nhiệm có ⏮ / ▶ / ⏭: app gán ⏮ / ⏭
+    thành lùi / tiến 15 giây.
+  - Ký tự "▶" bị iOS 6 đổi thành emoji ô vuông xanh, nên nút trên thanh thu nhỏ dùng "►".
 - **Tải về:** chỉ MP4 360p (progressive). HLS không lưu để xem offline được trên iOS 6 nếu không có máy chủ HTTP nội bộ trong app.
   - Tải từng video một bằng NSURLConnection, ghi thẳng ra file. Đứt mạng thì tải tiếp bằng `Range` (thử lại 3 lần). googlevideo
     trả 403/410 thì xin link mới (`streams?fresh=1`).

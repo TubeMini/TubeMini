@@ -1,4 +1,6 @@
 #import "TMDownloadsViewController.h"
+#import "TMAudioBar.h"
+#import "TMAudioPlayer.h"
 #import "TMCells.h"
 #import "TMDownloads.h"
 #import "TMLibrary.h"
@@ -38,6 +40,11 @@ static NSString *const kCell = @"download";
                                              selector:@selector(applyTheme)
                                                  name:TMThemeDidChangeNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(audioChanged)
+                                                 name:TMAudioPlayerDidChangeNotification
+                                               object:nil];
+    [self audioChanged];
     [self applyTheme];
     [self refresh];
 }
@@ -181,6 +188,11 @@ static NSString *const kCell = @"download";
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == actionSheet.destructiveButtonIndex && _pending) [[TMDownloads shared] remove:_pending.videoID];
     _pending = nil;
+}
+
+/// Room for the "Chỉ nghe" bar under the last rows.
+- (void)audioChanged {
+    [TMAudioBar applyInsetTo:self.tableView];
 }
 
 @end

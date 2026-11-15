@@ -8,6 +8,7 @@
 #import "TMPlayer.h"
 #import "TMSearchViewController.h"
 #import "TMSettingsViewController.h"
+#import "TMAudioPlayer.h"
 #import "TMChannelViewController.h"
 #import "TMDownloads.h"
 #import "TMDownloadsViewController.h"
@@ -167,6 +168,18 @@ static AVPlayer *gAVPlayer;
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top showSection:[arg integerValue]];
         if ([top isKindOfClass:[TMChannelViewController class]]) [(TMChannelViewController *)top showSection:[arg integerValue]];
+    } else if ([verb isEqualToString:@"audio"]) {
+        // audio status | toggle | seek <s> | skip <s> | stop
+        TMAudioPlayer *a = [TMAudioPlayer shared];
+        NSArray *parts = [arg componentsSeparatedByString:@" "];
+        NSString *sub = parts.count ? parts[0] : @"status";
+        double n = parts.count > 1 ? [parts[1] doubleValue] : 0;
+        if ([sub isEqualToString:@"toggle"]) [a togglePlay];
+        if ([sub isEqualToString:@"seek"]) [a seekTo:n];
+        if ([sub isEqualToString:@"skip"]) [a skip:n];
+        if ([sub isEqualToString:@"stop"]) [a stop];
+        TMLog(@"[audio] %@ %@ · %.1f / %.1f s · %@", a.active ? @"có" : @"không", a.video.videoID ?: @"", a.position, a.duration,
+              a.playing ? @"đang phát" : @"dừng");
     } else if ([verb isEqualToString:@"listenbtn"]) {
         UIViewController *top = [self nav].topViewController;
         if ([top isKindOfClass:[TMVideoViewController class]]) [(TMVideoViewController *)top listen];

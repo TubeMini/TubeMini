@@ -1,4 +1,6 @@
 #import "TMListViewController.h"
+#import "TMAudioBar.h"
+#import "TMAudioPlayer.h"
 #import "TMCells.h"
 #import "TMChannelViewController.h"
 #import "TMTheme.h"
@@ -44,6 +46,11 @@ static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", 
                                              selector:@selector(themeChanged)
                                                  name:TMThemeDidChangeNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(audioChanged)
+                                                 name:TMAudioPlayerDidChangeNotification
+                                               object:nil];
+    [self audioChanged];
     [self applyTheme];
     if (self.firstPage) [self reload];
 }
@@ -232,6 +239,11 @@ static NSString *const kVideoCell = @"video", *const kChannelCell = @"channel", 
         videos.emptyMessage = @"Playlist trống.";
         [self.navigationController pushViewController:videos animated:YES];
     }
+}
+
+/// Room for the "Chỉ nghe" bar under the last rows.
+- (void)audioChanged {
+    [TMAudioBar applyInsetTo:self.tableView];
 }
 
 @end

@@ -1,7 +1,10 @@
 #import "TMAppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
 #import "TMAPIClient.h"
+#import "TMAudioBar.h"
+#import "TMAudioPlayer.h"
 #import "TMDownloads.h"
+#import "TMVideoViewController.h"
 #import "TMDownloadsViewController.h"
 #import "TMPlayer.h"
 #import "TMImageLoader.h"
@@ -126,6 +129,7 @@ static UIImage *icon(TMDrawBlock draw) {
     self.window.backgroundColor = [TMTheme current].background;
     self.window.rootViewController = self.tabs;
     [self.window makeKeyAndVisible];
+    [self addAudioBar];
 
     [[TMLibrary shared] refresh]; // which channels are subscribed (for the Subscribe buttons)
     if (![TMAPIClient shared].isConfigured) {
@@ -141,6 +145,24 @@ static UIImage *icon(TMDrawBlock draw) {
     [TMDebug start];
 #endif
     return YES;
+}
+
+/// The "Chỉ nghe" mini player, just above the tab bar, on the view that rotates.
+- (void)addAudioBar {
+    UIView *host = self.tabs.view;
+    CGFloat h = [TMAudioBar height], tab = self.tabs.tabBar.bounds.size.height;
+    TMAudioBar *bar = [[TMAudioBar alloc] initWithFrame:CGRectMake(0, host.bounds.size.height - tab - h, host.bounds.size.width, h)];
+    bar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+    __weak TMAppDelegate *weakSelf = self;
+    bar.onOpen = ^{
+        TMVideo *v = [TMAudioPlayer shared].video;
+        UINavigationController *nav = [weakSelf nav];
+        UIViewController *top = nav.topViewController;
+        if (!v || !nav) return;
+        if ([top isKindOfClass:[TMVideoViewController class]] && [[(TMVideoViewController *)top video].videoID isEqualToString:v.videoID]) return;
+        [nav pushViewController:[[TMVideoViewController alloc] initWithVideo:v] animated:YES];
+    };
+    [host addSubview:bar];
 }
 
 /// Lock screen / headphone buttons reach the end of the responder chain here.

@@ -1,5 +1,6 @@
 #import "TMPlayer.h"
 #import "TMAPIClient.h"
+#import "TMAudioPlayer.h"
 #import "TMImageLoader.h"
 #import "TMLibrary.h"
 #import "TMLog.h"
@@ -132,6 +133,7 @@ static const NSTimeInterval kSaveInterval = 15;
 }
 
 - (void)playFile:(NSString *)path video:(TMVideo *)video startAt:(NSInteger)seconds from:(UIViewController *)presenter {
+    [[TMAudioPlayer shared] stop];
     _generation++;
     _audioOnly = NO;
     _localPath = [path copy];
@@ -151,6 +153,7 @@ static const NSTimeInterval kSaveInterval = 15;
 }
 
 - (void)begin:(TMVideo *)video quality:(NSInteger)quality startAt:(NSInteger)seconds from:(UIViewController *)presenter {
+    [[TMAudioPlayer shared] stop]; // one sound at a time
     _generation++;
     _video = video;
     _quality = quality;
@@ -227,6 +230,12 @@ static const NSTimeInterval kSaveInterval = 15;
     }
     self.playingLabel = [self labelFor:_stream];
     TMLog(@"[player] %@ %@", _video.videoID, self.playingLabel);
+    if ([_stream.kind isEqualToString:@"audio"]) {
+        // No screen of its own: the mini bar above the tab bar controls it
+        self.playingLabel = nil;
+        [[TMAudioPlayer shared] playURL:_stream.url video:_video startAt:_startAt];
+        return;
+    }
     if (_playerVC) {
         // Retry inside the open player, from where it stopped
         _playerVC.moviePlayer.initialPlaybackTime = _lastPosition;
@@ -248,8 +257,7 @@ static const NSTimeInterval kSaveInterval = 15;
         TMLog(@"[player] xem tiếp từ %ld giây", (long)_startAt);
         _playerVC.moviePlayer.initialPlaybackTime = _startAt;
     }
-    if (_audioOnly || [_stream.kind isEqualToString:@"audio"]) [self showArtworkIn:_playerVC.moviePlayer];
-    [UIApplication sharedApplication].idleTimerDisabled = !_audioOnly; // audio: let the screen lock
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     [self loadArtwork];
     [_presenter presentMoviePlayerViewControllerAnimated:_playerVC];
@@ -266,41 +274,6 @@ static const NSTimeInterval kSaveInterval = 15;
 }
 
 #pragma mark - Audio only, lock screen
-
-/// Audio has no picture: show the thumbnail and title behind the controls.
-- (void)showArtworkIn:(MPMoviePlayerController *)player {
-    UIView *bg = player.backgroundView;
-    bg.backgroundColor = [UIColor blackColor];
-    // The background view has no size yet when the player is created: lay out on the screen size
-    // without autoresizing (growing from 0×0 would double everything), fit it once on screen
-    CGRect frame = CGRectIsEmpty(bg.bounds) ? [UIScreen mainScreen].bounds : bg.bounds;
-    UIView *box = [[UIView alloc] initWithFrame:frame];
-    [bg addSubview:box];
-    UIView *holder = bg;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (CGRectIsEmpty(holder.bounds)) return;
-        box.frame = holder.bounds;
-        box.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight; // rotation
-    });
-    bg = box;
-    UIImageView *art = [[UIImageView alloc] initWithFrame:bg.bounds];
-    art.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    art.contentMode = UIViewContentModeScaleAspectFit;
-    art.alpha = 0.55;
-    art.tag = 501;
-    [bg addSubview:art];
-    NSURL *hq = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", _video.videoID]];
-    [[TMImageLoader shared] setImageURL:hq onImageView:art placeholder:nil size:CGSizeMake(480, 360)];
-    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(20, frame.size.height * 0.7, frame.size.width - 40, 60)];
-    title.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-    title.text = [NSString stringWithFormat:@"♫ %@", _video.title ?: @""];
-    title.textColor = [UIColor whiteColor];
-    title.backgroundColor = [UIColor clearColor];
-    title.font = [UIFont boldSystemFontOfSize:20];
-    title.textAlignment = NSTextAlignmentCenter;
-    title.numberOfLines = 2;
-    [bg addSubview:title];
-}
 
 /// The thumbnail for the lock screen (MPMediaItemArtwork needs a UIImage).
 - (void)loadArtwork {
@@ -321,7 +294,8 @@ static const NSTimeInterval kSaveInterval = 15;
 - (void)updateNowPlaying {
     MPMoviePlayerController *p = _playerVC.moviePlayer;
     if (!p || !_video) {
-        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+        // Leave the lock screen to the audio player when it is the one playing
+        if (![TMAudioPlayer shared].active) [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
         return;
     }
     [self readPlayer];
@@ -336,6 +310,10 @@ static const NSTimeInterval kSaveInterval = 15;
 }
 
 - (void)remoteControl:(UIEvent *)event {
+    if ([TMAudioPlayer shared].active) {
+        [[TMAudioPlayer shared] remoteControl:event];
+        return;
+    }
     MPMoviePlayerController *p = _playerVC.moviePlayer;
     if (!p || event.type != UIEventTypeRemoteControl) return;
     switch (event.subtype) {
@@ -391,8 +369,10 @@ static const NSTimeInterval kSaveInterval = 15;
     _playerVC = nil;
     self.playingLabel = nil;
     [UIApplication sharedApplication].idleTimerDisabled = NO;
-    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
-    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+    if (![TMAudioPlayer shared].active) {
+        [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
+        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+    }
 }
 
 - (void)finished:(NSNotification *)n {

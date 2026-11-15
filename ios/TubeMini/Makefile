@@ -14,7 +14,7 @@ include $(THEOS)/makefiles/common.mk
 
 APPLICATION_NAME = TubeMini
 TubeMini_FILES = main.m $(wildcard Core/*.m) $(wildcard UI/*.m)
-TubeMini_FRAMEWORKS = UIKit Foundation CoreGraphics QuartzCore MediaPlayer AVFoundation
+TubeMini_FRAMEWORKS = UIKit Foundation CoreGraphics QuartzCore MediaPlayer AVFoundation CoreMedia
 # Any API newer than the iOS 6.0 deployment target is a build error (SDK 9.3 headers carry the availability).
 # Not covered: UISearchBar.keyboardAppearance (iOS 7, unannotated in the SDK) — see docs/DECISIONS.md D24.
 TubeMini_CFLAGS = -fobjc-arc -Wno-deprecated-declarations -Werror=unguarded-availability -Werror=partial-availability -ICore -IUI -IDebug

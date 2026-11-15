@@ -11,8 +11,8 @@
 - (void)playVideo:(TMVideo *)video quality:(NSInteger)quality from:(UIViewController *)presenter;
 /// `seconds` > 0 resumes there.
 - (void)playVideo:(TMVideo *)video quality:(NSInteger)quality startAt:(NSInteger)seconds from:(UIViewController *)presenter;
-/// Audio only (`<tm:audio>`, falls back to 360p): keeps playing with the screen locked or in the
-/// background, with title / artwork on the lock screen and its play / pause controls.
+/// Audio only (`<tm:audio>`, falls back to 360p video): handed to TMAudioPlayer, which keeps playing
+/// while the user browses, with the screen locked or in the background (mini bar above the tab bar).
 - (void)playAudioOf:(TMVideo *)video startAt:(NSInteger)seconds from:(UIViewController *)presenter;
 /// A downloaded file (offline).
 - (void)playFile:(NSString *)path video:(TMVideo *)video startAt:(NSInteger)seconds from:(UIViewController *)presenter;

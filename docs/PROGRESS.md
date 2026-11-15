@@ -290,6 +290,8 @@
     vuốt để xoá; dòng tổng dung lượng.
   - **Cài đặt**: "Tìm máy chủ trong mạng" (Bonjour), "Phát qua máy chủ".
   - Trang video: 6 nút xếp hai hàng (Phát, Chỉ nghe, Chất lượng / Tải về, Kênh, Theo dõi).
+- [x] **Thanh nghe nhạc thu nhỏ** (anh yêu cầu): "Chỉ nghe" phát ngầm, thanh trên thanh tab có tua, ↺15, ❚❚ / ►, 15↻, ✕, hiện ở
+  mọi màn hình trong lúc lướt app. ⏮ / ⏭ trên màn hình khoá = lùi / tiến 15 giây (màn hình khoá iOS 6 không có thanh tiến trình).
 - [x] Hướng dẫn xem ngoài mạng nhà (VPN L2TP/IPsec, hoặc proxy) và triển khai VPS: SETUP mục 8, 9.
 - [x] Test: 73 unit test server (playlist chỉ tiếng, viết lại URL, chữ ký proxy, mDNS); `smoke.ps1` 33 kiểm tra, đều qua.
 
@@ -297,8 +299,8 @@
 
 | Tiêu chí | Kết quả |
 | --- | --- |
-| Chỉ nghe | Bitrate 144 kbit/s, không có hình (0x0), màn trình phát hiện ảnh video |
-| Nghe khi chuyển app | Mở app Cài đặt của iPad: TubeMini vẫn phát, vị trí từ giây 11,8 lên 52,4 sau 40 giây; thanh trạng thái có ▶ |
+| Chỉ nghe | Bitrate 144 kbit/s, không có hình. Thanh thu nhỏ: tua tới 600 giây có ngay, ↺15 về 584,7, dừng / phát được |
+| Nghe khi chuyển app | Mở app Cài đặt của iPad: TubeMini vẫn phát (586,8 → 600,8 giây sau 14 giây); thanh trạng thái có ▶ |
 | Màn hình khoá | Có tiêu đề, kênh, thời lượng, ảnh (`nowplaying`). Nút trên màn hình khoá cần anh thử bằng tay |
 | Tải về | 95,7 MB trong khoảng 70 giây; nút hiện "⬇ 7%"; tab "Đã tải" ghi "tiếng lồng AI" cho bản tin có lồng tiếng |
 | Xem offline | Phát từ file (không qua mạng), 640x360, cả 22 phút |
@@ -308,8 +310,8 @@
 
 ### Anh kiểm tra bằng cách nào
 
-1. Mở một video, bấm **"♫ Chỉ nghe"**, rồi khoá màn hình: tiếng vẫn chạy. Bấm nút Home hai lần hoặc xem màn hình khoá để
-   dừng / phát.
+1. Mở một video, bấm **"♫ Chỉ nghe"**: thanh thu nhỏ hiện trên thanh tab, quay ra lướt app tiếng vẫn chạy; kéo thanh để tua.
+   Khoá màn hình: tiếng vẫn chạy; bấm Home hai lần trên màn hình khoá để dừng / phát, ⏮ / ⏭ để lùi / tiến 15 giây.
 2. Bấm **"⬇ Tải về"**, chờ nút thành "✓ Đã tải". Bật chế độ máy bay, vào tab **"Đã tải"**, chạm video để xem offline.
 3. Cài đặt → **"Tìm máy chủ trong mạng"**: ở mạng nhà anh sẽ báo không tìm thấy (khác dải IP). Nếu cắm Wi-Fi cùng dải với server
    thì sẽ tìm được.
