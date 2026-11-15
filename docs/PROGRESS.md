@@ -1,5 +1,58 @@
 # Tiến độ
 
+## Tình trạng hiện tại (sao lưu 15/11/2026)
+
+Đã xong cả 6 giai đoạn (0–5) của tài liệu dự án, cùng các phần anh yêu cầu thêm. Chi tiết từng giai đoạn ở các mục bên dưới;
+lý do kỹ thuật ở `DECISIONS.md` (D1–D33).
+
+**Phiên bản:** app TubeMini và tubemini-server **0.5.1** (server 0.5.1 chỉ đổi số phiên bản so với 0.5.0).
+
+**Đã công khai**
+
+| Thứ | Ở đâu |
+| --- | --- |
+| Mã nguồn (server + app + tài liệu), GPL-3.0 | https://github.com/TubeMini/TubeMini |
+| Bản phát hành (`.deb` app + gói server) | v0.5.0, v0.5.1: https://github.com/TubeMini/TubeMini/releases |
+| Trang giới thiệu (Safari iOS 6 đọc được) | https://tubemini.github.io/ (repo `TubeMini/TubeMini.github.io`) |
+| Nguồn Cydia | `https://tubemini.github.io/cydia/` |
+| File cập nhật OTA cho app | https://tubemini.github.io/update.json |
+| Trang tổ chức + `SUPPORT.md` chung | https://github.com/TubeMini (repo `TubeMini/.github`) |
+| Nhóm Telegram | https://t.me/tivikit (@tivikit) |
+
+**Đang chạy**
+
+- iPad mini 1 (iOS 6.1.3): bản release 0.5.1, cài qua OTA trong app. Bản release không có lệnh debug; muốn thử qua SSH thì cài
+  lại bản debug (`scripts/ios-build.sh` không có `FINALPACKAGE=1`).
+- Server chính trong nhà: service systemd trên máy Ubuntu (cài bằng `install.sh`), vẫn là 0.5.0. Chưa cần cập nhật vì code server
+  không đổi.
+
+**Kiểm thử gần nhất:**
+- `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` sạch; `cargo test`: 74 đạt, 3 bỏ qua.
+- Trên iPad: OTA trọn vòng 0.5.0 → 0.5.1 (tải, kiểm SHA-256, `dpkg exit 0`, respring, app chạy).
+- Mục Nhóm Telegram trong Cài đặt: chụp ở giao diện sáng, tối, màn dọc, màn ngang; mã QR quét ra đúng.
+
+**Phát hành bản mới:** làm theo `SETUP.md` mục 10. Tóm tắt:
+1. tăng phiên bản ở 3 chỗ;
+2. `scripts/ios-build.sh FINALPACKAGE=1`;
+3. `scripts/make-release.sh`;
+4. `gh release create`;
+5. `scripts/publish-site.sh <deb> --notes "…"`.
+
+Commit lên GitHub luôn dùng email ẩn danh `…@users.noreply.github.com`.
+
+**Tài liệu giới thiệu cho nhóm Telegram** (ảnh tóm tắt 2560×3160 + 2 tin nhắn): nằm ở `dist/telegram/` trên máy làm việc, không
+có trong git.
+
+**Còn mở**
+
+- Phép thử 4G / IP khác (anh tự làm): quyết định có cần chế độ phát qua server khi ở ngoài nhà hay không.
+- HTTPS cho iOS 6 chưa thử (Let's Encrypt không chạy được trên iOS 6).
+- Không có tài khoản người dùng: mọi máy dùng chung server thì chung kênh theo dõi và lịch sử.
+- Thứ tự feed giữa các kênh chỉ gần đúng (YouTube chỉ ghi "3 giờ trước", D26).
+- App YouTube cũ chưa tự theo dõi kênh được (nút đăng ký cần đăng nhập Google).
+- Trình phát vẫn là MPMoviePlayerViewController toàn màn hình.
+- Tìm máy chủ trong mạng (Bonjour) chỉ chạy khi iPad và server cùng dải IP.
+
 ## Giai đoạn 0 — Dựng khung và kiểm chứng rủi ro (15/11/2026)
 
 ### Đã làm
