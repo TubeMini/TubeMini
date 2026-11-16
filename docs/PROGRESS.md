@@ -1,18 +1,18 @@
 # Tiến độ
 
-## Tình trạng hiện tại (sao lưu 15/11/2026)
+## Tình trạng hiện tại (cập nhật 16/11/2026)
 
 Đã xong cả 6 giai đoạn (0–5) của tài liệu dự án, cùng các phần anh yêu cầu thêm. Chi tiết từng giai đoạn ở các mục bên dưới;
-lý do kỹ thuật ở `DECISIONS.md` (D1–D33).
+lý do kỹ thuật ở `DECISIONS.md` (D1–D34).
 
-**Phiên bản:** app TubeMini và tubemini-server **0.5.1** (server 0.5.1 chỉ đổi số phiên bản so với 0.5.0).
+**Phiên bản:** app TubeMini và tubemini-server **0.5.2** (code server không đổi từ 0.5.0, chỉ đổi số phiên bản).
 
 **Đã công khai**
 
 | Thứ | Ở đâu |
 | --- | --- |
 | Mã nguồn (server + app + tài liệu), GPL-3.0 | https://github.com/TubeMini/TubeMini |
-| Bản phát hành (`.deb` app + gói server) | v0.5.0, v0.5.1: https://github.com/TubeMini/TubeMini/releases |
+| Bản phát hành (`.deb` app + gói server) | v0.5.0, v0.5.1, v0.5.2: https://github.com/TubeMini/TubeMini/releases |
 | Trang giới thiệu (Safari iOS 6 đọc được) | https://tubemini.github.io/ (repo `TubeMini/TubeMini.github.io`) |
 | Nguồn Cydia | `https://tubemini.github.io/cydia/` |
 | File cập nhật OTA cho app | https://tubemini.github.io/update.json |
@@ -21,15 +21,17 @@ lý do kỹ thuật ở `DECISIONS.md` (D1–D33).
 
 **Đang chạy**
 
-- iPad mini 1 (iOS 6.1.3): bản release 0.5.1, cài qua OTA trong app. Bản release không có lệnh debug; muốn thử qua SSH thì cài
-  lại bản debug (`scripts/ios-build.sh` không có `FINALPACKAGE=1`).
+- iPad mini 1 (iOS 6.1.3): bản release 0.5.2, cài qua SSH (đúng file `.deb` đã phát hành). Bản release không có lệnh debug;
+  muốn thử qua SSH thì cài lại bản debug (`scripts/ios-build.sh` không có `FINALPACKAGE=1`).
 - Server chính trong nhà: service systemd trên máy Ubuntu (cài bằng `install.sh`), vẫn là 0.5.0. Chưa cần cập nhật vì code server
   không đổi.
 
 **Kiểm thử gần nhất:**
-- `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` sạch; `cargo test`: 74 đạt, 3 bỏ qua.
+- `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` sạch; `cargo test`: 74 đạt, 3 bỏ qua (code server không đổi
+  từ đó).
+- Phát nền trên iPad (D34, bấm Home giả bằng `cbscreen home`): video 5/5 lần phát tiếp ở nền; "Chỉ nghe" bấm Home ngay ở 4 thời
+  điểm khác nhau, cả 4 đều có tiếng (ở nền, hoặc khi mở lại app nếu tiếng chưa kịp chạy).
 - Trên iPad: OTA trọn vòng 0.5.0 → 0.5.1 (tải, kiểm SHA-256, `dpkg exit 0`, respring, app chạy).
-- Mục Nhóm Telegram trong Cài đặt: chụp ở giao diện sáng, tối, màn dọc, màn ngang; mã QR quét ra đúng.
 
 **Phát hành bản mới:** làm theo `SETUP.md` mục 10. Tóm tắt:
 1. tăng phiên bản ở 3 chỗ;
@@ -391,6 +393,9 @@ có trong git.
   mô tả trong Cydia, ghi chú phát hành, và trang tổ chức https://github.com/TubeMini (repo `TubeMini/.github`). App 0.5.1 có
   mục **Nhóm Telegram** trong Cài đặt (mã QR + @tivikit). Đã thử OTA trọn vòng 0.5.0 → 0.5.1 trên iPad (cài xong, respring,
   app chạy).
+- [x] **Bản 0.5.2, sửa phát nền** (D34): xem video rồi bấm Home thỉnh thoảng mất tiếng trên iPad mini 1, vì iOS treo app trước
+  khi lệnh phát lại kịp chạy. App giờ xin thêm thời gian chạy nền và phát lại tới khi tiếng chạy hẳn. "Chỉ nghe": iOS 6 không cho
+  app ở nền bắt đầu phát, nên tiếng chưa kịp chạy lúc bấm Home thì sẽ phát khi mở lại app (trước đây có lúc im luôn).
 - [x] **Lên GitHub** (D31, D32): repo công khai https://github.com/TubeMini/TubeMini (lịch sử đã bỏ thông tin cá nhân),
   bundle id `vn.tubemini.io`, bản phát hành v0.5.0, trang https://tubemini.github.io/ (đọc được trên Safari iOS 6), nguồn
   Cydia `https://tubemini.github.io/cydia/`, cập nhật OTA trong app (tải, kiểm SHA-256, cài, respring). Đã thử OTA trọn vòng

@@ -507,3 +507,27 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
   với CSS cũ), và giữ ghi chú của `update.json` khi chạy lại không có `--notes`.
 - **Bản 0.5.1** (app có mục Telegram; server chỉ đổi số phiên bản). Đã thử OTA: cài bản debug 0.5.0, app thấy 0.5.1, tải, kiểm
   SHA-256, `dpkg exit 0`, respring, app 0.5.1 chạy bình thường.
+
+## D34. Phát nền: giữ app chạy tới khi tiếng thật sự chạy lại; giới hạn "chỉ nghe" của iOS 6 — 16/11/2026
+
+- **Lỗi:** trên iPad mini 1, xem video rồi bấm Home thỉnh thoảng mất tiếng. Log của anh (13:27 hôm 15/11, 05:55 hôm 16/11):
+  iOS dừng video lúc app mất focus, còn lệnh `play` hẹn sau 0,3 giây của D29 thì 1,5–3 giây sau mới chạy, đúng lúc anh mở lại
+  app. Lúc video đang dừng, không có gì giữ một app ở nền: iOS được phép treo app ngay sau `didEnterBackground`, trước khi
+  lệnh hẹn kịp chạy. Lúc đang tải về thì `TMDownloads` giữ app sống, nên lỗi lúc có lúc không.
+- **Sửa video (`TMPlayer`):** ở `willResignActive`, nếu đang phát thì xin **background task** và chạy một bộ canh: 0,25 giây
+  một lần, tới 4 giây sau `didEnterBackground`, hễ iOS dừng video thì gọi `play` (tối đa 10 lần, timer ở common modes để chạy
+  cả lúc UIKit chuyển cảnh). Tiếng chạy rồi thì chế độ nền `audio` giữ app; hết giờ canh thì trả background task. Người dùng
+  dừng bằng nút màn hình khoá / tai nghe thì bộ canh không phát lại; app khác chiếm âm thanh (interruption) thì thôi.
+  Log mới: `phát tiếp tiếng (lần N)` và `nền: đang phát tiếng` / `không phát tiếp được`.
+- **Thử trên iPad** (bản debug, bấm Home giả bằng `cbscreen home`): bản cũ 19/19 lần vẫn phát tiếp, không tái hiện được lỗi
+  của anh (có lẽ cần máy bận hơn: video 1080p thật, app chạy lâu). Bản mới 5/5 lần phát tiếp, kể cả bấm Home 4 giây sau khi
+  mở video.
+- **"Chỉ nghe" (`TMAudioPlayer`) — giới hạn của iOS 6:** app ở nền được phát *tiếp* nhưng không được *bắt đầu* phát. Một
+  `AVPlayerItem` chưa sẵn sàng khi app xuống nền thì không bao giờ nạp, dù app còn sống (đã thử: giữ app bằng background
+  task, gọi `play` ngay khi tạo, bật lại phiên âm thanh, nhận nút điều khiển trước khi xuống nền: đều không được). Vì vậy:
+  - bấm "Chỉ nghe" rồi bấm Home ngay (lúc đang lấy link, hoặc link vừa về) thì tiếng chỉ chạy khi mở lại app. Đây là giới hạn,
+    không sửa được trên iOS 6; tiếng đã chạy rồi mới bấm Home thì phát ở nền bình thường.
+  - lỗi có sẵn từ trước: item tạo đúng lúc app đang xuống nền thì "chết", mở lại app cũng im. Nay item chưa nạp xong khi app
+    xuống nền (hoặc tạo lúc app đã ở nền) được **nạp lại khi mở app**. Thử 4 thời điểm khác nhau: cả 4 đều có tiếng.
+- **Bản 0.5.2** (server chỉ đổi số phiên bản). iPad chạy đúng file `.deb` đã phát hành. Đã xoá khỏi lịch sử 17 video do các
+  lần thử thêm vào.
