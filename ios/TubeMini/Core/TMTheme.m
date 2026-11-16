@@ -1,5 +1,6 @@
 #import "TMTheme.h"
 #import <QuartzCore/QuartzCore.h>
+#import <objc/runtime.h>
 
 NSString *const TMThemeDidChangeNotification = @"TMThemeDidChangeNotification";
 static NSString *const kDarkKey = @"TMDarkMode";
@@ -10,6 +11,57 @@ static UIColor *rgb(int r, int g, int b) {
 
 @interface TMTheme ()
 @property (nonatomic, readwrite) BOOL dark;
+@end
+
+/// The image's shape filled with one colour (its alpha is the mask).
+static UIImage *tinted(UIImage *image, UIColor *color) {
+    if (!image) return nil;
+    CGRect r = CGRectMake(0, 0, image.size.width, image.size.height);
+    UIGraphicsBeginImageContextWithOptions(r.size, NO, image.scale);
+    CGContextRef c = UIGraphicsGetCurrentContext();
+    CGContextTranslateCTM(c, 0, r.size.height);
+    CGContextScaleCTM(c, 1, -1);
+    CGContextClipToMask(c, r, image.CGImage);
+    [color setFill];
+    CGContextFillRect(c, r);
+    UIImage *out = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return out;
+}
+
+/// The iPhone "Thêm" (More) list is UIKit's own white table. This stands in front of its data source and
+/// recolours each cell for the theme; everything else goes to UIKit's data source.
+@interface TMMoreListStyler : NSObject <UITableViewDataSource>
+@property (nonatomic, weak) id<UITableViewDataSource> original;
+@end
+
+@implementation TMMoreListStyler
+
+- (BOOL)respondsToSelector:(SEL)sel {
+    return [super respondsToSelector:sel] || [self.original respondsToSelector:sel];
+}
+
+- (id)forwardingTargetForSelector:(SEL)sel {
+    return self.original;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [self.original tableView:tableView numberOfRowsInSection:section];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [self.original tableView:tableView cellForRowAtIndexPath:indexPath];
+    TMTheme *t = [TMTheme current];
+    cell.backgroundColor = t.cellBackground;
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.textColor = t.text;
+    UIView *sel = [[UIView alloc] init];
+    sel.backgroundColor = t.selection;
+    cell.selectedBackgroundView = sel;
+    if (t.dark) cell.imageView.image = tinted(cell.imageView.image, t.secondaryText); // UIKit draws the icons dark grey
+    return cell;
+}
+
 @end
 
 @implementation TMTheme
@@ -108,10 +160,30 @@ static UIColor *rgb(int r, int g, int b) {
         UITabBarController *tabs = (UITabBarController *)vc;
         tabs.tabBar.tintColor = t.tabBarTint;
         for (UIViewController *child in tabs.viewControllers) [self recolourBarsIn:child theme:t];
+        [self styleMoreListOf:tabs theme:t];
     } else if ([vc isKindOfClass:[UINavigationController class]]) {
         ((UINavigationController *)vc).navigationBar.tintColor = t.barTint;
     }
     if (vc.presentedViewController) [self recolourBarsIn:vc.presentedViewController theme:t];
+}
+
+/// iPhone only (5 tabs fit; the iPad shows all 6): the "Thêm" bar and list in theme colours.
++ (void)styleMoreListOf:(UITabBarController *)tabs theme:(TMTheme *)t {
+    if ([UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPhone) return;
+    UINavigationController *more = tabs.moreNavigationController;
+    more.navigationBar.tintColor = t.barTint;
+    UIViewController *list = more.viewControllers.count ? more.viewControllers[0] : nil;
+    UITableView *tv = [list.view isKindOfClass:[UITableView class]] ? (UITableView *)list.view : nil;
+    if (!tv) return;
+    static char kStyler;
+    if (!objc_getAssociatedObject(tv, &kStyler)) {
+        TMMoreListStyler *styler = [[TMMoreListStyler alloc] init];
+        styler.original = tv.dataSource;
+        objc_setAssociatedObject(tv, &kStyler, styler, OBJC_ASSOCIATION_RETAIN_NONATOMIC); // dataSource is not retained
+        tv.dataSource = styler;
+    }
+    [t styleTableView:tv];
+    [tv reloadData];
 }
 
 @end

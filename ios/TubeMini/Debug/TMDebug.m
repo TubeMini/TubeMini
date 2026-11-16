@@ -224,7 +224,7 @@ static AVPlayer *gAVPlayer;
     } else if ([verb isEqualToString:@"bonjour"]) {
         TMAppDelegate *app = [self app];
         app.tabs.selectedIndex = app.tabs.viewControllers.count - 1;
-        UIViewController *root = [app nav].viewControllers[0];
+        UIViewController *root = [app nav].topViewController; // iPhone: Cài đặt sits under "Thêm"
         if ([root isKindOfClass:[TMSettingsViewController class]]) [(TMSettingsViewController *)root discover];
     } else if ([verb isEqualToString:@"subbtn"]) {
         UIViewController *top = [self nav].topViewController;
@@ -249,7 +249,7 @@ static AVPlayer *gAVPlayer;
     } else if ([verb isEqualToString:@"pingtest"]) {
         TMAppDelegate *app = [self app];
         app.tabs.selectedIndex = app.tabs.viewControllers.count - 1;
-        UIViewController *root = [app nav].viewControllers[0];
+        UIViewController *root = [app nav].topViewController; // iPhone: Cài đặt sits under "Thêm"
         if ([root isKindOfClass:[TMSettingsViewController class]]) [(TMSettingsViewController *)root testConnection];
     } else if ([verb isEqualToString:@"dismissalert"]) {
         [self dismissAlerts];
@@ -349,6 +349,12 @@ static AVPlayer *gAVPlayer;
         }
     }
     if (top.presentedViewController) [line appendFormat:@" presented=%@", NSStringFromClass([top.presentedViewController class])];
+    UIViewController *sel = app.tabs.selectedViewController;
+    UINavigationController *more = app.tabs.moreNavigationController;
+    [line appendFormat:@" sel=%@(%lu, onscreen=%d) more.top=%@ more.count=%lu", NSStringFromClass([sel class]),
+                       (unsigned long)([sel isKindOfClass:[UINavigationController class]] ? ((UINavigationController *)sel).viewControllers.count : 0),
+                       sel.isViewLoaded && sel.view.window != nil, NSStringFromClass([more.topViewController class]),
+                       (unsigned long)more.viewControllers.count];
     TMLog(@"%@", line);
 }
 

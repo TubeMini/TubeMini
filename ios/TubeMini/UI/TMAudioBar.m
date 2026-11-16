@@ -96,15 +96,18 @@ static UIButton *barButton(NSString *title, CGFloat size, id target, SEL action)
     [super layoutSubviews];
     CGFloat W = self.bounds.size.width;
     _seek.frame = CGRectMake(10, 2, W - 20, 23);
+    // An iPhone in portrait (320 pt) has no room for the thumbnail: the title gets it
+    BOOL narrow = W < 400;
+    _thumb.hidden = narrow;
     _thumb.frame = CGRectMake(10, 28, 64, 36);
-    CGFloat buttons = 4 * 52;
-    CGFloat x = 84, w = W - x - buttons - 10;
+    CGFloat bw = narrow ? 44 : 52, buttons = 4 * bw;
+    CGFloat x = narrow ? 10 : 84, w = W - x - buttons - 10;
     _title.frame = CGRectMake(x, 28, w, 20);
     _time.frame = CGRectMake(x, 47, w, 17);
     CGFloat bx = W - buttons - 6;
     for (UIButton *b in @[ _back, _play, _forward, _close ]) {
-        b.frame = CGRectMake(bx, 26, 52, 40);
-        bx += 52;
+        b.frame = CGRectMake(bx, 26, bw, 40);
+        bx += bw;
     }
 }
 

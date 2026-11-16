@@ -3,7 +3,18 @@
 #import "TMImageLoader.h"
 #import "TMTheme.h"
 
-static const CGFloat kThumbW = 160, kThumbH = 90;
+/// List thumbnail: 160×90 on the iPad, 128×72 on an iPhone (at 320 pt the title needs the room).
+static CGSize TMThumbSize(void) {
+    static CGSize size;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        BOOL phone = [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+        size = phone ? CGSizeMake(128, 72) : CGSizeMake(160, 90);
+    });
+    return size;
+}
+#define kThumbW (TMThumbSize().width)
+#define kThumbH (TMThumbSize().height)
 
 /// Background + selection colours of a cell for the current theme.
 static void themeCell(UITableViewCell *cell) {

@@ -74,6 +74,8 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom]; // styled by TMTheme (rounded-rect is always white)
     [b setTitle:title forState:UIControlStateNormal];
     b.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+    b.titleLabel.adjustsFontSizeToFitWidth = YES; // "▶ Xem tiếp 1:02:03" on a narrow button
+    b.titleLabel.minimumScaleFactor = 0.7;
     [b addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
     return b;
 }
@@ -194,7 +196,10 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     if (!force && W == _laidOutWidth) return;
     _laidOutWidth = W;
     CGFloat pad = 15, inner = W - 2 * pad;
-    CGFloat tw = MIN(inner, 600), th = floor(tw * 9 / 16);
+    // At most 600 pt wide, and 60% of the height (an iPhone on its side would see only the picture)
+    CGFloat H = self.tableView.bounds.size.height, tw = MIN(inner, 600);
+    if (H > 0) tw = MIN(tw, floor(H * 0.6 * 16 / 9));
+    CGFloat th = floor(tw * 9 / 16);
     _thumb.frame = CGRectMake(floor((W - tw) / 2), 10, tw, th);
     _playOverlay.frame = CGRectMake(CGRectGetMidX(_thumb.frame) - 38, CGRectGetMidY(_thumb.frame) - 38, 76, 76);
     CGFloat y = CGRectGetMaxY(_thumb.frame) + 12;
@@ -204,16 +209,14 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     CGSize ms = [_meta.text sizeWithFont:_meta.font constrainedToSize:CGSizeMake(inner, 40) lineBreakMode:NSLineBreakByWordWrapping];
     _meta.frame = CGRectMake(pad, y, inner, ms.height);
     y += ms.height + 10;
-    // Two rows: watching (play, listen, quality), then download / channel / subscribe
-    CGFloat bw = floor(MIN(230, (inner - 20) / 3));
-    _playButton.frame = CGRectMake(pad, y, bw, 40);
-    _listenButton.frame = CGRectMake(pad + bw + 10, y, bw, 40);
-    _qualityButton.frame = CGRectMake(pad + 2 * (bw + 10), y, bw, 40);
-    y += 50;
-    _downloadButton.frame = CGRectMake(pad, y, bw, 40);
-    _channelButton.frame = CGRectMake(pad + bw + 10, y, bw, 40);
-    _subscribeButton.frame = CGRectMake(pad + 2 * (bw + 10), y, bw, 40);
-    y += 52;
+    // Watching (play, listen, quality), then download / channel / subscribe: 3 per row, 2 on an iPhone in portrait
+    NSArray *buttons = @[ _playButton, _listenButton, _qualityButton, _downloadButton, _channelButton, _subscribeButton ];
+    NSInteger cols = inner < 420 ? 2 : 3;
+    CGFloat bw = floor(MIN(230, (inner - 10 * (cols - 1)) / cols));
+    for (NSUInteger i = 0; i < buttons.count; i++) {
+        [buttons[i] setFrame:CGRectMake(pad + (i % cols) * (bw + 10), y + (i / cols) * 50, bw, 40)];
+    }
+    y += 50 * (buttons.count / cols) + 2;
     if (_desc.text.length) {
         CGFloat maxH = _descExpanded ? 2000 : 4 * _desc.font.lineHeight + 2;
         CGSize ds = [_desc.text sizeWithFont:_desc.font constrainedToSize:CGSizeMake(inner, maxH) lineBreakMode:NSLineBreakByWordWrapping];

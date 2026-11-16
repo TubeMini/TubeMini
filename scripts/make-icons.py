@@ -12,7 +12,7 @@ size is drawn natively (no downscaling blur). Layers are composited over black, 
 premultiplied colour, then divided by the alpha. UIPrerenderedIcon=true in Info.plist keeps iOS from
 adding its own gloss on top of ours.
 
-    python scripts/make-icons.py                 # icons into ios/TubeMini/Resources/, docs/icon.png
+    python scripts/make-icons.py                 # icons + launch image into ios/TubeMini/Resources/, docs/icon.png
     python scripts/make-icons.py --preview DIR   # also DIR/icon-preview.png (on a wallpaper-like gradient)
     python scripts/make-icons.py --background silver|sky   # opaque rounded square instead of transparent
 """
@@ -25,6 +25,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 RES = ROOT / "ios" / "TubeMini" / "Resources"
 SIZES = {
+    "Icon-57.png": 57,  # iPhone home screen
+    "Icon-114.png": 114,  # iPhone retina
     "Icon-72.png": 72,  # iPad home screen
     "Icon-144.png": 144,  # iPad retina
     "Icon-Small-50.png": 50,  # Spotlight
@@ -32,6 +34,10 @@ SIZES = {
     "Icon-Small.png": 29,  # Settings
     "Icon-Small@2x.png": 58,
 }
+
+# Plain black launch image (what the app showed before it had one). Its only job: iOS 6 runs an app
+# full height on a 4-inch iPhone only when the bundle has Default-568h@2x.png, otherwise letterboxed.
+LAUNCH = {"Default-568h@2x.png": (640, 1136)}
 
 # Light comes from the top left (unit vector pointing towards the light, y down)
 LIGHT = (-0.55, -0.835)
@@ -355,6 +361,9 @@ def main():
     for name, size in SIZES.items():
         write_png(RES / name, size, size, render(size, bg), alpha=True)
         print(f"{name}: {size}x{size}")
+    for name, (w, h) in LAUNCH.items():
+        write_png(RES / name, w, h, [bytes(1 + 3 * w)] * h)
+        print(f"{name}: {w}x{h}")
     write_png(ROOT / "docs" / "icon.png", 256, 256, render(256, bg), alpha=True)
     print("docs/icon.png: 256x256")
     if "--preview" in sys.argv:

@@ -258,7 +258,8 @@ static long long folderSize(NSString *dir) {
                          longLongValue];
     if (estimate > 0 && free > 0 && estimate > free - kKeepFree) {
         x.state = TMDownloadFailed;
-        x.error = [NSString stringWithFormat:@"iPad không đủ chỗ (cần khoảng %@, còn %@).", [TMDownloads megabytes:estimate],
+        x.error = [NSString stringWithFormat:@"%@ không đủ chỗ (cần khoảng %@, còn %@).", [UIDevice currentDevice].model,
+                                             [TMDownloads megabytes:estimate],
                                              [TMDownloads megabytes:MAX(free - kKeepFree, 0)]];
     }
     [_items insertObject:x atIndex:0];

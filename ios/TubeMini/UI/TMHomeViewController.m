@@ -8,6 +8,27 @@
 static NSString *const kGridKey = @"TMHomeGrid";
 static NSString *const kSourceKey = @"TMHomeSubscriptions";
 
+/// White list / grid glyph with the dark 1 pt top shadow of iOS 6 bar titles (the iPhone mode switch).
+static UIImage *TMModeIcon(BOOL grid) {
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(18, 15), NO, 0);
+    CGContextRef c = UIGraphicsGetCurrentContext();
+    for (int pass = 0; pass < 2; pass++) {
+        CGFloat dy = pass; // the shadow first, then the glyph 1 pt lower
+        [(pass ? [UIColor whiteColor] : [UIColor colorWithWhite:0 alpha:0.45]) setFill];
+        for (int i = 0; i < (grid ? 4 : 3); i++) {
+            if (grid) {
+                CGContextFillRect(c, CGRectMake((i % 2) * 10, dy + (i / 2) * 7.5, 8, 5.5));
+            } else {
+                CGContextFillRect(c, CGRectMake(0, dy + i * 5, 3, 3));
+                CGContextFillRect(c, CGRectMake(5, dy + i * 5, 13, 3));
+            }
+        }
+    }
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
 @implementation TMHomeViewController {
     TMListViewController *_list;
     TMGridViewController *_grid;
@@ -35,12 +56,18 @@ static NSString *const kSourceKey = @"TMHomeSubscriptions";
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [TMTheme current].background;
-    _source = [[UISegmentedControl alloc] initWithItems:@[ @"Đã theo dõi", @"Phổ biến" ]];
+    // The iPhone bar (320 pt) cannot hold both switches with full labels: shorter source, icons for the mode
+    BOOL phone = [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+    _source = [[UISegmentedControl alloc] initWithItems:@[ phone ? @"Theo dõi" : @"Đã theo dõi", @"Phổ biến" ]];
     _source.segmentedControlStyle = UISegmentedControlStyleBar;
     _source.selectedSegmentIndex = _subscriptionsSource ? 0 : 1;
     [_source addTarget:self action:@selector(sourcePicked) forControlEvents:UIControlEventValueChanged];
     self.navigationItem.titleView = _source;
-    _mode = [[UISegmentedControl alloc] initWithItems:@[ @"Danh sách", @"Lưới" ]];
+    _mode = [[UISegmentedControl alloc] initWithItems:phone ? @[ TMModeIcon(NO), TMModeIcon(YES) ] : @[ @"Danh sách", @"Lưới" ]];
+    if (phone) {
+        [_mode setWidth:38 forSegmentAtIndex:0];
+        [_mode setWidth:38 forSegmentAtIndex:1];
+    }
     _mode.segmentedControlStyle = UISegmentedControlStyleBar;
     _mode.selectedSegmentIndex = _gridMode ? 1 : 0;
     [_mode addTarget:self action:@selector(modePicked) forControlEvents:UIControlEventValueChanged];

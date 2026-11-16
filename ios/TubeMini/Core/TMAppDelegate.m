@@ -40,7 +40,11 @@ static UIImage *icon(TMDrawBlock draw) {
 
 - (UINavigationController *)nav {
     UIViewController *vc = self.tabs.selectedViewController;
-    return [vc isKindOfClass:[UINavigationController class]] ? (UINavigationController *)vc : nil;
+    if (![vc isKindOfClass:[UINavigationController class]]) return nil;
+    // iPhone: the tabs past the 4th sit under "Thêm" (More). Picking one leaves its own navigation controller
+    // empty and off screen: UIKit pushes its screens onto moreNavigationController instead.
+    if (((UINavigationController *)vc).viewControllers.count == 0) return self.tabs.moreNavigationController;
+    return (UINavigationController *)vc;
 }
 
 - (UINavigationController *)wrap:(UIViewController *)vc title:(NSString *)title image:(UIImage *)image {
@@ -130,6 +134,7 @@ static UIImage *icon(TMDrawBlock draw) {
     self.window.backgroundColor = [TMTheme current].background;
     self.window.rootViewController = self.tabs;
     [self.window makeKeyAndVisible];
+    [TMTheme applyGlobalAppearance]; // again, now that the tabs exist: the iPhone "Thêm" list
     [self addAudioBar];
 
     [[TMLibrary shared] refresh]; // which channels are subscribed (for the Subscribe buttons)

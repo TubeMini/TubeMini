@@ -183,15 +183,30 @@ static const CGFloat kQRSize = 145; // 29 modules × 5 pt: crisp at 1x and 2x
     [self.tableView reloadData];
 }
 
+/// Side inset of section titles, in line with the grouped cells: those start 45 pt in on the iPad, 10 pt on an
+/// iPhone (in both orientations).
+- (CGFloat)sectionLabelInset {
+    return [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone ? 20 : 50;
+}
+
+/// Footers grow with their text (3–5 lines at 320 pt on an iPhone).
+- (CGFloat)footerHeight:(NSString *)text {
+    if (!text.length) return 10;
+    CGFloat w = self.tableView.bounds.size.width - 2 * [self sectionLabelInset];
+    CGSize s = [text sizeWithFont:[UIFont systemFontOfSize:15] constrainedToSize:CGSizeMake(w, 1000) lineBreakMode:NSLineBreakByWordWrapping];
+    return MAX(60, ceil(s.height) + 16);
+}
+
 /// Grouped section titles drawn in theme colours (iOS 6 draws them grey with a white shadow).
 - (UIView *)sectionLabel:(NSString *)text header:(BOOL)header {
     if (!text.length) return nil;
-    UIView *box = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, header ? 44 : 60)];
+    CGFloat h = header ? 44 : [self footerHeight:text];
+    UIView *box = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, h)];
     box.backgroundColor = [UIColor clearColor];
-    UILabel *l = [[UILabel alloc] initWithFrame:CGRectInset(box.bounds, 50, header ? 6 : 4)];
+    UILabel *l = [[UILabel alloc] initWithFrame:CGRectInset(box.bounds, [self sectionLabelInset], header ? 6 : 4)];
     l.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     l.backgroundColor = [UIColor clearColor];
-    l.numberOfLines = 3;
+    l.numberOfLines = header ? 1 : 0;
     l.text = text;
     l.font = header ? [UIFont boldSystemFontOfSize:17] : [UIFont systemFontOfSize:15];
     l.textColor = header ? [TMTheme current].text : [TMTheme current].secondaryText;
@@ -213,7 +228,7 @@ static const CGFloat kQRSize = 145; // 29 modules × 5 pt: crisp at 1x and 2x
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    return [self tableView:tableView titleForFooterInSection:section].length ? 60 : 10;
+    return [self footerHeight:[self tableView:tableView titleForFooterInSection:section]];
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -249,7 +264,7 @@ static const CGFloat kQRSize = 145; // 29 modules × 5 pt: crisp at 1x and 2x
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    // Row heights depend on the width (Telegram cell); recompute them without rebuilding the cells
+    // Row and footer heights depend on the width (Telegram cell, footer text); recompute them without rebuilding the cells
     [self.tableView beginUpdates];
     [self.tableView endUpdates];
 }
@@ -297,7 +312,7 @@ static const CGFloat kQRSize = 145; // 29 modules × 5 pt: crisp at 1x and 2x
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     switch (section) {
     case kSectionServer: return @"Máy chạy tubemini-server trong mạng nhà, ví dụ http://192.168.1.10:8080";
-    case kSectionDiscover: return @"Tự tìm chỉ được khi iPad và máy chủ ở chung một mạng (cùng dải địa chỉ IP).";
+    case kSectionDiscover: return @"Tự tìm chỉ được khi máy này và máy chủ ở chung một mạng (cùng dải địa chỉ IP).";
     case kSectionUpdate:
         return [NSString stringWithFormat:@"Đang dùng TubeMini %@. Cũng cập nhật được trong Cydia: nguồn https://tubemini.github.io/cydia/",
                                           [TMUpdater currentVersion]];
@@ -460,7 +475,7 @@ static const CGFloat kQRSize = 145; // 29 modules × 5 pt: crisp at 1x and 2x
     [self.tableView reloadData];
     if (!_found.count) {
         [[[UIAlertView alloc] initWithTitle:@"Không tìm thấy máy chủ"
-                                    message:@"iPad và máy chủ phải ở chung một mạng (cùng dải địa chỉ IP), và máy chủ bật "
+                                    message:@"Máy này và máy chủ phải ở chung một mạng (cùng dải địa chỉ IP), và máy chủ bật "
                                             @"mdns = true. Nếu không, nhập địa chỉ bằng tay."
                                    delegate:nil
                           cancelButtonTitle:@"OK"

@@ -101,7 +101,7 @@ static const NSTimeInterval kTimeout = 20;
     case NSURLErrorTimedOut:
         return @"Máy chủ không phản hồi (quá 20 giây). Thử lại sau.";
     case NSURLErrorNotConnectedToInternet:
-        return @"iPad chưa kết nối mạng. Kiểm tra Wi-Fi.";
+        return [NSString stringWithFormat:@"%@ chưa kết nối mạng. Kiểm tra Wi-Fi.", [UIDevice currentDevice].model];
     case NSURLErrorCannotFindHost:
     case NSURLErrorCannotConnectToHost:
     case NSURLErrorNetworkConnectionLost:
@@ -158,7 +158,8 @@ static const NSTimeInterval kTimeout = 20;
         [req setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     }
     NSString *version = [NSBundle mainBundle].infoDictionary[@"CFBundleShortVersionString"];
-    [req setValue:[NSString stringWithFormat:@"TubeMini/%@ (iPad; iOS %@)", version, [UIDevice currentDevice].systemVersion]
+    UIDevice *device = [UIDevice currentDevice];
+    [req setValue:[NSString stringWithFormat:@"TubeMini/%@ (%@; iOS %@)", version, device.model, device.systemVersion]
         forHTTPHeaderField:@"User-Agent"];
     if (self.token.length) [req setValue:self.token forHTTPHeaderField:@"X-Auth-Token"];
     [NSURLConnection sendAsynchronousRequest:req

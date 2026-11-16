@@ -89,8 +89,8 @@ static NSString *const kCell = @"download";
 }
 
 - (void)updateUsage {
-    _usage.text = [NSString stringWithFormat:@"%lu video · %@ trên iPad", (unsigned long)_items.count,
-                                             [TMDownloads megabytes:[[TMDownloads shared] bytesUsed]]];
+    _usage.text = [NSString stringWithFormat:@"%lu video · %@ trên %@", (unsigned long)_items.count,
+                                             [TMDownloads megabytes:[[TMDownloads shared] bytesUsed]], [UIDevice currentDevice].model];
 }
 
 /// Progress ticks only repaint their row; adds / removals reload everything.
