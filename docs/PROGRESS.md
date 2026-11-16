@@ -3,16 +3,16 @@
 ## Tình trạng hiện tại (cập nhật 16/11/2026)
 
 Đã xong cả 6 giai đoạn (0–5) của tài liệu dự án, cùng các phần anh yêu cầu thêm. Chi tiết từng giai đoạn ở các mục bên dưới;
-lý do kỹ thuật ở `DECISIONS.md` (D1–D34).
+lý do kỹ thuật ở `DECISIONS.md` (D1–D35).
 
-**Phiên bản:** app TubeMini và tubemini-server **0.5.2** (code server không đổi từ 0.5.0, chỉ đổi số phiên bản).
+**Phiên bản:** app TubeMini và tubemini-server **0.5.3** (code server không đổi từ 0.5.0, chỉ đổi số phiên bản).
 
 **Đã công khai**
 
 | Thứ | Ở đâu |
 | --- | --- |
 | Mã nguồn (server + app + tài liệu), GPL-3.0 | https://github.com/TubeMini/TubeMini |
-| Bản phát hành (`.deb` app + gói server) | v0.5.0, v0.5.1, v0.5.2: https://github.com/TubeMini/TubeMini/releases |
+| Bản phát hành (`.deb` app + gói server) | v0.5.0 – v0.5.3: https://github.com/TubeMini/TubeMini/releases |
 | Trang giới thiệu (Safari iOS 6 đọc được) | https://tubemini.github.io/ (repo `TubeMini/TubeMini.github.io`) |
 | Nguồn Cydia | `https://tubemini.github.io/cydia/` |
 | File cập nhật OTA cho app | https://tubemini.github.io/update.json |
@@ -21,8 +21,9 @@ lý do kỹ thuật ở `DECISIONS.md` (D1–D34).
 
 **Đang chạy**
 
-- iPad mini 1 (iOS 6.1.3): bản release 0.5.2, cài qua SSH (đúng file `.deb` đã phát hành). Bản release không có lệnh debug;
+- iPad mini 1 (iOS 6.1.3): bản release 0.5.3, cài qua SSH (đúng file `.deb` đã phát hành). Bản release không có lệnh debug;
   muốn thử qua SSH thì cài lại bản debug (`scripts/ios-build.sh` không có `FINALPACKAGE=1`).
+- iPhone 5 (iOS 6.1.4): cũng dùng TubeMini, bản 0.5.3.
 - Server chính trong nhà: service systemd trên máy Ubuntu (cài bằng `install.sh`), vẫn là 0.5.0. Chưa cần cập nhật vì code server
   không đổi.
 
@@ -31,6 +32,9 @@ lý do kỹ thuật ở `DECISIONS.md` (D1–D34).
   từ đó).
 - Phát nền trên iPad (D34, bấm Home giả bằng `cbscreen home`): video 5/5 lần phát tiếp ở nền; "Chỉ nghe" bấm Home ngay ở 4 thời
   điểm khác nhau, cả 4 đều có tiếng (ở nền, hoặc khi mở lại app nếu tiếng chưa kịp chạy).
+- Trên iPhone 5 (D35): chụp và soát từng màn (Trang chủ lưới / danh sách, trang video, thanh "Chỉ nghe", Tìm kiếm, kênh,
+  Lịch sử, mục "Thêm", Đã tải, Cài đặt) ở màn dọc và ngang, giao diện sáng và tối: app dùng hết màn 4 inch, không còn chữ đè
+  hay bị cắt.
 - Trên iPad: OTA trọn vòng 0.5.0 → 0.5.1 (tải, kiểm SHA-256, `dpkg exit 0`, respring, app chạy).
 
 **Phát hành bản mới:** làm theo `SETUP.md` mục 10. Tóm tắt:
@@ -396,6 +400,10 @@ có trong git.
 - [x] **Bản 0.5.2, sửa phát nền** (D34): xem video rồi bấm Home thỉnh thoảng mất tiếng trên iPad mini 1, vì iOS treo app trước
   khi lệnh phát lại kịp chạy. App giờ xin thêm thời gian chạy nền và phát lại tới khi tiếng chạy hẳn. "Chỉ nghe": iOS 6 không cho
   app ở nền bắt đầu phát, nên tiếng chưa kịp chạy lúc bấm Home thì sẽ phát khi mở lại app (trước đây có lúc im luôn).
+- [x] **Bản 0.5.3, chạy đúng trên iPhone** (D35): trên iPhone 5 app chạy ở khung 3,5 inch có viền đen trên dưới, vì thiếu
+  ảnh khởi động `Default-568h@2x.png`. Đã thêm ảnh đó, icon iPhone, khai báo app cho cả iPhone; sửa bố cục cho màn 320 điểm
+  (thanh trên Trang chủ, nút trang video, thanh "Chỉ nghe", ảnh trong danh sách, chú thích trong Cài đặt) và mục "Thêm" theo
+  giao diện tối. iPad không đổi (đã chụp lại các màn trên iPad để so).
 - [x] **Lên GitHub** (D31, D32): repo công khai https://github.com/TubeMini/TubeMini (lịch sử đã bỏ thông tin cá nhân),
   bundle id `vn.tubemini.io`, bản phát hành v0.5.0, trang https://tubemini.github.io/ (đọc được trên Safari iOS 6), nguồn
   Cydia `https://tubemini.github.io/cydia/`, cập nhật OTA trong app (tải, kiểm SHA-256, cài, respring). Đã thử OTA trọn vòng

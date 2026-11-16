@@ -531,3 +531,27 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
     xuống nền (hoặc tạo lúc app đã ở nền) được **nạp lại khi mở app**. Thử 4 thời điểm khác nhau: cả 4 đều có tiếng.
 - **Bản 0.5.2** (server chỉ đổi số phiên bản). iPad chạy đúng file `.deb` đã phát hành. Đã xoá khỏi lịch sử 17 video do các
   lần thử thêm vào.
+
+## D35. Chạy đúng trên iPhone: hết màn 4 inch, bố cục cho màn 320 điểm — 16/11/2026
+
+- **Lỗi:** trên iPhone 5 (iOS 6.1.4) app bị "lẹm": chạy ở khung 3,5 inch (320×480) với hai dải đen trên dưới. iOS 6 chỉ cho
+  app dùng hết màn 4 inch khi trong app có ảnh khởi động `Default-568h@2x.png`; TubeMini chưa có ảnh khởi động nào. App cũng
+  chỉ khai báo iPad (`UIDeviceFamily` = 2), dù trang web đã ghi là chạy được trên iPhone.
+- **Sửa:** thêm `Default-568h@2x.png` (640×1136, nền đen như lúc khởi động trước đây; `make-icons.py` vẽ ra), icon iPhone
+  57/114 px, `UIDeviceFamily` = 1, 2. iPad không đổi gì: ảnh `-568h` iPad không đọc tới, các chỗ dưới đây chia theo loại máy
+  hoặc theo bề rộng màn nhỏ hơn iPad.
+- **Bố cục trên iPhone** (soát từng màn bằng ảnh chụp trên iPhone 5, dọc và ngang, sáng và tối):
+  - Trang chủ: thanh trên không chứa nổi "Đã theo dõi | Phổ biến" và "Danh sách | Lưới" (chữ đè nhau). Trên iPhone: "Theo dõi"
+    và hai icon nhỏ vẽ bằng code (danh sách, lưới).
+  - Trang video: 6 nút xếp 2 cột khi bề rộng dưới 420 điểm (3 cột thì "Chất lượng: 1080p" bị cắt); chữ nút tự thu nhỏ khi dài.
+    Ảnh video cao tối đa 60% màn, để khi xoay ngang vẫn thấy tên video.
+  - Thanh "Chỉ nghe": dưới 400 điểm bỏ ảnh nhỏ, nút hẹp hơn, nhường chỗ cho tên bài (trước chỉ còn 18 điểm).
+  - Danh sách: ảnh 128×72 thay 160×90 trên iPhone, tên video có 160 điểm thay vì 128.
+  - Cài đặt: chú thích dưới mỗi mục cao theo nội dung (trước cố định 60 điểm, bị cắt "…"), lề chữ theo lề ô của iPhone.
+  - iPhone chỉ hiện 5 tab: "Đã tải" và "Cài đặt" vào mục "Thêm" của iOS. Danh sách "Thêm" là bảng trắng của UIKit, nay tô theo
+    giao diện tối (một lớp đứng trước data source của bảng, đổi màu từng ô). Chọn một tab trong "Thêm" thì UIKit để trống
+    navigation controller của tab đó và đẩy màn hình sang `moreNavigationController`: `-[TMAppDelegate nav]` trả về cái này,
+    nếu không bấm thanh "Chỉ nghe" lúc đang ở Cài đặt sẽ không mở được trang video.
+- Chữ "iPad" trong vài thông báo đổi theo máy (`UIDevice.model`); User-Agent gửi server cũng vậy (trước luôn ghi iPad).
+- Trên iPad đã chụp lại Trang chủ (lưới, danh sách), trang video, Cài đặt ở màn dọc và ngang: giống bản trước.
+- **Bản 0.5.3** (server chỉ đổi số phiên bản).
