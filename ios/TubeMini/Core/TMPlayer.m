@@ -5,6 +5,7 @@
 #import "TMLocalServer.h"
 #import "TMLibrary.h"
 #import "TMLog.h"
+#import <AVFoundation/AVFoundation.h>
 #import <QuartzCore/QuartzCore.h>
 
 @interface TMPlayer ()
@@ -28,8 +29,12 @@
     NSTimer *_saveTimer;
     NSInteger _lastPosition, _lastDuration; // last known from the player (seconds)
     BOOL _audioOnly;
-    BOOL _wasPlaying; // playing when the app started to leave the screen
-    NSTimeInterval _resignedAt;
+    // Sound in the background: playing when the app started to leave the screen, not paused by the user since
+    BOOL _keepSound;
+    NSTimer *_guard;              // plays again whenever iOS pauses the movie, until _guardUntil
+    NSTimeInterval _guardUntil;
+    NSInteger _resumes;
+    UIBackgroundTaskIdentifier _bgTask; // keeps the app running meanwhile
     NSString *_localPath;  // playing a downloaded file
     UIImage *_artwork;     // lock screen picture (the video thumbnail)
 }
@@ -45,18 +50,19 @@ static const NSTimeInterval kSaveInterval = 15;
 
 - (instancetype)init {
     if ((self = [super init])) {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(willResignActive)
-                                                     name:UIApplicationWillResignActiveNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didEnterBackground)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(playbackStateChanged:)
-                                                     name:MPMoviePlayerPlaybackStateDidChangeNotification
-                                                   object:nil];
+        _bgTask = UIBackgroundTaskInvalid;
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc addObserver:self selector:@selector(willResignActive) name:UIApplicationWillResignActiveNotification object:nil];
+        [nc addObserver:self selector:@selector(didEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [nc addObserver:self selector:@selector(didBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
+        [nc addObserver:self
+               selector:@selector(audioInterrupted:)
+                   name:AVAudioSessionInterruptionNotification
+                 object:[AVAudioSession sharedInstance]];
+        [nc addObserver:self
+               selector:@selector(playbackStateChanged:)
+                   name:MPMoviePlayerPlaybackStateDidChangeNotification
+                 object:nil];
     }
     return self;
 }
@@ -325,18 +331,20 @@ static const NSTimeInterval kSaveInterval = 15;
     }
     MPMoviePlayerController *p = _playerVC.moviePlayer;
     if (!p || event.type != UIEventTypeRemoteControl) return;
+    BOOL play;
     switch (event.subtype) {
-    case UIEventSubtypeRemoteControlTogglePlayPause:
-        if (p.playbackState == MPMoviePlaybackStatePlaying) {
-            [p pause];
-        } else {
-            [p play];
-        }
-        break;
-    case UIEventSubtypeRemoteControlPlay: [p play]; break;
-    case UIEventSubtypeRemoteControlPause: [p pause]; break;
-    case UIEventSubtypeRemoteControlStop: [p pause]; break;
+    case UIEventSubtypeRemoteControlTogglePlayPause: play = p.playbackState != MPMoviePlaybackStatePlaying; break;
+    case UIEventSubtypeRemoteControlPlay: play = YES; break;
+    case UIEventSubtypeRemoteControlPause:
+    case UIEventSubtypeRemoteControlStop: play = NO; break;
     default: return;
+    }
+    // A pause by the user (lock screen, headphones) stays paused: the background guard leaves it alone
+    _keepSound = play;
+    if (play) {
+        [p play];
+    } else {
+        [p pause];
     }
     TMLog(@"[player] điều khiển từ xa: %ld", (long)event.subtype);
     [self saveProgress];
@@ -344,43 +352,87 @@ static const NSTimeInterval kSaveInterval = 15;
 
 #pragma mark - Background
 
-- (void)willResignActive {
-    _wasPlaying = _playerVC.moviePlayer.playbackState == MPMoviePlaybackStatePlaying;
-    _resignedAt = [NSDate timeIntervalSinceReferenceDate];
-}
-
-/// Locking the screen may only make the app inactive: the pause iOS does right then is undone too
-/// (only within a moment of it, so a later pause by the user stays).
-- (void)playbackStateChanged:(NSNotification *)n {
-    [self updateNowPlaying];
-    MPMoviePlayerController *p = _playerVC.moviePlayer;
-    if (n.object != p || !_wasPlaying || p.playbackState != MPMoviePlaybackStatePaused) return;
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) return;
-    if ([NSDate timeIntervalSinceReferenceDate] - _resignedAt > 1.5) return;
-    _wasPlaying = NO; // once
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (p != self->_playerVC.moviePlayer || p.playbackState == MPMoviePlaybackStatePlaying) return;
-        TMLog(@"[player] màn hình khoá / app xuống nền: phát tiếp tiếng");
-        [p play];
-    });
-}
-
 /// iOS pauses a movie with video when the app leaves the screen (home button, lock). With the playback
-/// audio session and UIBackgroundModes = audio, playing again right away keeps the sound going in the
-/// background (frames are not drawn); back on screen the picture continues.
+/// audio session and UIBackgroundModes = audio, playing it again keeps the sound going in the background
+/// (frames are not drawn; back on screen the picture continues). But while it is paused nothing keeps a
+/// background app alive: iOS may suspend it right after didEnterBackground, before a delayed `play` runs,
+/// and the sound is gone until the app is opened again (seen on the iPad mini 1, now and then). So a
+/// background task keeps the app running while a guard checks every 0.25 s, for a few seconds, and plays
+/// again whenever the movie is paused (iOS may pause it more than once). Once the sound plays, the audio
+/// background mode keeps the app alive.
+- (void)willResignActive {
+    MPMoviePlayerController *p = _playerVC.moviePlayer;
+    _keepSound = p && p.playbackState == MPMoviePlaybackStatePlaying;
+    if (!_keepSound) return;
+    _resumes = 0;
+    [self guardFor:3]; // locking the screen may only make the app inactive
+}
+
 - (void)didEnterBackground {
     [self saveProgress];
-    if (!_playerVC) return;
-    if (!_wasPlaying && _playerVC.moviePlayer.playbackState != MPMoviePlaybackStatePlaying) {
-        // Already resumed by playbackStateChanged:, or paused by the user
+    if (_keepSound && _playerVC) [self guardFor:4];
+}
+
+- (void)didBecomeActive {
+    [self stopGuard];
+}
+
+/// Another app took the sound (or an alarm): don't fight it.
+- (void)audioInterrupted:(NSNotification *)n {
+    if ([n.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue] != AVAudioSessionInterruptionTypeBegan) return;
+    if (!_guard) return;
+    TMLog(@"[player] âm thanh bị app khác chiếm, không phát tiếp");
+    _keepSound = NO;
+    [self stopGuard];
+}
+
+- (void)guardFor:(NSTimeInterval)seconds {
+    _guardUntil = MAX(_guardUntil, [NSDate timeIntervalSinceReferenceDate] + seconds);
+    if (_bgTask == UIBackgroundTaskInvalid) {
+        _bgTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{ [self stopGuard]; }];
+    }
+    if (!_guard) {
+        // Common modes: also fires while UIKit runs the loop in its own mode during the app switch
+        _guard = [NSTimer timerWithTimeInterval:0.25 target:self selector:@selector(guardTick) userInfo:nil repeats:YES];
+        [[NSRunLoop mainRunLoop] addTimer:_guard forMode:NSRunLoopCommonModes];
+    }
+}
+
+- (void)guardTick {
+    MPMoviePlayerController *p = _playerVC.moviePlayer;
+    if (!p || !_keepSound) {
+        [self stopGuard];
         return;
     }
-    MPMoviePlayerController *p = _playerVC.moviePlayer;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (p != self->_playerVC.moviePlayer || p.playbackState == MPMoviePlaybackStatePlaying) return;
-        TMLog(@"[player] app xuống nền: phát tiếp tiếng");
+    BOOL away = [UIApplication sharedApplication].applicationState != UIApplicationStateActive;
+    // Paused by iOS: a pause by the user went through remoteControl: and cleared _keepSound
+    if (away && p.playbackState == MPMoviePlaybackStatePaused && _resumes < 10) {
+        _resumes++;
+        TMLog(@"[player] app xuống nền: phát tiếp tiếng (lần %ld)", (long)_resumes);
         [p play];
-    });
+    }
+    if ([NSDate timeIntervalSinceReferenceDate] < _guardUntil) return;
+    if (away && _resumes) {
+        BOOL playing = p.playbackState == MPMoviePlaybackStatePlaying;
+        TMLog(@"[player] nền: %@", playing ? @"đang phát tiếng"
+                                           : [NSString stringWithFormat:@"không phát tiếp được (trạng thái %ld)",
+                                                                        (long)p.playbackState]);
+    }
+    [self stopGuard];
+}
+
+- (void)stopGuard {
+    [_guard invalidate];
+    _guard = nil;
+    _guardUntil = 0;
+    if (_bgTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:_bgTask];
+        _bgTask = UIBackgroundTaskInvalid;
+    }
+}
+
+- (void)playbackStateChanged:(NSNotification *)n {
+    [self updateNowPlaying];
 }
 
 #pragma mark - Watch position
@@ -410,6 +462,8 @@ static const NSTimeInterval kSaveInterval = 15;
 - (void)dismissPlayer {
     [_saveTimer invalidate];
     _saveTimer = nil;
+    _keepSound = NO;
+    [self stopGuard];
     if (!_playerVC) return;
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:MPMoviePlayerPlaybackDidFinishNotification

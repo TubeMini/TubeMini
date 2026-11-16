@@ -18,6 +18,8 @@ static void *kStatusContext = &kStatusContext;
     NSTimeInterval _lastSave;
     BOOL _retried;
     UIImage *_artwork;
+    NSString *_url;
+    BOOL _stuck; // not loaded yet when the app went to the background: load again when it is opened
 }
 
 + (instancetype)shared {
@@ -30,8 +32,12 @@ static void *kStatusContext = &kStatusContext;
 - (instancetype)init {
     if ((self = [super init])) {
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(save)
+                                                 selector:@selector(didEnterBackground)
                                                      name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didBecomeActive)
+                                                     name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
     }
     return self;
@@ -90,7 +96,28 @@ static void *kStatusContext = &kStatusContext;
     } else {
         [_player replaceCurrentItemWithPlayerItem:_item];
     }
+    _url = [url copy];
+    _stuck = NO;
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) [self didEnterBackground];
     [self changed];
+}
+
+/// iOS 6 lets a background app keep a sound going, not start one: an item that is not ready by the time
+/// the app is in the background never loads, even with the app kept running (tried on the iPad: Home
+/// pressed while the link is on its way, or right after it came). It is loaded again when the app is
+/// opened, so the sound starts then.
+- (void)didEnterBackground {
+    [self save];
+    if (_item && _item.status == AVPlayerItemStatusUnknown && !_stuck) {
+        _stuck = YES;
+        TMLog(@"[audio] app xuống nền khi chưa nạp xong: sẽ phát khi mở lại app");
+    }
+}
+
+- (void)didBecomeActive {
+    if (!_stuck || !_item || _item.status != AVPlayerItemStatusUnknown) return;
+    TMLog(@"[audio] mở lại app: nạp lại %@", _video.videoID);
+    [self load:_url];
 }
 
 - (void)unloadItem {
@@ -110,7 +137,10 @@ static void *kStatusContext = &kStatusContext;
         if (self->_item.status == AVPlayerItemStatusReadyToPlay) {
             if (self->_startAt > 0) [self->_player seekToTime:CMTimeMakeWithSeconds(self->_startAt, 1)];
             self->_startAt = 0;
+            NSError *err = nil;
+            BOOL session = [[AVAudioSession sharedInstance] setActive:YES error:&err];
             [self->_player play];
+            if (!session) TMLog(@"[audio] không bật được phiên âm thanh: %@", err.localizedDescription);
             [self changed];
             [self updateNowPlaying];
         } else if (self->_item.status == AVPlayerItemStatusFailed) {
@@ -188,6 +218,8 @@ static void *kStatusContext = &kStatusContext;
     _player = nil;
     _video = nil;
     _artwork = nil;
+    _url = nil;
+    _stuck = NO;
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
     [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
     TMLog(@"[audio] dừng");
