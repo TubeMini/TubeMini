@@ -106,7 +106,7 @@ def main():
         "Codename: ios",
         "Architectures: iphoneos-arm",
         "Components: main",
-        "Description: TubeMini — YouTube cho iPad và iPhone iOS 6",
+        "Description: TubeMini — YouTube cho iPad và iPhone iOS 5 – 8",
         f"Date: {time.strftime('%a, %d %b %Y %H:%M:%S UTC', time.gmtime())}",
     ]
     for algo, title in ((hashlib.md5, "MD5Sum"), (hashlib.sha256, "SHA256")):

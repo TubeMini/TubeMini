@@ -145,7 +145,7 @@ Gói cài đặt: trên PC chạy `bash scripts/make-release.sh`, được `dist
 server, `install.sh`, `docker-compose.yml`, `HUONG-DAN.txt`). Chép sang máy Ubuntu rồi:
 
 ```sh
-tar xzf tubemini-server-0.5.4.tar.gz && cd tubemini-server-0.5.4
+tar xzf tubemini-server-0.6.0.tar.gz && cd tubemini-server-0.6.0
 sudo ./install.sh                     # hỏi: 1) Docker hay 2) Service, cổng (8080), mã truy cập
 ```
 

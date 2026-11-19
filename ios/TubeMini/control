@@ -1,6 +1,6 @@
 Package: vn.tubemini.io
 Name: TubeMini
-Version: 0.5.4
+Version: 0.6.0
 Architecture: iphoneos-arm
 Description: Ung dung YouTube cho iPad va iPhone iOS 5 - 8, dung server tubemini-server trong mang nha.
 Maintainer: TubeMini <https://github.com/TubeMini>
