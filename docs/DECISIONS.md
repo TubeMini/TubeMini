@@ -334,6 +334,8 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
 
 ## D27. Icon app: bánh răng gỉ sét + màn hình ống đỏ, phong cách iOS 6 — 15/11/2026
 
+> Đã thay bằng logo mới ở D37 (19/11/2026). Script cũ vẽ bánh răng vẫn còn trong lịch sử git.
+
 - Anh yêu cầu icon hợp tên TubeMini, mang phong cách iOS 6, phong cách Rust và một chút YouTube:
   - **Rust:** bánh răng 12 răng bằng đồng, có vân gỉ (mảng xỉn và vảy cam) và 4 đinh tán;
   - **YouTube:** màn hình đỏ bo góc với nút play trắng. Chỉ gợi nhớ, không chép logo YouTube hay Rust;
@@ -555,3 +557,60 @@ Thời gian một lần lấy link (đo trên LXC, tổng 4,5 giây):
 - Chữ "iPad" trong vài thông báo đổi theo máy (`UIDevice.model`); User-Agent gửi server cũng vậy (trước luôn ghi iPad).
 - Trên iPad đã chụp lại Trang chủ (lưới, danh sách), trang video, Cài đặt ở màn dọc và ngang: giống bản trước.
 - **Bản 0.5.3** (server chỉ đổi số phiên bản).
+
+## D36. Spike: giải mã link YouTube ngay trên iPad bằng QuickJS — 16/11/2026
+
+Câu hỏi của anh: muốn TubeMini chạy không cần server thì máy phải thế nào. Phần khó nhất là bước yt-dlp giải "JS challenge" (mã
+`n` và chữ ký) bằng file JavaScript player của YouTube. JavaScript của iOS 6 quá cũ (ES5), nên thử QuickJS.
+
+- **Build:** QuickJS-ng 0.18.0, Theos (`iphone:clang:9.3:6.0`, armv7), binary `qjs` khoảng 1 MB. Chỉ phải vá hai chỗ:
+  `clock_gettime` (iOS 10+, thay bằng `mach_absolute_time`) và header `crt_externs.h` (SDK iOS không có). `cbsymcheck`: 185 ký
+  hiệu, thiếu 0. ES2022 chạy đúng.
+- **Đầu vào thật:** yt-dlp 2026.10.26 được trỏ tới một script giả làm QuickJS để chép lại đúng file nó tạo: script giải mã EJS
+  0.8.0 cùng player `fad7e4e9` (3,0 MB), 3 mã `n` và 2 mã chữ ký của một video. Đáp án chuẩn lấy bằng Deno trên máy build.
+  yt-dlp bản này xin link bằng client `tv samsung` và `visionos`.
+- **Kết quả trên iPad mini 1** (A5, RAM 503 MB), đáp án khớp Deno ở mọi phép:
+
+| Bước | Khi nào | iPad mini 1 (QuickJS) | Máy build (Deno) |
+| --- | --- | --- | --- |
+| Xử lý player từ đầu (phân tích cú pháp, tách hàm giải) | mỗi khi YouTube đổi player | **90 s**, đỉnh 151 MB | 1,3 s |
+| Nạp player đã xử lý (4,2 MB mã nguồn) | mỗi lần mở app | 3,6 s, đỉnh 63 MB (cả tiến trình 4,3 s) | 0,56 s |
+| Nạp player từ bytecode QuickJS đã lưu (15,6 MB) | mỗi lần mở app | **0,45 s**, đỉnh 40 MB | — |
+| Giải một mã `n` | mỗi video | **21 ms** | — |
+
+- **Ý nghĩa:**
+  - Mỗi video chỉ tốn khoảng 21 ms để giải mã, cộng thời gian gọi API player. Bước nặng là 90 giây mỗi khi YouTube ra player mới;
+    lưu bytecode thì các lần mở app sau chỉ tốn 0,45 giây.
+  - Bộ nhớ vừa với máy 512 MB khi đo bằng tiến trình dòng lệnh; trong app (cùng giao diện, ảnh) thì chưa đo.
+  - Chưa thử iPhone 5 (A6, nhanh hơn A5).
+  - Phần còn lại của việc chạy không server (gọi API player với đúng client, lọc HLS, thư viện lưu trên máy) chưa làm. Phần này
+    phải theo kịp mỗi lần yt-dlp đổi cách xin link.
+- Công cụ spike: `~/TestLab/qjsspike` trên máy build; bản sao Makefile, shim, `bench.mjs` trong `local/qjsspike/` (không lên git).
+  Trên iPad còn `/var/mobile/qjsspike/qjs` và `rusage` (đo thời gian, bộ nhớ đỉnh).
+- **Kết luận: bỏ qua hướng này.** So với dùng server, trải nghiệm không tốt hơn ở nhà:
+  - mỗi lần YouTube đổi player thì video đầu phải chờ khoảng 1,5 phút;
+  - mỗi lần YouTube đổi cách làm thì phải ra bản app mới;
+  - mỗi máy một danh sách theo dõi và lịch sử riêng.
+
+  Chỉ hơn ở hai chỗ: xem ngoài nhà, và người mới không phải dựng server. Anh quyết định không làm.
+
+## D37. Icon mới theo logo anh gửi — 19/11/2026
+
+- Anh gửi logo mới (lưu ở `art/TubeMini-logo.png`, 697×682): ô vuông bo góc kiểu kính bóng, sọc đỏ / cam / hồng, nút play trắng
+  nổi ở giữa, nhãn "mini" hình chiếc TV ở góc dưới phải. Logo này thay icon bánh răng của D27.
+- `scripts/make-icons.py` được viết lại bằng Pillow (máy làm việc giờ có Python 3.12 và Pillow) và tạo mọi icon từ logo gốc:
+  - Ô bo góc của logo là một superellipse |x/a|ⁿ + |y/b|ⁿ = 1. Script tìm đường viền (điểm ảnh có màu hoặc sáng, khác nền xám
+    tối) rồi khớp ra n ≈ 5,6, sai lệch trung bình dưới 1 px.
+  - Nền tối quanh logo thành trong suốt. App cài vào `/Applications` thì SpringBoard iOS 6 không bo góc giùm (D27), nên góc
+    trong suốt phải có sẵn trong PNG.
+  - Thu nhỏ bằng alpha premultiplied, với mặt nạ nguồn lùi vào 1,5 px, nên mép không ăn màu nền tối. Alpha ở mỗi cỡ được vẽ lại
+    trực tiếp từ superellipse, nên góc nét ở cả cỡ nhỏ.
+  - Ô logo cao hơn rộng 7 px (624×631). Script co nó về hình vuông; lệch khoảng 1 %, mắt không thấy.
+  - Script ghi ra 8 icon app, `docs/icon.png` (README), và icon của trang web và Cydia: `site/img/icon.png`,
+    `site/apple-touch-icon.png`, `site/cydia/icon.png`, `site/cydia/CydiaIcon.png`. Trước đây các icon trang web được chép tay.
+    `--preview DIR` vẽ các cỡ trên một nền giống hình nền để xem thử.
+- `UIPrerenderedIcon = true` giữ nguyên, vì logo đã có lớp kính bóng riêng.
+- Ở cỡ 57 và 72 px, nhãn "mini" chỉ còn là một vệt sáng rộng khoảng 11 px. Từ 114 px trở lên mới đọc được chữ.
+- Đã thử trên iPad (bản debug 0.5.3-1+debug, respring): icon ở dock hiện đúng, góc trong suốt, mép mịn. Icon đặc che kín ô bóng
+  tối mà SpringBoard vẽ dưới mọi icon (D27), nên ô bóng đó không lộ ra.
+- Phát hành ở bản **0.5.4** (chức năng không đổi so với 0.5.3). iPad lên 0.5.4 bằng OTA từ trang đã đăng.

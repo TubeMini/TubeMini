@@ -1,18 +1,18 @@
 # Tiến độ
 
-## Tình trạng hiện tại (cập nhật 16/11/2026)
+## Tình trạng hiện tại (cập nhật 19/11/2026)
 
 Đã xong cả 6 giai đoạn (0–5) của tài liệu dự án, cùng các phần anh yêu cầu thêm. Chi tiết từng giai đoạn ở các mục bên dưới;
-lý do kỹ thuật ở `DECISIONS.md` (D1–D35).
+lý do kỹ thuật ở `DECISIONS.md` (D1–D37).
 
-**Phiên bản:** app TubeMini và tubemini-server **0.5.3** (code server không đổi từ 0.5.0, chỉ đổi số phiên bản).
+**Phiên bản:** app TubeMini và tubemini-server **0.5.4** (code server không đổi từ 0.5.0, chỉ đổi số phiên bản).
 
 **Đã công khai**
 
 | Thứ | Ở đâu |
 | --- | --- |
 | Mã nguồn (server + app + tài liệu), GPL-3.0 | https://github.com/TubeMini/TubeMini |
-| Bản phát hành (`.deb` app + gói server) | v0.5.0 – v0.5.3: https://github.com/TubeMini/TubeMini/releases |
+| Bản phát hành (`.deb` app + gói server) | v0.5.0 – v0.5.4: https://github.com/TubeMini/TubeMini/releases |
 | Trang giới thiệu (Safari iOS 6 đọc được) | https://tubemini.github.io/ (repo `TubeMini/TubeMini.github.io`) |
 | Nguồn Cydia | `https://tubemini.github.io/cydia/` |
 | File cập nhật OTA cho app | https://tubemini.github.io/update.json |
@@ -21,9 +21,9 @@ lý do kỹ thuật ở `DECISIONS.md` (D1–D35).
 
 **Đang chạy**
 
-- iPad mini 1 (iOS 6.1.3): bản release 0.5.3, cài qua SSH (đúng file `.deb` đã phát hành). Bản release không có lệnh debug;
+- iPad mini 1 (iOS 6.1.3): bản release 0.5.4, lên bằng OTA từ bản debug 0.5.3-1+debug. Bản release không có lệnh debug;
   muốn thử qua SSH thì cài lại bản debug (`scripts/ios-build.sh` không có `FINALPACKAGE=1`).
-- iPhone 5 (iOS 6.1.4): cũng dùng TubeMini, bản 0.5.3.
+- iPhone 5 (iOS 6.1.4): cũng dùng TubeMini, bản 0.5.3 (app sẽ tự báo có bản 0.5.4).
 - Server chính trong nhà: service systemd trên máy Ubuntu (cài bằng `install.sh`), vẫn là 0.5.0. Chưa cần cập nhật vì code server
   không đổi.
 
@@ -35,7 +35,8 @@ lý do kỹ thuật ở `DECISIONS.md` (D1–D35).
 - Trên iPhone 5 (D35): chụp và soát từng màn (Trang chủ lưới / danh sách, trang video, thanh "Chỉ nghe", Tìm kiếm, kênh,
   Lịch sử, mục "Thêm", Đã tải, Cài đặt) ở màn dọc và ngang, giao diện sáng và tối: app dùng hết màn 4 inch, không còn chữ đè
   hay bị cắt.
-- Trên iPad: OTA trọn vòng 0.5.0 → 0.5.1 (tải, kiểm SHA-256, `dpkg exit 0`, respring, app chạy).
+- Trên iPad: OTA trọn vòng 0.5.3-1+debug → 0.5.4 từ trang đã đăng (tải, kiểm SHA-256, `dpkg exit 0`, respring, app chạy, icon
+  mới ở dock).
 
 **Phát hành bản mới:** làm theo `SETUP.md` mục 10. Tóm tắt:
 1. tăng phiên bản ở 3 chỗ;
@@ -404,6 +405,12 @@ có trong git.
   ảnh khởi động `Default-568h@2x.png`. Đã thêm ảnh đó, icon iPhone, khai báo app cho cả iPhone; sửa bố cục cho màn 320 điểm
   (thanh trên Trang chủ, nút trang video, thanh "Chỉ nghe", ảnh trong danh sách, chú thích trong Cài đặt) và mục "Thêm" theo
   giao diện tối. iPad không đổi (đã chụp lại các màn trên iPad để so).
+- [x] **Spike chạy không server: giải mã link trên iPad** (D36): QuickJS build cho iOS 6 chạy đúng script giải mã của yt-dlp
+  trên iPad mini 1. Xử lý player mới mất 90 giây (một lần mỗi phiên bản player); nạp lại từ bytecode đã lưu 0,45 giây; mỗi video
+  21 ms. Anh quyết định không làm chế độ không server (không bền bằng dùng server).
+- [x] **Bản 0.5.4, icon mới theo logo anh gửi** (D37): `scripts/make-icons.py` tạo mọi icon (app, README, trang web, Cydia)
+  từ `art/TubeMini-logo.png`, nền quanh logo thành trong suốt. Đã phát hành (GitHub, Cydia, OTA); iPad lên 0.5.4 bằng OTA,
+  icon mới hiện đúng ở dock.
 - [x] **Lên GitHub** (D31, D32): repo công khai https://github.com/TubeMini/TubeMini (lịch sử đã bỏ thông tin cá nhân),
   bundle id `vn.tubemini.io`, bản phát hành v0.5.0, trang https://tubemini.github.io/ (đọc được trên Safari iOS 6), nguồn
   Cydia `https://tubemini.github.io/cydia/`, cập nhật OTA trong app (tải, kiểm SHA-256, cài, respring). Đã thử OTA trọn vòng
