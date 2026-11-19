@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 
+@class TMChannel;
+
 /// Posted (main thread) after a channel was subscribed / unsubscribed or the list was reloaded.
 extern NSString *const TMSubscriptionsDidChangeNotification;
 /// Posted (main thread) after a watch position was saved or history entries were removed.
@@ -16,6 +18,10 @@ extern NSString *const TMHistoryDidChangeNotification;
 - (void)refresh;
 /// The subscriptions screen already has the list: take the ids from it.
 - (void)updateWithChannels:(NSArray *)channels;
+/// Channel avatars seen so far (subscriptions list, channel pages), kept in NSUserDefaults, so video
+/// cards can show the real avatar instead of a letter. nil = not known.
+- (NSString *)avatarForChannel:(NSString *)channelID;
+- (void)rememberChannel:(TMChannel *)channel;
 /// Subscribe / unsubscribe on the server, then update the cache and post the notification.
 - (void)setSubscribed:(BOOL)subscribed channelID:(NSString *)channelID completion:(void (^)(NSString *error))done;
 /// Posts TMHistoryDidChangeNotification.

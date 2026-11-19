@@ -1,4 +1,5 @@
 #import "TMAudioPlayer.h"
+#import "TMAlert.h"
 #import <AVFoundation/AVFoundation.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import "TMAPIClient.h"
@@ -154,11 +155,7 @@ static void *kStatusContext = &kStatusContext;
     TMLog(@"[audio] lỗi %@: %@", _video.videoID, error.localizedDescription);
     if (_retried) {
         [self stop];
-        [[[UIAlertView alloc] initWithTitle:@"Không phát được"
-                                    message:@"Không nghe được video này. Thử lại sau."
-                                   delegate:nil
-                          cancelButtonTitle:@"Đóng"
-                          otherButtonTitles:nil] show];
+        [TMAlert showTitle:@"Không phát được" message:@"Không nghe được video này. Thử lại sau." button:@"Đóng"];
         return;
     }
     _retried = YES;

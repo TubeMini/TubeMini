@@ -31,13 +31,14 @@ Dự án dùng máy Ubuntu thử nghiệm (máy ảo, `~/TestLab`); WSL2 Ubuntu 
    bash scripts/setup-theos.sh        # cài vào ~/theos; chạy lại nhiều lần không sao
    ```
    Script làm ba việc: clone Theos, tải toolchain iOS cho Linux (L1ghtmann, clang 11 / ld64-609), lấy `iPhoneOS9.3.sdk` từ
-   theos/sdks rồi vá ba chỗ để chạy được trên iOS 6 (xem chú thích trong script và `docs/DECISIONS.md` mục D2).
+   theos/sdks rồi vá bốn chỗ để chạy được trên iOS 5 / 6 (xem chú thích trong script, `docs/DECISIONS.md` mục D2 và D38). Sau khi
+   vá header lần đầu trên máy đã từng build, xoá `~/.cache/clang/ModuleCache` (bộ nhớ đệm module cũ báo lỗi "ambiguous").
 3. Build từ Windows (Git Bash), mã nguồn được gửi sang máy Linux qua SSH:
    ```sh
    TM_BUILD_HOST=<user>@<IP máy Ubuntu> TM_BUILD_KEY=~/.ssh/<khóa> scripts/ios-build.sh             # bản debug
    TM_BUILD_HOST=... scripts/ios-build.sh FINALPACKAGE=1                                          # bản phát hành
    ```
-   Script in ra kết quả `lipo -info` (phải là **armv7** duy nhất) và `LC_VERSION_MIN_IPHONEOS` (phải là **6.0**), rồi chép `.deb`
+   Script in ra kết quả `lipo -info` (phải là **armv7** duy nhất) và `LC_VERSION_MIN_IPHONEOS` (phải là **5.0**), rồi chép `.deb`
    về `ios/TubeMini/packages/`.
    Nếu làm thẳng trên máy Linux: `cd ios/TubeMini && THEOS=~/theos make package`.
 

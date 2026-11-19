@@ -1,4 +1,5 @@
 #import "TMUpdater.h"
+#import "TMAlert.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <spawn.h>
 #import <sys/wait.h>
@@ -121,16 +122,14 @@ static NSString *updateDir(void) {
 - (void)offer {
     NSString *message = [NSString stringWithFormat:@"Đang dùng %@.%@%@", [TMUpdater currentVersion], self.notes.length ? @"\n\n" : @"",
                                                    self.notes ?: @""];
-    UIAlertView *a = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Có TubeMini %@", self.latestVersion]
-                                                message:message
-                                               delegate:self
-                                      cancelButtonTitle:@"Để sau"
-                                      otherButtonTitles:@"Cập nhật", nil];
-    [a show];
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex != alertView.cancelButtonIndex) [self install];
+    [TMAlert showTitle:[NSString stringWithFormat:@"Có TubeMini %@", self.latestVersion]
+               message:message
+               buttons:@[ @"Để sau", @"Cập nhật" ]
+           cancelIndex:0
+      destructiveIndex:-1
+               handler:^(NSInteger i) {
+                   if (i == 1) [self install];
+               }];
 }
 
 #pragma mark - Download
@@ -243,8 +242,7 @@ static NSString *updateDir(void) {
     _status = nil;
     TMLog(@"[update] %@", message);
     [self changed];
-    [[[UIAlertView alloc] initWithTitle:@"Không cập nhật được" message:message delegate:nil cancelButtonTitle:@"Đóng"
-                      otherButtonTitles:nil] show];
+    [TMAlert showTitle:@"Không cập nhật được" message:message button:@"Đóng"];
 }
 
 @end

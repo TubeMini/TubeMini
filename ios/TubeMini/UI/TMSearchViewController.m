@@ -1,8 +1,17 @@
 #import "TMSearchViewController.h"
+#import "TMCells.h"
+#import "TMCompat.h"
+#import "TMGlass.h"
+#import "TMIcons.h"
+#import "TMNavigationController.h"
 #import "TMTheme.h"
 
 @implementation TMSearchViewController {
-    UISearchBar *_bar;
+    UIView *_header;
+    UIImageView *_fieldBack, *_glyph;
+    TMTextField *_field;
+    TMChipBar *_scopes;
+    NSInteger _scope;
 }
 
 - (instancetype)init {
@@ -11,15 +20,35 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _bar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 88)];
-    _bar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    _bar.placeholder = @"Tìm video hoặc kênh";
-    _bar.scopeButtonTitles = @[ @"Video", @"Kênh" ];
-    _bar.showsScopeBar = YES;
-    _bar.delegate = self;
-    _bar.autocorrectionType = UITextAutocorrectionTypeNo;
-    [_bar sizeToFit];
-    self.tableView.tableHeaderView = _bar;
+    TMSetLargeTitle(self, @"Tìm kiếm", NO);
+    CGFloat W = self.tableView.bounds.size.width, m = TMListMargin();
+    _header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, W, 104)];
+    _header.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _header.backgroundColor = [UIColor clearColor];
+    _fieldBack = [[UIImageView alloc] initWithFrame:CGRectMake(m, 8, W - 2 * m, 42)];
+    _fieldBack.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _fieldBack.userInteractionEnabled = YES;
+    [_header addSubview:_fieldBack];
+    _glyph = [[UIImageView alloc] initWithFrame:CGRectMake(12, 11, 20, 20)];
+    [_fieldBack addSubview:_glyph];
+    _field = [[TMTextField alloc] initWithFrame:CGRectMake(40, 0, _fieldBack.bounds.size.width - 48, 42)];
+    _field.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _field.borderStyle = UITextBorderStyleNone;
+    _field.font = TMFontRegular(17);
+    _field.placeholder = @"Tìm video hoặc kênh";
+    _field.returnKeyType = UIReturnKeySearch;
+    _field.autocorrectionType = UITextAutocorrectionTypeNo;
+    _field.clearButtonMode = UITextFieldViewModeWhileEditing;
+    _field.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    _field.delegate = self;
+    [_fieldBack addSubview:_field];
+    _scopes = [[TMChipBar alloc] initWithFrame:CGRectMake(0, 56, W, 44)];
+    _scopes.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _scopes.titles = @[ @"Video", @"Kênh" ];
+    __weak TMSearchViewController *weakSelf = self;
+    _scopes.onSelect = ^(NSInteger i) { [weakSelf scopePicked:i]; };
+    [_header addSubview:_scopes];
+    self.tableView.tableHeaderView = _header;
     [self applyTheme];
     [self showIdleMessage:@"Nhập từ khoá rồi bấm Tìm."];
 }
@@ -27,23 +56,25 @@
 - (void)applyTheme {
     [super applyTheme];
     TMTheme *t = [TMTheme current];
-    _bar.tintColor = t.dark ? [UIColor colorWithWhite:0.16 alpha:1] : [UIColor colorWithRed:0.75 green:0.24 blue:0.24 alpha:1];
-    // UISearchBar.keyboardAppearance is iOS 7+ (crashes on iOS 6): set it on the inner text field
-    for (UIView *v in _bar.subviews) {
-        if ([v isKindOfClass:[UITextField class]]) ((UITextField *)v).keyboardAppearance = t.keyboard;
-    }
+    _fieldBack.image = TMRoundImage(t.elevated, 21);
+    _glyph.image = TMIcon(@"search", 20, t.secondaryText);
+    _field.textColor = t.text;
+    _field.keyboardAppearance = t.keyboard;
+    [_field setNeedsDisplay]; // placeholder colour
 }
 
-// iOS 6 has no keyboardDismissMode: hide the keyboard when the list starts scrolling
+// iOS 5/6 have no keyboardDismissMode: hide the keyboard when the list starts scrolling
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    [_bar resignFirstResponder];
+    [_field resignFirstResponder];
 }
 
 - (void)runSearch:(NSString *)query scope:(NSInteger)scope {
+    [self view]; // the field is built in viewDidLoad
     NSString *q = [query stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    _bar.text = q;
-    _bar.selectedScopeButtonIndex = scope;
-    [_bar resignFirstResponder];
+    _field.text = q;
+    _scope = scope;
+    _scopes.selectedIndex = scope;
+    [_field resignFirstResponder];
     if (!q.length) return;
     BOOL channels = scope == 1;
     self.emptyMessage = channels ? @"Không tìm thấy kênh nào." : @"Không tìm thấy video nào.";
@@ -57,12 +88,14 @@
     [self reload];
 }
 
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    [self runSearch:searchBar.text scope:searchBar.selectedScopeButtonIndex];
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [self runSearch:textField.text scope:_scope];
+    return YES;
 }
 
-- (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
-    if (searchBar.text.length) [self runSearch:searchBar.text scope:selectedScope];
+- (void)scopePicked:(NSInteger)scope {
+    _scope = scope;
+    if (_field.text.length) [self runSearch:_field.text scope:scope];
 }
 
 @end

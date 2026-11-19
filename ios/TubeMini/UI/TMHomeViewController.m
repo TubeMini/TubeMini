@@ -1,79 +1,68 @@
 #import "TMHomeViewController.h"
 #import "TMAPIClient.h"
-#import "TMGridViewController.h"
+#import "TMCompat.h"
+#import "TMGlass.h"
 #import "TMLibrary.h"
 #import "TMListViewController.h"
+#import "TMNavigationController.h"
 #import "TMTheme.h"
 
 static NSString *const kGridKey = @"TMHomeGrid";
 static NSString *const kSourceKey = @"TMHomeSubscriptions";
 
-/// White list / grid glyph with the dark 1 pt top shadow of iOS 6 bar titles (the iPhone mode switch).
-static UIImage *TMModeIcon(BOOL grid) {
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(18, 15), NO, 0);
-    CGContextRef c = UIGraphicsGetCurrentContext();
-    for (int pass = 0; pass < 2; pass++) {
-        CGFloat dy = pass; // the shadow first, then the glyph 1 pt lower
-        [(pass ? [UIColor whiteColor] : [UIColor colorWithWhite:0 alpha:0.45]) setFill];
-        for (int i = 0; i < (grid ? 4 : 3); i++) {
-            if (grid) {
-                CGContextFillRect(c, CGRectMake((i % 2) * 10, dy + (i / 2) * 7.5, 8, 5.5));
-            } else {
-                CGContextFillRect(c, CGRectMake(0, dy + i * 5, 3, 3));
-                CGContextFillRect(c, CGRectMake(5, dy + i * 5, 13, 3));
-            }
-        }
-    }
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image;
-}
-
 @implementation TMHomeViewController {
     TMListViewController *_list;
-    TMGridViewController *_grid;
-    UISegmentedControl *_mode, *_source;
-    BOOL _fresh;               // next load asks the server to refetch every channel
-    BOOL _listStale, _gridStale; // the source changed while that view was hidden
+    TMChipBar *_chips;
+    TMGlassButton *_modeButton;
+    BOOL _fresh; // next load asks the server to refetch every channel
+    BOOL _stale; // the source changed while Home was hidden
 }
 
 - (instancetype)init {
     if ((self = [super init])) {
-        self.title = @"Trang chủ";
-        NSNumber *saved = [[NSUserDefaults standardUserDefaults] objectForKey:kSourceKey];
+        NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+        NSNumber *saved = [d objectForKey:kSourceKey];
         _subscriptionsSource = saved ? saved.boolValue : [TMLibrary shared].subscriptionCount > 0;
+        NSNumber *grid = [d objectForKey:kGridKey];
+        _gridMode = grid ? grid.boolValue : YES; // cards, unless the user picked rows before
         __weak TMHomeViewController *weakSelf = self;
-        TMFirstPageBlock first = ^(TMFeedBlock done) { [weakSelf loadFirstPage:done]; };
-        _list = [[TMListViewController alloc] initWithTitle:@"Trang chủ" firstPage:first];
+        _list = [[TMListViewController alloc] initWithTitle:@"Trang chủ"
+                                                  firstPage:^(TMFeedBlock done) { [weakSelf loadFirstPage:done]; }];
         _list.willRefresh = ^{ [weakSelf markFresh]; };
-        _grid = [[TMGridViewController alloc] initWithFirstPage:first];
-        _gridMode = [[NSUserDefaults standardUserDefaults] boolForKey:kGridKey];
-        [self updateEmptyMessages];
+        _list.cards = _gridMode;
+        [self updateEmptyMessage];
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [TMTheme current].background;
-    // The iPhone bar (320 pt) cannot hold both switches with full labels: shorter source, icons for the mode
-    BOOL phone = [UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone;
-    _source = [[UISegmentedControl alloc] initWithItems:@[ phone ? @"Theo dõi" : @"Đã theo dõi", @"Phổ biến" ]];
-    _source.segmentedControlStyle = UISegmentedControlStyleBar;
-    _source.selectedSegmentIndex = _subscriptionsSource ? 0 : 1;
-    [_source addTarget:self action:@selector(sourcePicked) forControlEvents:UIControlEventValueChanged];
-    self.navigationItem.titleView = _source;
-    _mode = [[UISegmentedControl alloc] initWithItems:phone ? @[ TMModeIcon(NO), TMModeIcon(YES) ] : @[ @"Danh sách", @"Lưới" ]];
-    if (phone) {
-        [_mode setWidth:38 forSegmentAtIndex:0];
-        [_mode setWidth:38 forSegmentAtIndex:1];
-    }
-    _mode.segmentedControlStyle = UISegmentedControlStyleBar;
-    _mode.selectedSegmentIndex = _gridMode ? 1 : 0;
-    [_mode addTarget:self action:@selector(modePicked) forControlEvents:UIControlEventValueChanged];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_mode];
-    self.navigationItem.leftBarButtonItem =
-        [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
+    TMSetLargeTitle(self, @"TubeMini", YES);
+    self.title = @"Trang chủ";
+    _modeButton = [TMGlassButton buttonWithIcon:_gridMode ? @"list" : @"grid" target:self action:@selector(toggleMode)];
+    self.navigationItem.rightBarButtonItems = @[
+        [[UIBarButtonItem alloc] initWithCustomView:_modeButton],
+        TMBarButton(@"refresh", self, @selector(refresh)),
+    ];
+    [self addChildViewController:_list];
+    _list.view.frame = self.view.bounds;
+    _list.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view addSubview:_list.view];
+    [_list didMoveToParentViewController:self];
+
+    // Chips scroll away with the feed, like YouTube's
+    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50)];
+    header.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    header.backgroundColor = [UIColor clearColor];
+    _chips = [[TMChipBar alloc] initWithFrame:CGRectMake(0, 2, header.bounds.size.width, 44)];
+    _chips.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _chips.titles = @[ @"Đã theo dõi", @"Phổ biến" ];
+    _chips.selectedIndex = _subscriptionsSource ? 0 : 1;
+    __weak TMHomeViewController *weakSelf = self;
+    _chips.onSelect = ^(NSInteger i) { [weakSelf setSubscriptionsSource:i == 0]; };
+    [header addSubview:_chips];
+    _list.tableView.tableHeaderView = header;
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(themeChanged)
                                                  name:TMThemeDidChangeNotification
@@ -82,7 +71,7 @@ static UIImage *TMModeIcon(BOOL grid) {
                                              selector:@selector(subscriptionsChanged)
                                                  name:TMSubscriptionsDidChangeNotification
                                                object:nil];
-    [self showChild];
+    [self themeChanged];
 }
 
 - (void)dealloc {
@@ -91,14 +80,6 @@ static UIImage *TMModeIcon(BOOL grid) {
 
 - (void)themeChanged {
     self.view.backgroundColor = [TMTheme current].background;
-}
-
-- (BOOL)shouldAutorotate {
-    return YES;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskAll;
 }
 
 #pragma mark - Source
@@ -117,104 +98,61 @@ static UIImage *TMModeIcon(BOOL grid) {
     _fresh = _subscriptionsSource;
 }
 
-- (void)updateEmptyMessages {
-    NSString *empty = _subscriptionsSource ? @"Chưa có video từ kênh đã theo dõi.\nMở một kênh (từ Tìm kiếm hoặc trang video) rồi "
-                                             @"bấm “+ Theo dõi”: video mới của kênh sẽ hiện ở đây."
-                                           : @"Máy chủ chưa có video phổ biến.";
-    _list.emptyMessage = empty;
-    _grid.emptyMessage = empty;
+- (void)updateEmptyMessage {
+    _list.emptyMessage = _subscriptionsSource ? @"Chưa có video từ kênh đã theo dõi.\nMở một kênh (từ Tìm kiếm hoặc trang video) rồi "
+                                                @"bấm “Theo dõi”: video mới của kênh sẽ hiện ở đây."
+                                              : @"Máy chủ chưa có video phổ biến.";
 }
 
 - (void)setSubscriptionsSource:(BOOL)subscriptions {
     _subscriptionsSource = subscriptions;
-    _source.selectedSegmentIndex = subscriptions ? 0 : 1;
+    _chips.selectedIndex = subscriptions ? 0 : 1;
     [[NSUserDefaults standardUserDefaults] setBool:subscriptions forKey:kSourceKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [self updateEmptyMessages];
-    [self reloadActiveMarkingOtherStale];
-}
-
-- (void)sourcePicked {
-    [self setSubscriptionsSource:_source.selectedSegmentIndex == 0];
+    [self updateEmptyMessage];
+    [_list reload];
 }
 
 /// A channel was (un)subscribed: the subscriptions feed is out of date.
 - (void)subscriptionsChanged {
     if (!_subscriptionsSource) return;
     if (self.isViewLoaded && self.view.window) {
-        [self reloadActiveMarkingOtherStale];
-    } else {
-        _listStale = _gridStale = YES;
-    }
-}
-
-- (void)reloadActiveMarkingOtherStale {
-    if (_gridMode) {
-        [_grid reload];
-        _listStale = YES;
-    } else {
         [_list reload];
-        _gridStale = YES;
+    } else {
+        _stale = YES;
     }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self reloadIfStale];
-}
-
-- (void)reloadIfStale {
-    if (_gridMode && _gridStale) {
-        _gridStale = NO;
-        [_grid reload];
-    } else if (!_gridMode && _listStale) {
-        _listStale = NO;
+    if (_stale) {
+        _stale = NO;
         [_list reload];
     }
 }
 
-#pragma mark - List / grid
+#pragma mark - Cards / rows
 
 - (UIViewController *)activeChild {
-    return _gridMode ? _grid : _list;
-}
-
-- (void)showChild {
-    UIViewController *show = [self activeChild], *hide = _gridMode ? (UIViewController *)_list : (UIViewController *)_grid;
-    if (hide.parentViewController) {
-        [hide willMoveToParentViewController:nil];
-        [hide.view removeFromSuperview];
-        [hide removeFromParentViewController];
-    }
-    if (show.parentViewController != self) {
-        [self addChildViewController:show];
-        show.view.frame = self.view.bounds;
-        show.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self.view addSubview:show.view];
-        [show didMoveToParentViewController:self];
-    }
-    [self reloadIfStale];
+    return _list;
 }
 
 - (void)setGridMode:(BOOL)grid {
     _gridMode = grid;
-    _mode.selectedSegmentIndex = grid ? 1 : 0;
+    _modeButton.iconName = grid ? @"list" : @"grid";
     [[NSUserDefaults standardUserDefaults] setBool:grid forKey:kGridKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [self showChild];
+    _list.cards = grid;
 }
 
-- (void)modePicked {
-    [self setGridMode:_mode.selectedSegmentIndex == 1];
+- (void)toggleMode {
+    [self setGridMode:!_gridMode];
 }
 
 - (void)refresh {
     [self markFresh];
-    if (_gridMode) {
-        [_grid reload];
-    } else {
-        [_list reload];
-    }
+    [_list reload];
+    [_list.tableView setContentOffset:CGPointMake(0, -_list.tableView.contentInset.top) animated:YES];
 }
 
 @end

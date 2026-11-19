@@ -3,36 +3,45 @@
 /// Posted (main thread) after the theme changes; screens refresh their colours.
 extern NSString *const TMThemeDidChangeNotification;
 
-/// App colour theme. iOS 6 has no system dark mode, so TubeMini keeps its own light / dark palette,
-/// persisted in NSUserDefaults. Screens read colours from `[TMTheme current]` when they lay out or
-/// configure cells, and listen for TMThemeDidChangeNotification.
+/// App colour theme, iOS 26 / YouTube style ("Liquid Glass" bars over white or near-black pages).
+/// iOS 5–8 have no system dark mode, so TubeMini keeps its own light / dark palette, persisted in
+/// NSUserDefaults. Screens read colours from `[TMTheme current]` when they lay out or configure cells,
+/// and listen for TMThemeDidChangeNotification.
 @interface TMTheme : NSObject
 + (TMTheme *)current;
 + (BOOL)isDark;
 /// Saves, re-applies the bar appearance and posts TMThemeDidChangeNotification.
 + (void)setDark:(BOOL)dark;
-/// Applies appearance proxies and recolours bars already on screen (call once at launch too).
+/// Appearance proxies (call once at launch, before any bar is created).
 + (void)applyGlobalAppearance;
 
 @property (nonatomic, readonly) BOOL dark;
-@property (nonatomic, readonly) UIColor *background;      // lists, pages
-@property (nonatomic, readonly) UIColor *cellBackground;
-@property (nonatomic, readonly) UIColor *selection;       // highlighted row / cell
+@property (nonatomic, readonly) UIColor *background;        // pages, lists, bars
+@property (nonatomic, readonly) UIColor *groupedBackground; // behind the cards of Settings
+@property (nonatomic, readonly) UIColor *cellBackground;    // cards (Settings rows, sheets)
+@property (nonatomic, readonly) UIColor *elevated;          // chips, pills, description box, text fields
+@property (nonatomic, readonly) UIColor *elevatedPressed;
+@property (nonatomic, readonly) UIColor *selection;         // highlighted row / tile
 @property (nonatomic, readonly) UIColor *text;
 @property (nonatomic, readonly) UIColor *secondaryText;
+@property (nonatomic, readonly) UIColor *tertiaryText;
 @property (nonatomic, readonly) UIColor *separator;
-@property (nonatomic, readonly) UIColor *placeholder;     // image placeholders
-@property (nonatomic, readonly) UIColor *barTint;         // navigation bar
-@property (nonatomic, readonly) UIColor *tabBarTint;
-@property (nonatomic, readonly) UIColor *accent;          // buttons, links
-@property (nonatomic, readonly) UIColor *buttonBackground;
-@property (nonatomic, readonly) UIColor *buttonBorder;
+@property (nonatomic, readonly) UIColor *placeholder;       // image placeholders
+@property (nonatomic, readonly) UIColor *accent;            // links, text buttons (iOS 26 blue)
+@property (nonatomic, readonly) UIColor *brand;             // TubeMini red: selected tab, progress, Play
+@property (nonatomic, readonly) UIColor *inverse;           // "Theo dõi" button: black on light, white on dark
+@property (nonatomic, readonly) UIColor *inverseText;
+@property (nonatomic, readonly) UIColor *switchOn;
+@property (nonatomic, readonly) UIColor *destructive;
 @property (nonatomic, readonly) UIKeyboardAppearance keyboard;
+@property (nonatomic, readonly) UIActivityIndicatorViewStyle spinnerStyle;
 
-/// Rounded button in theme colours (iOS 6 rounded-rect buttons are always white).
-- (void)styleButton:(UIButton *)button;
-/// Subscribe button: red "+ Theo dõi", or a plain "✓ Đã theo dõi" once subscribed ("…" while busy).
-- (void)styleSubscribeButton:(UIButton *)button subscribed:(BOOL)subscribed busy:(BOOL)busy;
-/// Background / separators / cells of a table view.
+/// 1×1 stretchable image of a colour (bar backgrounds).
++ (UIImage *)imageWithColor:(UIColor *)color;
+/// Flat bar in the page colour, no hairline, medium title (the iOS 26 top edge).
++ (void)styleNavigationBar:(UINavigationBar *)bar;
+/// Same, in another page colour (grouped screens).
++ (void)styleNavigationBar:(UINavigationBar *)bar color:(UIColor *)color;
+/// Background / separators of a table view (TubeMini draws no separators: rows are spaced instead).
 - (void)styleTableView:(UITableView *)tableView;
 @end

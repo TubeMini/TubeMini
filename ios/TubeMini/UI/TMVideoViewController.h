@@ -1,9 +1,10 @@
 #import "TMListViewController.h"
 
-/// Video page: big thumbnail with play button, title, channel, views, description, Play (or "Xem tiếp"
-/// from the watch history) / quality / channel / subscribe buttons, and below it the related videos or
-/// the comments (segmented control).
-@interface TMVideoViewController : TMListViewController <UIActionSheetDelegate>
+/// Video page (YouTube layout): rounded thumbnail with a glass Play button, title, views / age, the
+/// channel row with its Subscribe pill, a row of action pills (Phát or "Xem tiếp" from the watch history,
+/// Chỉ nghe, Tải về, quality), the description in a grey box, and below it the related videos or the
+/// comments (segmented control).
+@interface TMVideoViewController : TMListViewController
 - (instancetype)initWithVideo:(TMVideo *)video;
 @property (nonatomic, readonly) TMVideo *video;
 /// Same as tapping Play (debug commands).

@@ -26,7 +26,7 @@ tar -C "$APP" --exclude=.theos --exclude=packages -cf - . |
 echo "==> make package $*"
 "${SSH[@]}" "$TM_BUILD_HOST" "cd $DIR/src && export THEOS=$REMOTE_THEOS && make package $*"
 
-echo "==> check binary (expect: armv7 only, minimum iOS 6.0)"
+echo "==> check binary (expect: armv7 only, minimum iOS 5.0)"
 "${SSH[@]}" "$TM_BUILD_HOST" "cd $DIR/src && T=$REMOTE_THEOS/toolchain/linux/iphone/bin && B=\$(ls -t .theos/obj/*/TubeMini.app/TubeMini .theos/obj/TubeMini.app/TubeMini 2>/dev/null | head -1) && echo \$B && \$T/lipo -info \$B && \$T/otool -l \$B | grep -A3 LC_VERSION_MIN_IPHONEOS | grep -E 'version|sdk'"
 
 DEB="$("${SSH[@]}" "$TM_BUILD_HOST" "ls -t $DIR/src/packages/*.deb | head -1")"

@@ -6,7 +6,7 @@
 /// with a countdown), play in MPMoviePlayerViewController, retry once with `fresh=1` on error,
 /// then offer 360p. Only one playback at a time. The watch position goes to `/tm/v1/history` every
 /// 15 seconds, when the player closes and when the app goes to the background.
-@interface TMPlayer : NSObject <UIAlertViewDelegate>
+@interface TMPlayer : NSObject
 + (instancetype)shared;
 - (void)playVideo:(TMVideo *)video quality:(NSInteger)quality from:(UIViewController *)presenter;
 /// `seconds` > 0 resumes there.

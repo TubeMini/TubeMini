@@ -45,16 +45,25 @@ static const NSTimeInterval kDiskMaxAge = 7 * 86400;
 }
 
 + (UIImage *)placeholderOfSize:(CGSize)size {
+    return [self placeholderOfSize:size radius:0];
+}
+
++ (UIImage *)placeholderOfSize:(CGSize)size radius:(CGFloat)radius {
     static NSCache *cache;
     static dispatch_once_t once;
     dispatch_once(&once, ^{ cache = [[NSCache alloc] init]; });
     TMTheme *theme = [TMTheme current];
-    NSString *key = [NSString stringWithFormat:@"%@|%d", NSStringFromCGSize(size), theme.dark];
+    NSString *key = [NSString stringWithFormat:@"%@|%.1f|%d", NSStringFromCGSize(size), radius, theme.dark];
     UIImage *img = [cache objectForKey:key];
     if (!img) {
-        UIGraphicsBeginImageContextWithOptions(size, YES, 0);
+        UIGraphicsBeginImageContextWithOptions(size, radius <= 0, 0);
         [theme.placeholder setFill];
-        UIRectFill(CGRectMake(0, 0, size.width, size.height));
+        CGRect r = CGRectMake(0, 0, size.width, size.height);
+        if (radius > 0) {
+            [[UIBezierPath bezierPathWithRoundedRect:r cornerRadius:radius] fill];
+        } else {
+            UIRectFill(r);
+        }
         img = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         [cache setObject:img forKey:key];
@@ -72,10 +81,25 @@ static const NSTimeInterval kDiskMaxAge = 7 * 86400;
 }
 
 /// Decodes into a bitmap no larger than `size` (points × screen scale), so the main thread only blits.
-+ (UIImage *)decoded:(NSData *)data size:(CGSize)size {
+/// radius > 0: exactly `size`, centre-cropped (aspect fill), corners cut out.
++ (UIImage *)decoded:(NSData *)data size:(CGSize)size radius:(CGFloat)radius {
     UIImage *raw = [UIImage imageWithData:data];
     if (!raw || raw.size.width < 1 || raw.size.height < 1) return nil;
     CGFloat scale = [UIScreen mainScreen].scale;
+    if (radius > 0 && size.width > 0 && size.height > 0) {
+        CGSize target = CGSizeMake(round(size.width * scale), round(size.height * scale));
+        CGFloat fill = MAX(target.width / raw.size.width, target.height / raw.size.height);
+        CGSize drawn = CGSizeMake(raw.size.width * fill, raw.size.height * fill);
+        UIGraphicsBeginImageContextWithOptions(target, NO, 1.0);
+        [[UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, target.width, target.height) cornerRadius:radius * scale] addClip];
+        [raw drawInRect:CGRectMake((target.width - drawn.width) / 2, (target.height - drawn.height) / 2, drawn.width, drawn.height)];
+        CGImageRef cg = CGBitmapContextCreateImage(UIGraphicsGetCurrentContext());
+        UIGraphicsEndImageContext();
+        if (!cg) return raw;
+        UIImage *img = [UIImage imageWithCGImage:cg scale:scale orientation:UIImageOrientationUp];
+        CGImageRelease(cg);
+        return img;
+    }
     CGFloat ratio = MIN(1.0, MIN(size.width * scale / raw.size.width, size.height * scale / raw.size.height));
     if (size.width <= 0 || size.height <= 0) ratio = 1.0;
     CGSize target = CGSizeMake(floor(raw.size.width * ratio), floor(raw.size.height * ratio));
@@ -90,8 +114,16 @@ static const NSTimeInterval kDiskMaxAge = 7 * 86400;
 }
 
 - (void)setImageURL:(NSURL *)url onImageView:(UIImageView *)view placeholder:(UIImage *)placeholder size:(CGSize)size {
+    [self setImageURL:url onImageView:view placeholder:placeholder size:size radius:0];
+}
+
+- (void)setImageURL:(NSURL *)url onImageView:(UIImageView *)view size:(CGSize)size radius:(CGFloat)radius {
+    [self setImageURL:url onImageView:view placeholder:[TMImageLoader placeholderOfSize:size radius:radius] size:size radius:radius];
+}
+
+- (void)setImageURL:(NSURL *)url onImageView:(UIImageView *)view placeholder:(UIImage *)placeholder size:(CGSize)size radius:(CGFloat)radius {
     objc_setAssociatedObject(view, &kWantedURLKey, url.absoluteString, OBJC_ASSOCIATION_COPY_NONATOMIC);
-    NSString *key = [NSString stringWithFormat:@"%@|%.0fx%.0f", url.absoluteString, size.width, size.height];
+    NSString *key = [NSString stringWithFormat:@"%@|%.0fx%.0f|%.1f", url.absoluteString, size.width, size.height, radius];
     UIImage *hit = url ? [_memory objectForKey:key] : nil;
     view.image = hit ?: placeholder;
     if (hit || !url) return;
@@ -111,7 +143,7 @@ static const NSTimeInterval kDiskMaxAge = 7 * 86400;
     NSString *path = [self pathForURL:url];
     dispatch_async(_io, ^{
         NSData *disk = [NSData dataWithContentsOfFile:path];
-        UIImage *img = disk ? [TMImageLoader decoded:disk size:size] : nil;
+        UIImage *img = disk ? [TMImageLoader decoded:disk size:size radius:radius] : nil;
         if (img) {
             show(img);
             return;
@@ -127,7 +159,7 @@ static const NSTimeInterval kDiskMaxAge = 7 * 86400;
                                                           : 0;
                                    if (err || status != 200 || !data.length) return; // keep the placeholder
                                    dispatch_async(self->_io, ^{
-                                       UIImage *fresh = [TMImageLoader decoded:data size:size];
+                                       UIImage *fresh = [TMImageLoader decoded:data size:size radius:radius];
                                        if (fresh) [data writeToFile:path atomically:YES];
                                        show(fresh);
                                    });

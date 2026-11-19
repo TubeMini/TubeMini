@@ -1,12 +1,12 @@
-# TubeMini — YouTube client for iPad on iOS 6 (jailbroken). Theos on Linux, SDK 9.3 (patched for iOS 6), armv7 only.
+# TubeMini — YouTube client for iPad / iPhone on iOS 5–8 (jailbroken). Theos on Linux, SDK 9.3 (patched for iOS 6), armv7 only.
 #   make package                    debug build (includes Debug/: command file, screenshots)
 #   make package FINALPACKAGE=1     release build
 # Toolchain setup: docs/SETUP.md
-TARGET := iphone:clang:9.3:6.0
+TARGET := iphone:clang:9.3:5.0
 ARCHS = armv7
 INSTALL_TARGET_PROCESSES = TubeMini
 
-# dpkg on iOS 6 only reads gzip-compressed .deb; the iOS 6 kernel only understands SHA-1 code signatures
+# dpkg on iOS 5/6 only reads gzip-compressed .deb; the iOS 5/6 kernel only understands SHA-1 code signatures
 THEOS_PLATFORM_DEB_COMPRESSION_TYPE = gzip
 TARGET_CODESIGN_FLAGS = -S -Hsha1
 
@@ -15,7 +15,8 @@ include $(THEOS)/makefiles/common.mk
 APPLICATION_NAME = TubeMini
 TubeMini_FILES = main.m $(wildcard Core/*.m) $(wildcard UI/*.m)
 TubeMini_FRAMEWORKS = UIKit Foundation CoreGraphics QuartzCore MediaPlayer AVFoundation CoreMedia
-# Any API newer than the iOS 6.0 deployment target is a build error (SDK 9.3 headers carry the availability).
+# Any API newer than the iOS 5.0 deployment target is a build error (SDK 9.3 headers carry the availability);
+# newer APIs go through TMCompat (runtime checks).
 # Not covered: UISearchBar.keyboardAppearance (iOS 7, unannotated in the SDK) — see docs/DECISIONS.md D24.
 TubeMini_CFLAGS = -fobjc-arc -Wno-deprecated-declarations -Werror=unguarded-availability -Werror=partial-availability -ICore -IUI -IDebug
 ifneq ($(FINALPACKAGE),1)

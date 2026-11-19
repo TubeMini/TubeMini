@@ -33,6 +33,8 @@ SIZES = {
     RES / "Icon-Small-50@2x.png": 100,
     RES / "Icon-Small.png": 29,  # Settings
     RES / "Icon-Small@2x.png": 58,
+    RES / "LogoMark.png": 30,  # in-app header next to the "TubeMini" title
+    RES / "LogoMark@2x.png": 60,
     ROOT / "docs" / "icon.png": 256,  # README
     ROOT / "site" / "img" / "icon.png": 256,  # site header
     ROOT / "site" / "apple-touch-icon.png": 144,

@@ -6,7 +6,7 @@ extern NSString *const TMUpdaterDidChangeNotification;
 /// OTA updates of the app itself. Reads https://tubemini.github.io/update.json (the Cydia repo's latest
 /// TubeMini package: version, URL, SHA-256, notes), downloads the .deb, checks its SHA-256, and hands it to
 /// /usr/libexec/tubemini/tmupdate (setuid root), which runs dpkg -i and resprings.
-@interface TMUpdater : NSObject <UIAlertViewDelegate>
+@interface TMUpdater : NSObject
 + (instancetype)shared;
 /// Version of the running app (CFBundleShortVersionString).
 + (NSString *)currentVersion;

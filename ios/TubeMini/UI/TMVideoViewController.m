@@ -1,29 +1,39 @@
 #import "TMVideoViewController.h"
-#import "TMFormat.h"
+#import "TMAlert.h"
+#import "TMCells.h"
 #import "TMChannelViewController.h"
+#import "TMCompat.h"
 #import "TMDownloads.h"
+#import "TMFormat.h"
+#import "TMGlass.h"
 #import "TMImageLoader.h"
 #import "TMLibrary.h"
 #import "TMPlayer.h"
 #import "TMTheme.h"
 
+static const CGFloat kChannelAvatar = 40;
+
 @implementation TMVideoViewController {
     TMVideo *_video;
+    TMChannel *_channel; // fetched for the avatar and subscriber count
     UIView *_header;
-    UIImageView *_thumb;
-    UIButton *_playOverlay, *_playButton, *_qualityButton, *_channelButton, *_subscribeButton, *_listenButton, *_downloadButton;
-    UILabel *_title, *_meta, *_desc;
-    UISegmentedControl *_segment;
+    UIImageView *_thumb, *_avatar, *_descBack;
+    TMGlassButton *_playOverlay;
+    UILabel *_title, *_meta, *_channelName, *_channelMeta, *_desc;
+    UIControl *_channelRow;
+    TMPill *_subscribe, *_playPill, *_listenPill, *_downloadPill, *_qualityPill;
+    UIScrollView *_actions;
+    TMSegmentedControl *_segment;
     BOOL _descExpanded, _subBusy;
     NSInteger _quality;
     NSInteger _resumeAt; // seconds, from the watch history; 0 = from the start
-    NSArray *_downloadChoices; // @{title, quality, hls, bytes} shown in the sheet
     BOOL _loadingChoices;
     CGFloat _laidOutWidth;
+    CGSize _thumbSize;
 }
 
 - (instancetype)initWithVideo:(TMVideo *)video {
-    if ((self = [super initWithTitle:@"Video" firstPage:nil])) {
+    if ((self = [super initWithTitle:@"" firstPage:nil])) {
         _video = video;
         _quality = [TMAPIClient shared].preferredQuality;
         [self useSection:0];
@@ -54,81 +64,66 @@
 
 #pragma mark - Header
 
-+ (UIImage *)playImage {
-    CGFloat d = 76;
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(d, d), NO, 0);
-    CGContextRef ctx = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(ctx, [UIColor colorWithWhite:0 alpha:0.6].CGColor);
-    CGContextFillEllipseInRect(ctx, CGRectMake(0, 0, d, d));
-    CGContextSetFillColorWithColor(ctx, [UIColor whiteColor].CGColor);
-    CGContextMoveToPoint(ctx, d * 0.39, d * 0.28);
-    CGContextAddLineToPoint(ctx, d * 0.39, d * 0.72);
-    CGContextAddLineToPoint(ctx, d * 0.74, d * 0.5);
-    CGContextFillPath(ctx);
-    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return img;
-}
-
-static UIButton *makeButton(NSString *title, id target, SEL action) {
-    UIButton *b = [UIButton buttonWithType:UIButtonTypeCustom]; // styled by TMTheme (rounded-rect is always white)
-    [b setTitle:title forState:UIControlStateNormal];
-    b.titleLabel.font = [UIFont boldSystemFontOfSize:16];
-    b.titleLabel.adjustsFontSizeToFitWidth = YES; // "▶ Xem tiếp 1:02:03" on a narrow button
-    b.titleLabel.minimumScaleFactor = 0.7;
-    [b addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
-    return b;
+static UILabel *headerLabel(UIFont *font, NSInteger lines) {
+    UILabel *l = [[UILabel alloc] init];
+    l.font = font;
+    l.numberOfLines = lines;
+    l.backgroundColor = [UIColor clearColor];
+    l.lineBreakMode = TMLineBreakWord;
+    return l;
 }
 
 - (void)buildHeader {
     _header = [[UIView alloc] initWithFrame:CGRectZero];
-    _header.backgroundColor = [UIColor whiteColor];
     _thumb = [[UIImageView alloc] init];
-    _thumb.contentMode = UIViewContentModeScaleAspectFill;
-    _thumb.clipsToBounds = YES;
-    _thumb.backgroundColor = [UIColor blackColor];
+    _thumb.userInteractionEnabled = YES;
+    [_thumb addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(play)]];
     [_header addSubview:_thumb];
-    _playOverlay = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_playOverlay setImage:[TMVideoViewController playImage] forState:UIControlStateNormal];
-    [_playOverlay addTarget:self action:@selector(play) forControlEvents:UIControlEventTouchUpInside];
+    _playOverlay = [TMGlassButton buttonWithIcon:@"play" target:self action:@selector(play)];
+    _playOverlay.iconSize = 28;
+    _playOverlay.glassInset = 0;
+    _playOverlay.frame = CGRectMake(0, 0, 68, 68);
     [_header addSubview:_playOverlay];
 
-    _title = [[UILabel alloc] init];
-    _title.font = [UIFont boldSystemFontOfSize:20];
-    _title.numberOfLines = 0;
-    _title.backgroundColor = [UIColor clearColor];
+    _title = headerLabel(TMFontBold(TMIsPhone() ? 18 : 20), 0);
     [_header addSubview:_title];
-    _meta = [[UILabel alloc] init];
-    _meta.font = [UIFont systemFontOfSize:15];
-    _meta.textColor = [UIColor darkGrayColor];
-    _meta.numberOfLines = 2;
-    _meta.backgroundColor = [UIColor clearColor];
+    _meta = headerLabel(TMFontRegular(13), 2);
     [_header addSubview:_meta];
 
-    _playButton = makeButton(@"▶ Phát", self, @selector(play));
-    _qualityButton = makeButton(@"", self, @selector(chooseQuality));
-    _channelButton = makeButton(@"Kênh", self, @selector(openChannel));
-    _subscribeButton = makeButton(@"", self, @selector(toggleSubscribe));
-    _listenButton = makeButton(@"♫ Chỉ nghe", self, @selector(listen));
-    _downloadButton = makeButton(@"", self, @selector(download));
-    [_header addSubview:_listenButton];
-    [_header addSubview:_downloadButton];
-    [_header addSubview:_playButton];
-    [_header addSubview:_qualityButton];
-    [_header addSubview:_channelButton];
-    [_header addSubview:_subscribeButton];
+    _channelRow = [[UIControl alloc] init];
+    [_channelRow addTarget:self action:@selector(openChannel) forControlEvents:UIControlEventTouchUpInside];
+    [_header addSubview:_channelRow];
+    _avatar = [[UIImageView alloc] init];
+    _avatar.userInteractionEnabled = NO;
+    [_channelRow addSubview:_avatar];
+    _channelName = headerLabel(TMFontMedium(15), 1);
+    _channelName.lineBreakMode = TMLineBreakTail;
+    [_channelRow addSubview:_channelName];
+    _channelMeta = headerLabel(TMFontRegular(12.5), 1);
+    _channelMeta.lineBreakMode = TMLineBreakTail;
+    [_channelRow addSubview:_channelMeta];
+    _subscribe = [TMPill pillWithTitle:@"Theo dõi" icon:nil style:TMPillStyleInverse target:self action:@selector(toggleSubscribe)];
+    [_header addSubview:_subscribe];
 
-    _desc = [[UILabel alloc] init];
-    _desc.font = [UIFont systemFontOfSize:14];
-    _desc.textColor = [UIColor darkGrayColor];
-    _desc.backgroundColor = [UIColor clearColor];
-    _desc.userInteractionEnabled = YES;
-    [_desc addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleDescription)]];
-    [_header addSubview:_desc];
+    _actions = [[UIScrollView alloc] init];
+    _actions.showsHorizontalScrollIndicator = NO;
+    _actions.alwaysBounceHorizontal = YES;
+    _actions.scrollsToTop = NO;
+    [_header addSubview:_actions];
+    _playPill = [TMPill pillWithTitle:@"Phát" icon:@"play" style:TMPillStyleBrand target:self action:@selector(play)];
+    _listenPill = [TMPill pillWithTitle:@"Chỉ nghe" icon:@"headphones" style:TMPillStyleGray target:self action:@selector(listen)];
+    _downloadPill = [TMPill pillWithTitle:@"Tải về" icon:@"download" style:TMPillStyleGray target:self action:@selector(download)];
+    _qualityPill = [TMPill pillWithTitle:@"" icon:@"hd" style:TMPillStyleGray target:self action:@selector(chooseQuality)];
+    for (TMPill *p in @[ _playPill, _listenPill, _downloadPill, _qualityPill ]) [_actions addSubview:p];
 
-    _segment = [[UISegmentedControl alloc] initWithItems:@[ @"Video liên quan", @"Bình luận" ]];
-    _segment.segmentedControlStyle = UISegmentedControlStyleBar;
-    _segment.selectedSegmentIndex = 0;
+    _descBack = [[UIImageView alloc] init];
+    _descBack.userInteractionEnabled = YES;
+    [_descBack addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleDescription)]];
+    [_header addSubview:_descBack];
+    _desc = headerLabel(TMFontRegular(14), 4);
+    [_descBack addSubview:_desc];
+
+    _segment = [[TMSegmentedControl alloc] initWithItems:@[ @"Video liên quan", @"Bình luận" ]];
     [_segment addTarget:self action:@selector(segmentChanged) forControlEvents:UIControlEventValueChanged];
     [_header addSubview:_segment];
     [self applyTheme];
@@ -140,93 +135,143 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     _header.backgroundColor = t.background;
     _title.textColor = t.text;
     _meta.textColor = t.secondaryText;
-    _desc.textColor = t.secondaryText;
-    for (UIButton *b in @[ _playButton ?: [NSNull null], _qualityButton ?: [NSNull null], _channelButton ?: [NSNull null],
-                          _listenButton ?: [NSNull null], _downloadButton ?: [NSNull null] ]) {
-        if ([b isKindOfClass:[UIButton class]]) [t styleButton:b];
-    }
-    _segment.tintColor = t.dark ? [UIColor colorWithWhite:0.28 alpha:1] : [UIColor colorWithRed:0.62 green:0.08 blue:0.08 alpha:1];
+    _channelName.textColor = t.text;
+    _channelMeta.textColor = t.secondaryText;
+    _desc.textColor = t.text;
+    _descBack.image = TMRoundImage(t.elevated, 12);
     [self styleSubscribe];
 }
 
 - (void)styleSubscribe {
-    if (!_subscribeButton) return;
-    [[TMTheme current] styleSubscribeButton:_subscribeButton subscribed:[[TMLibrary shared] isSubscribed:_video.authorID] busy:_subBusy];
+    if (!_subscribe) return;
+    BOOL subscribed = [[TMLibrary shared] isSubscribed:_video.authorID];
+    _subscribe.pillStyle = subscribed ? TMPillStyleGray : TMPillStyleInverse;
+    _subscribe.title = _subBusy ? @"…" : (subscribed ? @"Đã theo dõi" : @"Theo dõi");
+    [self layoutHeaderForce:YES];
 }
 
 - (void)updateDownloadTitle {
     TMDownload *x = [[TMDownloads shared] itemFor:_video.videoID];
-    NSString *title = @"⬇ Tải về";
+    NSString *title = @"Tải về";
+    NSString *icon = @"download";
     if (x.state == TMDownloadDone) {
-        title = @"✓ Đã tải";
+        title = @"Đã tải";
+        icon = @"check";
     } else if (x.state == TMDownloadFailed) {
-        title = @"⬇ Tải lại";
+        title = @"Tải lại";
     } else if (x.state == TMDownloadRunning && x.total > 0) {
-        title = [NSString stringWithFormat:@"⬇ %d%%", (int)(100 * x.received / x.total)];
+        title = [NSString stringWithFormat:@"%d%%", (int)(100 * x.received / x.total)];
     } else if (x) {
-        title = @"⬇ Đang chờ…";
+        title = @"Đang chờ…";
     }
-    [_downloadButton setTitle:title forState:UIControlStateNormal];
+    if ([title isEqualToString:[_downloadPill titleForState:UIControlStateNormal]]) return;
+    _downloadPill.title = title;
+    _downloadPill.iconName = icon;
+    [self layoutActions];
 }
 
 - (void)updatePlayTitle {
-    NSString *title = _resumeAt > 0 ? [NSString stringWithFormat:@"▶ Xem tiếp %@", [TMFormat duration:_resumeAt]] : @"▶ Phát";
-    [_playButton setTitle:title forState:UIControlStateNormal];
+    _playPill.title = _resumeAt > 0 ? [NSString stringWithFormat:@"Xem tiếp %@", [TMFormat duration:_resumeAt]] : @"Phát";
+    [self layoutActions];
+}
+
+- (void)updateQualityTitle {
+    _qualityPill.title = [NSString stringWithFormat:@"%ldp", (long)_quality];
+    [self layoutActions];
+}
+
+- (void)fillChannel {
+    NSString *name = _video.author ?: @"";
+    _channelName.text = name;
+    _channelMeta.text = _channel.subscribers > 0 ? [NSString stringWithFormat:@"%@ người đăng ký", [TMFormat count:_channel.subscribers]] : @"";
+    NSString *url = _channel.avatarURL.length ? _channel.avatarURL : [[TMLibrary shared] avatarForChannel:_video.authorID];
+    CGSize size = CGSizeMake(kChannelAvatar, kChannelAvatar);
+    [[TMImageLoader shared] setImageURL:url.length ? [NSURL URLWithString:url] : nil
+                            onImageView:_avatar
+                            placeholder:TMLetterAvatar(name, kChannelAvatar)
+                                   size:size
+                                 radius:kChannelAvatar / 2];
 }
 
 - (void)fillHeader {
     _title.text = _video.title;
-    _meta.text = [TMFormat join:@[ _video.author ?: @"", [TMFormat views:_video.views], [TMFormat relativeDate:_video.published] ]];
+    _meta.text = [TMFormat join:@[ [TMFormat views:_video.views], [TMFormat relativeDate:_video.published] ]];
     _desc.text = _video.descriptionText.length ? _video.descriptionText : @"";
     _desc.numberOfLines = _descExpanded ? 0 : 4;
-    [_qualityButton setTitle:[NSString stringWithFormat:@"Chất lượng: %ldp", (long)_quality] forState:UIControlStateNormal];
-    _channelButton.hidden = _video.authorID.length == 0;
-    _subscribeButton.hidden = _channelButton.hidden;
+    _channelRow.hidden = _subscribe.hidden = _video.authorID.length == 0 && _video.author.length == 0;
+    _subscribe.hidden = _video.authorID.length == 0;
+    [self fillChannel];
     [self styleSubscribe];
     [self updatePlayTitle];
     [self updateDownloadTitle];
-    NSURL *hq = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", _video.videoID]];
-    [[TMImageLoader shared] setImageURL:hq onImageView:_thumb placeholder:nil size:CGSizeMake(480, 360)];
+    [self updateQualityTitle];
+    _thumbSize = CGSizeZero; // reload the picture at the laid-out size
     [self layoutHeaderForce:YES];
+}
+
+- (void)layoutActions {
+    CGFloat x = TMListMargin();
+    for (TMPill *p in @[ _playPill, _listenPill, _downloadPill, _qualityPill ]) {
+        p.frame = CGRectMake(x, 0, [p fittingWidth], 36);
+        x += p.frame.size.width + 8;
+    }
+    _actions.contentSize = CGSizeMake(x - 8 + TMListMargin(), 36);
 }
 
 /// Frame layout for the current width; re-assigning tableHeaderView applies the new height.
 - (void)layoutHeaderForce:(BOOL)force {
+    if (!_header) return;
     CGFloat W = self.tableView.bounds.size.width;
     if (!force && W == _laidOutWidth) return;
     _laidOutWidth = W;
-    CGFloat pad = 15, inner = W - 2 * pad;
-    // At most 600 pt wide, and 60% of the height (an iPhone on its side would see only the picture)
-    CGFloat H = self.tableView.bounds.size.height, tw = MIN(inner, 600);
+    CGFloat m = TMListMargin(), inner = W - 2 * m;
+    // At most 720 pt wide, and 60% of the height (an iPhone on its side would see only the picture)
+    CGFloat H = self.tableView.bounds.size.height, tw = MIN(inner, 720);
     if (H > 0) tw = MIN(tw, floor(H * 0.6 * 16 / 9));
     CGFloat th = floor(tw * 9 / 16);
-    _thumb.frame = CGRectMake(floor((W - tw) / 2), 10, tw, th);
-    _playOverlay.frame = CGRectMake(CGRectGetMidX(_thumb.frame) - 38, CGRectGetMidY(_thumb.frame) - 38, 76, 76);
-    CGFloat y = CGRectGetMaxY(_thumb.frame) + 12;
-    CGSize ts = [_title.text sizeWithFont:_title.font constrainedToSize:CGSizeMake(inner, 120) lineBreakMode:NSLineBreakByWordWrapping];
-    _title.frame = CGRectMake(pad, y, inner, ts.height);
-    y += ts.height + 4;
-    CGSize ms = [_meta.text sizeWithFont:_meta.font constrainedToSize:CGSizeMake(inner, 40) lineBreakMode:NSLineBreakByWordWrapping];
-    _meta.frame = CGRectMake(pad, y, inner, ms.height);
-    y += ms.height + 10;
-    // Watching (play, listen, quality), then download / channel / subscribe: 3 per row, 2 on an iPhone in portrait
-    NSArray *buttons = @[ _playButton, _listenButton, _qualityButton, _downloadButton, _channelButton, _subscribeButton ];
-    NSInteger cols = inner < 420 ? 2 : 3;
-    CGFloat bw = floor(MIN(230, (inner - 10 * (cols - 1)) / cols));
-    for (NSUInteger i = 0; i < buttons.count; i++) {
-        [buttons[i] setFrame:CGRectMake(pad + (i % cols) * (bw + 10), y + (i / cols) * 50, bw, 40)];
+    _thumb.frame = CGRectMake(floor((W - tw) / 2), 4, tw, th);
+    if (!CGSizeEqualToSize(_thumbSize, _thumb.frame.size)) {
+        _thumbSize = _thumb.frame.size;
+        NSURL *hq = [NSURL URLWithString:[NSString stringWithFormat:@"https://i.ytimg.com/vi/%@/hqdefault.jpg", _video.videoID]];
+        [[TMImageLoader shared] setImageURL:hq onImageView:_thumb size:_thumbSize radius:TMIsPhone() ? 14 : 18];
     }
-    y += 50 * (buttons.count / cols) + 2;
+    _playOverlay.center = CGPointMake(CGRectGetMidX(_thumb.frame), CGRectGetMidY(_thumb.frame));
+    CGFloat y = CGRectGetMaxY(_thumb.frame) + 14;
+    CGSize ts = [_title.text sizeWithFont:_title.font constrainedToSize:CGSizeMake(inner, 200) lineBreakMode:TMLineBreakWord];
+    _title.frame = CGRectMake(m, y, inner, ceil(ts.height));
+    y += ceil(ts.height) + 4;
+    _meta.frame = CGRectMake(m, y, inner, 17);
+    y += 17 + 14;
+
+    if (!_channelRow.hidden) {
+        CGFloat sw = _subscribe.hidden ? 0 : [_subscribe fittingWidth];
+        _subscribe.frame = CGRectMake(W - m - sw, y + 2, sw, 36);
+        _channelRow.frame = CGRectMake(m, y, inner - sw - 10, kChannelAvatar);
+        _avatar.frame = CGRectMake(0, 0, kChannelAvatar, kChannelAvatar);
+        CGFloat nx = kChannelAvatar + 10, nw = _channelRow.bounds.size.width - nx;
+        BOOL hasMeta = _channelMeta.text.length > 0;
+        _channelName.frame = CGRectMake(nx, hasMeta ? 2 : 10, nw, 19);
+        _channelMeta.frame = CGRectMake(nx, 22, nw, 16);
+        _channelMeta.hidden = !hasMeta;
+        y += kChannelAvatar + 14;
+    }
+
+    _actions.frame = CGRectMake(0, y, W, 36);
+    [self layoutActions];
+    y += 36 + 14;
+
     if (_desc.text.length) {
-        CGFloat maxH = _descExpanded ? 2000 : 4 * _desc.font.lineHeight + 2;
-        CGSize ds = [_desc.text sizeWithFont:_desc.font constrainedToSize:CGSizeMake(inner, maxH) lineBreakMode:NSLineBreakByWordWrapping];
-        _desc.frame = CGRectMake(pad, y, inner, ds.height);
-        y += ds.height + 12;
+        CGFloat maxH = _descExpanded ? 3000 : 4 * _desc.font.lineHeight + 2;
+        CGSize ds = [_desc.text sizeWithFont:_desc.font constrainedToSize:CGSizeMake(inner - 24, maxH) lineBreakMode:TMLineBreakWord];
+        _descBack.hidden = NO;
+        _descBack.frame = CGRectMake(m, y, inner, ceil(ds.height) + 22);
+        _desc.frame = CGRectMake(12, 11, inner - 24, ceil(ds.height));
+        y += _descBack.frame.size.height + 14;
     } else {
-        _desc.frame = CGRectZero;
+        _descBack.hidden = YES;
     }
-    _segment.frame = CGRectMake(pad, y, inner, 32);
-    y += 32 + 10;
+    _segment.frame = CGRectMake(m, y, MIN(inner, 420), 34);
+    y += 34 + 10;
     _header.frame = CGRectMake(0, 0, W, y);
     self.tableView.tableHeaderView = _header;
 }
@@ -253,14 +298,31 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     [[TMAPIClient shared] video:_video.videoID
                      completion:^(TMVideo *full, NSString *error) {
                          if (!full) return;
+                         BOOL newChannel = ![full.authorID isEqualToString:self->_video.authorID];
                          self->_video = full;
                          [self fillHeader];
+                         if (newChannel) [self loadChannel];
                      }];
+    [self loadChannel];
     [[TMAPIClient shared] positionOf:_video.videoID
                           completion:^(NSInteger position, NSInteger duration) {
                               self->_resumeAt = [TMLibrary resumePositionFor:position duration:duration];
                               [self updatePlayTitle];
                           }];
+}
+
+/// The channel's avatar and subscriber count for the channel row.
+- (void)loadChannel {
+    NSString *cid = _video.authorID;
+    if (!cid.length) return;
+    [[TMAPIClient shared] channel:cid
+                       completion:^(TMChannel *c, NSString *error) {
+                           if (!c || ![cid isEqualToString:self->_video.authorID]) return;
+                           self->_channel = c;
+                           [[TMLibrary shared] rememberChannel:c];
+                           [self fillChannel];
+                           [self layoutHeaderForce:YES];
+                       }];
 }
 
 /// The player saved a position for this video: "Xem tiếp" follows it without asking the server.
@@ -294,14 +356,10 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
     } else if (!x) {
         [self chooseDownload];
     } else if (x.state == TMDownloadDone) {
-        // Already on the iPad: play the saved copy (works without network)
+        // Already on the device: play the saved copy (works without network)
         [[TMPlayer shared] playFile:x.filePath video:_video startAt:_resumeAt from:self];
     } else {
-        [[[UIAlertView alloc] initWithTitle:@"Đang tải"
-                                    message:@"Xem tiến độ ở tab “Đã tải”."
-                                   delegate:nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil] show];
+        [TMAlert showTitle:@"Đang tải" message:@"Xem tiến độ ở tab “Đã tải”." button:@"OK"];
     }
 }
 
@@ -348,28 +406,26 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
 - (void)chooseDownload {
     if (_loadingChoices) return;
     _loadingChoices = YES;
-    [_downloadButton setTitle:@"⬇ …" forState:UIControlStateNormal];
+    _downloadPill.title = @"…";
     [self loadDownloadChoices:^(NSArray *choices, NSString *error) {
         self->_loadingChoices = NO;
+        self->_downloadPill.title = @"";
         [self updateDownloadTitle];
         if (error) {
-            [[[UIAlertView alloc] initWithTitle:@"Không tải được" message:error delegate:nil cancelButtonTitle:@"Đóng"
-                              otherButtonTitles:nil] show];
+            [TMAlert showTitle:@"Không tải được" message:error button:@"Đóng"];
             return;
         }
-        self->_downloadChoices = choices;
-        UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Tải về để xem khi không có mạng"
-                                                           delegate:self
-                                                  cancelButtonTitle:nil
-                                             destructiveButtonTitle:nil
-                                                  otherButtonTitles:nil];
-        sheet.tag = 2;
+        NSMutableArray *titles = [NSMutableArray array];
         for (NSDictionary *c in choices) {
             long long bytes = [c[@"bytes"] longLongValue];
-            [sheet addButtonWithTitle:bytes > 0 ? [NSString stringWithFormat:@"%@ · khoảng %lld MB", c[@"title"], MAX(bytes >> 20, 1LL)]
-                                                : c[@"title"]];
+            [titles addObject:bytes > 0 ? [NSString stringWithFormat:@"%@ · khoảng %lld MB", c[@"title"], MAX(bytes >> 20, 1LL)] : c[@"title"]];
         }
-        [sheet showFromRect:self->_downloadButton.frame inView:self->_header animated:YES];
+        [TMAlert sheetWithTitle:@"Tải về để xem khi không có mạng"
+                        buttons:titles
+               destructiveIndex:-1
+                        handler:^(NSInteger i) {
+                            if (i >= 0 && i < (NSInteger)choices.count) [self startDownload:choices[(NSUInteger)i]];
+                        }];
     }];
 }
 
@@ -384,30 +440,22 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
 }
 
 - (void)chooseQuality {
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Chất lượng phát"
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                         destructiveButtonTitle:nil
-                                              otherButtonTitles:@"360p (nhẹ, ổn định)", @"720p (HD)", @"1080p (Full HD)", nil];
-    [sheet showFromRect:_qualityButton.frame inView:_header animated:YES];
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (actionSheet.tag == 2) {
-        if (buttonIndex >= 0 && buttonIndex < (NSInteger)_downloadChoices.count) [self startDownload:_downloadChoices[(NSUInteger)buttonIndex]];
-        _downloadChoices = nil;
-        return;
-    }
-    NSArray *qualities = [TMAPIClient qualities];
-    if (buttonIndex < 0 || buttonIndex >= (NSInteger)qualities.count) return;
-    _quality = [qualities[(NSUInteger)buttonIndex] integerValue];
-    [_qualityButton setTitle:[NSString stringWithFormat:@"Chất lượng: %ldp", (long)_quality] forState:UIControlStateNormal];
+    [TMAlert sheetWithTitle:@"Chất lượng phát"
+                    buttons:@[ @"360p (nhẹ, ổn định)", @"720p (HD)", @"1080p (Full HD)" ]
+           destructiveIndex:-1
+                    handler:^(NSInteger i) {
+                        NSArray *qualities = [TMAPIClient qualities];
+                        if (i < 0 || i >= (NSInteger)qualities.count) return;
+                        self->_quality = [qualities[(NSUInteger)i] integerValue];
+                        [self updateQualityTitle];
+                    }];
 }
 
 - (void)openChannel {
     if (!_video.authorID.length) return;
-    [self.navigationController pushViewController:[[TMChannelViewController alloc] initWithChannelID:_video.authorID name:_video.author]
-                                         animated:YES];
+    TMChannelViewController *c = _channel ? [[TMChannelViewController alloc] initWithChannel:_channel]
+                                           : [[TMChannelViewController alloc] initWithChannelID:_video.authorID name:_video.author];
+    [self.navigationController pushViewController:c animated:YES];
 }
 
 - (void)toggleSubscribe {
@@ -422,11 +470,7 @@ static UIButton *makeButton(NSString *title, id target, SEL action) {
                                self->_subBusy = NO;
                                [self styleSubscribe];
                                if (error) {
-                                   [[[UIAlertView alloc] initWithTitle:subscribe ? @"Không theo dõi được" : @"Không bỏ theo dõi được"
-                                                               message:error
-                                                              delegate:nil
-                                                     cancelButtonTitle:@"Đóng"
-                                                     otherButtonTitles:nil] show];
+                                   [TMAlert showTitle:subscribe ? @"Không theo dõi được" : @"Không bỏ theo dõi được" message:error button:@"Đóng"];
                                }
                            }];
 }

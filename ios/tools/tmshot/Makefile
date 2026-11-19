@@ -1,5 +1,5 @@
-# tmshot — screenshot from SSH on jailbroken iOS 6 (dev tool; see main.m). Build: make → .theos/obj/debug/tmshot
-TARGET := iphone:clang:9.3:6.0
+# tmshot — screenshot from SSH on jailbroken iOS 5–8 (dev tool; see main.m; on iOS 8 the picture is black: use TMDebug "shot"). Build: make → .theos/obj/debug/tmshot
+TARGET := iphone:clang:9.3:5.0
 ARCHS = armv7
 include $(THEOS)/makefiles/common.mk
 TOOL_NAME = tmshot

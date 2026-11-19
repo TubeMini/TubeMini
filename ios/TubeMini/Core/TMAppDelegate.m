@@ -1,6 +1,8 @@
 #import "TMAppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
 #import "TMAPIClient.h"
+#import "TMAlert.h"
+#import "TMNavigationController.h"
 #import "TMAudioBar.h"
 #import "TMAudioPlayer.h"
 #import "TMDownloads.h"
@@ -21,36 +23,15 @@
 #import "TMDebug.h"
 #endif
 
-typedef void (^TMDrawBlock)(CGContextRef ctx);
-
-/// Tab bar icons drawn at runtime (30×30 alpha masks), so the app needs no image assets.
-static UIImage *icon(TMDrawBlock draw) {
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(30, 30), NO, 0);
-    CGContextRef ctx = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(ctx, [UIColor blackColor].CGColor);
-    CGContextSetStrokeColorWithColor(ctx, [UIColor blackColor].CGColor);
-    CGContextSetLineWidth(ctx, 3);
-    draw(ctx);
-    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return img;
-}
-
 @implementation TMAppDelegate
 
 - (UINavigationController *)nav {
     UIViewController *vc = self.tabs.selectedViewController;
-    if (![vc isKindOfClass:[UINavigationController class]]) return nil;
-    // iPhone: the tabs past the 4th sit under "Thêm" (More). Picking one leaves its own navigation controller
-    // empty and off screen: UIKit pushes its screens onto moreNavigationController instead.
-    if (((UINavigationController *)vc).viewControllers.count == 0) return self.tabs.moreNavigationController;
-    return (UINavigationController *)vc;
+    return [vc isKindOfClass:[UINavigationController class]] ? (UINavigationController *)vc : nil;
 }
 
-- (UINavigationController *)wrap:(UIViewController *)vc title:(NSString *)title image:(UIImage *)image {
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    nav.tabBarItem = [[UITabBarItem alloc] initWithTitle:title image:image tag:0];
-    return nav;
+- (UINavigationController *)wrap:(UIViewController *)vc {
+    return [[TMNavigationController alloc] initWithRootViewController:vc];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -64,87 +45,41 @@ static UIImage *icon(TMDrawBlock draw) {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
 
-    TMHomeViewController *home = [[TMHomeViewController alloc] init];
-
-    UIImage *homeIcon = icon(^(CGContextRef ctx) {
-        CGContextMoveToPoint(ctx, 15, 3);
-        CGContextAddLineToPoint(ctx, 28, 15);
-        CGContextAddLineToPoint(ctx, 2, 15);
-        CGContextFillPath(ctx);
-        CGContextFillRect(ctx, CGRectMake(6, 14, 18, 13));
-    });
-    UIImage *searchIcon = icon(^(CGContextRef ctx) {
-        CGContextStrokeEllipseInRect(ctx, CGRectMake(4, 4, 15, 15));
-        CGContextSetLineWidth(ctx, 4);
-        CGContextMoveToPoint(ctx, 17, 17);
-        CGContextAddLineToPoint(ctx, 26, 26);
-        CGContextStrokePath(ctx);
-    });
-    UIImage *subscriptionsIcon = icon(^(CGContextRef ctx) {
-        // A stack of screens with a play triangle cut out of the front one
-        CGContextFillRect(ctx, CGRectMake(10, 3, 10, 2));
-        CGContextFillRect(ctx, CGRectMake(6, 7, 18, 2));
-        CGContextFillRect(ctx, CGRectMake(2, 11, 26, 17));
-        CGContextSetBlendMode(ctx, kCGBlendModeClear);
-        CGContextMoveToPoint(ctx, 12, 14);
-        CGContextAddLineToPoint(ctx, 12, 25);
-        CGContextAddLineToPoint(ctx, 21, 19.5);
-        CGContextFillPath(ctx);
-    });
-    UIImage *historyIcon = icon(^(CGContextRef ctx) {
-        CGContextStrokeEllipseInRect(ctx, CGRectMake(3, 3, 24, 24));
-        CGContextSetLineCap(ctx, kCGLineCapRound);
-        CGContextMoveToPoint(ctx, 15, 8);
-        CGContextAddLineToPoint(ctx, 15, 15);
-        CGContextAddLineToPoint(ctx, 20, 19);
-        CGContextStrokePath(ctx);
-    });
-    UIImage *downloadsIcon = icon(^(CGContextRef ctx) {
-        // Arrow down into a tray
-        CGContextFillRect(ctx, CGRectMake(12.5, 2, 5, 11));
-        CGContextMoveToPoint(ctx, 6, 12);
-        CGContextAddLineToPoint(ctx, 24, 12);
-        CGContextAddLineToPoint(ctx, 15, 21);
-        CGContextFillPath(ctx);
-        CGContextMoveToPoint(ctx, 3.5, 18);
-        CGContextAddLineToPoint(ctx, 3.5, 26.5);
-        CGContextAddLineToPoint(ctx, 26.5, 26.5);
-        CGContextAddLineToPoint(ctx, 26.5, 18);
-        CGContextStrokePath(ctx);
-    });
-    UIImage *settingsIcon = icon(^(CGContextRef ctx) {
-        for (int i = 0; i < 8; i++) {
-            CGFloat a = i * M_PI / 4;
-            CGContextFillEllipseInRect(ctx, CGRectMake(15 + 10 * cos(a) - 3, 15 + 10 * sin(a) - 3, 6, 6));
-        }
-        CGContextFillEllipseInRect(ctx, CGRectMake(7, 7, 16, 16));
-    });
-
-    self.tabs = [[UITabBarController alloc] init];
+    // Search is the round button at the right end of the bar (iOS 26); the indexes stay those of the
+    // old tab bar (debug commands: tab 5 = Cài đặt)
+    self.tabs = [[TMTabBarController alloc] init];
     self.tabs.viewControllers = @[
-        [self wrap:home title:@"Trang chủ" image:homeIcon],
-        [self wrap:[[TMSearchViewController alloc] init] title:@"Tìm kiếm" image:searchIcon],
-        [self wrap:[[TMSubscriptionsViewController alloc] init] title:@"Đã theo dõi" image:subscriptionsIcon],
-        [self wrap:[[TMHistoryViewController alloc] init] title:@"Lịch sử" image:historyIcon],
-        [self wrap:[[TMDownloadsViewController alloc] init] title:@"Đã tải" image:downloadsIcon],
-        [self wrap:[[TMSettingsViewController alloc] init] title:@"Cài đặt" image:settingsIcon],
+        [self wrap:[[TMHomeViewController alloc] init]],
+        [self wrap:[[TMSearchViewController alloc] init]],
+        [self wrap:[[TMSubscriptionsViewController alloc] init]],
+        [self wrap:[[TMHistoryViewController alloc] init]],
+        [self wrap:[[TMDownloadsViewController alloc] init]],
+        [self wrap:[[TMSettingsViewController alloc] init]],
     ];
+    self.tabs.items = @[
+        [TMTabItem itemWithTitle:@"Trang chủ" icon:@"home"],
+        [TMTabItem itemWithTitle:@"Tìm kiếm" icon:@"search"],
+        [TMTabItem itemWithTitle:@"Theo dõi" icon:@"subs"],
+        [TMTabItem itemWithTitle:@"Lịch sử" icon:@"history"],
+        [TMTabItem itemWithTitle:@"Đã tải" icon:@"download"],
+        [TMTabItem itemWithTitle:@"Cài đặt" icon:@"settings"],
+    ];
+    self.tabs.accessoryIndex = 1;
 
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [TMTheme current].background;
     self.window.rootViewController = self.tabs;
-    [self.window makeKeyAndVisible];
-    [TMTheme applyGlobalAppearance]; // again, now that the tabs exist: the iPhone "Thêm" list
     [self addAudioBar];
+    [self.window makeKeyAndVisible];
 
     [[TMLibrary shared] refresh]; // which channels are subscribed (for the Subscribe buttons)
     if (![TMAPIClient shared].isConfigured) {
         self.tabs.selectedIndex = self.tabs.viewControllers.count - 1; // Cài đặt
-        [[[UIAlertView alloc] initWithTitle:@"Chào mừng đến TubeMini"
-                                    message:@"Nhập địa chỉ máy chủ tubemini-server trong mạng nhà để bắt đầu."
-                                   delegate:nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil] show];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [TMAlert showTitle:@"Chào mừng đến TubeMini"
+                       message:@"Nhập địa chỉ máy chủ tubemini-server trong mạng nhà để bắt đầu."
+                        button:@"Bắt đầu"];
+        });
     }
     [[TMDownloads shared] resume]; // downloads interrupted last time
     if ([TMAPIClient shared].isConfigured) [[TMUpdater shared] checkQuietly]; // a newer TubeMini? (once a day)
@@ -154,12 +89,9 @@ static UIImage *icon(TMDrawBlock draw) {
     return YES;
 }
 
-/// The "Chỉ nghe" mini player, just above the tab bar, on the view that rotates.
+/// The "Chỉ nghe" mini player, floating just above the tab bar.
 - (void)addAudioBar {
-    UIView *host = self.tabs.view;
-    CGFloat h = [TMAudioBar height], tab = self.tabs.tabBar.bounds.size.height;
-    TMAudioBar *bar = [[TMAudioBar alloc] initWithFrame:CGRectMake(0, host.bounds.size.height - tab - h, host.bounds.size.width, h)];
-    bar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+    TMAudioBar *bar = [[TMAudioBar alloc] initWithFrame:CGRectZero];
     __weak TMAppDelegate *weakSelf = self;
     bar.onOpen = ^{
         TMVideo *v = [TMAudioPlayer shared].video;
@@ -169,7 +101,7 @@ static UIImage *icon(TMDrawBlock draw) {
         if ([top isKindOfClass:[TMVideoViewController class]] && [[(TMVideoViewController *)top video].videoID isEqualToString:v.videoID]) return;
         [nav pushViewController:[[TMVideoViewController alloc] initWithVideo:v] animated:YES];
     };
-    [host addSubview:bar];
+    self.tabs.accessoryView = bar;
 }
 
 /// Lock screen / headphone buttons reach the end of the responder chain here.

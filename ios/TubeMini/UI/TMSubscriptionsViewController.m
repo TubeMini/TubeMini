@@ -1,8 +1,10 @@
 #import "TMSubscriptionsViewController.h"
+#import "TMAlert.h"
 #import "TMLibrary.h"
+#import "TMNavigationController.h"
 
 static void showError(NSString *title, NSString *message) {
-    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"Đóng" otherButtonTitles:nil] show];
+    [TMAlert showTitle:title message:message button:@"Đóng"];
 }
 
 #pragma mark - Subscriptions
@@ -19,7 +21,7 @@ static void showError(NSString *title, NSString *message) {
         }];
     };
     if ((self = [super initWithTitle:@"Đã theo dõi" firstPage:first])) {
-        self.emptyMessage = @"Chưa theo dõi kênh nào.\nMở một kênh (từ Tìm kiếm hoặc trang video) rồi bấm “+ Theo dõi”.";
+        self.emptyMessage = @"Chưa theo dõi kênh nào.\nMở một kênh (từ Tìm kiếm hoặc trang video) rồi bấm “Theo dõi”.";
         self.deleteTitle = @"Bỏ theo dõi";
         __weak TMSubscriptionsViewController *weakSelf = self;
         self.onDelete = ^(id item) {
@@ -38,6 +40,11 @@ static void showError(NSString *title, NSString *message) {
                                                    object:nil];
     }
     return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    TMSetLargeTitle(self, @"Đã theo dõi", NO);
 }
 
 - (void)changed {
@@ -80,8 +87,8 @@ static void showError(NSString *title, NSString *message) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.rightBarButtonItem =
-        [[UIBarButtonItem alloc] initWithTitle:@"Xoá hết" style:UIBarButtonItemStyleBordered target:self action:@selector(askClear)];
+    TMSetLargeTitle(self, @"Lịch sử", NO);
+    self.navigationItem.rightBarButtonItem = TMBarButton(@"trash", self, @selector(askClear));
 }
 
 - (void)changed {
@@ -98,15 +105,14 @@ static void showError(NSString *title, NSString *message) {
 
 - (void)askClear {
     if (!self.items.count) return;
-    [[[UIAlertView alloc] initWithTitle:@"Xoá toàn bộ lịch sử xem?"
-                                message:@"Vị trí đang xem dở của mọi video cũng mất."
-                               delegate:self
-                      cancelButtonTitle:@"Không"
-                      otherButtonTitles:@"Xoá hết", nil] show];
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex != alertView.cancelButtonIndex) [self clearAll];
+    [TMAlert showTitle:@"Xoá toàn bộ lịch sử xem?"
+               message:@"Vị trí đang xem dở của mọi video cũng mất."
+               buttons:@[ @"Không", @"Xoá hết" ]
+           cancelIndex:0
+      destructiveIndex:1
+               handler:^(NSInteger i) {
+                   if (i == 1) [self clearAll];
+               }];
 }
 
 - (void)clearAll {

@@ -119,5 +119,14 @@ print("chuyển sang Foundation: %d symbols, %d objc-classes, %d objc-ivars"
 EOF
 fi
 
+# Vá 4 (TubeMini, iOS 5): `mảng[i]`, `từđiển[khoá]` gọi objectAtIndexedSubscript: / objectForKeyedSubscript:…, SDK ghi «iOS 6+».
+# Toolchain của Apple gắn libarclite để có chúng trên iOS 5; toolchain Linux không có libarclite, nên app tự thêm 4 hàm này lúc chạy
+# (ios/TubeMini/Core/TMCompat.m). Ghi lại mốc iOS 5.0 cho 4 hàm đó để -Werror=unguarded-availability không chặn; với app nhắm
+# iOS 6 trở lên thì không đổi gì.
+HEADERS="$SDK/System/Library/Frameworks/Foundation.framework/Headers"
+for h in NSArray.h NSDictionary.h NSOrderedSet.h; do
+    sed -i -E 's/((Indexed|Keyed)Subscript:\([^)]*\)(idx|key) NS_AVAILABLE\(10_8, )6_0\)/\15_0)/' "$HEADERS/$h"
+done
+
 "$THEOS/toolchain/linux/iphone/bin/clang" --version | head -1
 echo "Theos: $THEOS — SDK: $SDK"

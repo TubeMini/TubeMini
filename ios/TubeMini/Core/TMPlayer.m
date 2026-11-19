@@ -1,4 +1,6 @@
 #import "TMPlayer.h"
+#import "TMAlert.h"
+#import "TMCompat.h"
 #import "TMAPIClient.h"
 #import "TMAudioPlayer.h"
 #import "TMImageLoader.h"
@@ -57,7 +59,7 @@ static const NSTimeInterval kSaveInterval = 15;
         [nc addObserver:self selector:@selector(didBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
         [nc addObserver:self
                selector:@selector(audioInterrupted:)
-                   name:AVAudioSessionInterruptionNotification
+                   name:@"AVAudioSessionInterruptionNotification" // iOS 6+ (the constant too); iOS 5 never posts it
                  object:[AVAudioSession sharedInstance]];
         [nc addObserver:self
                selector:@selector(playbackStateChanged:)
@@ -75,22 +77,24 @@ static const NSTimeInterval kSaveInterval = 15;
 
 - (void)showHUD:(NSString *)text on:(UIView *)host {
     if (!_hud) {
-        _hud = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 120)];
-        _hud.backgroundColor = [UIColor colorWithWhite:0 alpha:0.78];
-        _hud.layer.cornerRadius = 12;
+        _hud = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 124)];
+        _hud.backgroundColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.11 alpha:0.86];
+        _hud.layer.cornerRadius = 24;
+        _hud.layer.borderWidth = 1;
+        _hud.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.14].CGColor;
         _hud.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin |
                                 UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
         UIActivityIndicatorView *spin =
             [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-        spin.center = CGPointMake(160, 38);
+        spin.center = CGPointMake(150, 40);
         [spin startAnimating];
         [_hud addSubview:spin];
-        _hudLabel = [[UILabel alloc] initWithFrame:CGRectMake(12, 64, 296, 48)];
+        _hudLabel = [[UILabel alloc] initWithFrame:CGRectMake(14, 66, 272, 48)];
         _hudLabel.numberOfLines = 2;
-        _hudLabel.textAlignment = NSTextAlignmentCenter;
+        _hudLabel.textAlignment = TMAlignCenter;
         _hudLabel.textColor = [UIColor whiteColor];
         _hudLabel.backgroundColor = [UIColor clearColor];
-        _hudLabel.font = [UIFont systemFontOfSize:16];
+        _hudLabel.font = TMFontRegular(15);
         [_hud addSubview:_hudLabel];
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancel)];
         [_hud addGestureRecognizer:tap];
@@ -123,8 +127,7 @@ static const NSTimeInterval kSaveInterval = 15;
 }
 
 - (void)alert:(NSString *)message {
-    [[[UIAlertView alloc] initWithTitle:@"Không phát được" message:message delegate:nil cancelButtonTitle:@"Đóng"
-                      otherButtonTitles:nil] show];
+    [TMAlert showTitle:@"Không phát được" message:message button:@"Đóng"];
 }
 
 #pragma mark - Flow
@@ -379,7 +382,7 @@ static const NSTimeInterval kSaveInterval = 15;
 
 /// Another app took the sound (or an alarm): don't fight it.
 - (void)audioInterrupted:(NSNotification *)n {
-    if ([n.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue] != AVAudioSessionInterruptionTypeBegan) return;
+    if ([n.userInfo[@"AVAudioSessionInterruptionTypeKey"] unsignedIntegerValue] != 1 /* began */) return;
     if (!_guard) return;
     TMLog(@"[player] âm thanh bị app khác chiếm, không phát tiếp");
     _keepSound = NO;
@@ -503,21 +506,18 @@ static const NSTimeInterval kSaveInterval = 15;
     if (local) {
         [self alert:@"Không phát được bản đã tải. Có thể file bị hỏng: xoá rồi tải lại."];
     } else if (canFallBack) {
-        UIAlertView *a = [[UIAlertView alloc] initWithTitle:@"Không phát được"
-                                                    message:[NSString stringWithFormat:@"Không phát được ở %@. Thử 360p?",
-                                                                                       [self labelFor:_stream]]
-                                                   delegate:self
-                                          cancelButtonTitle:@"Đóng"
-                                          otherButtonTitles:@"Thử 360p", nil];
-        [a show];
+        [TMAlert showTitle:@"Không phát được"
+                   message:[NSString stringWithFormat:@"Không phát được ở %@. Thử 360p?", [self labelFor:_stream]]
+                   buttons:@[ @"Đóng", @"Thử 360p" ]
+               cancelIndex:0
+          destructiveIndex:-1
+                   handler:^(NSInteger i) {
+                       if (i != 1 || !self->_presenter) return;
+                       [self playVideo:self->_video quality:360 startAt:self->_lastPosition from:self->_presenter];
+                   }];
     } else {
         [self alert:@"Video này không phát được. Thử lại sau, hoặc chọn video khác."];
     }
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == alertView.cancelButtonIndex || !_presenter) return;
-    [self playVideo:_video quality:360 startAt:_lastPosition from:_presenter];
 }
 
 @end

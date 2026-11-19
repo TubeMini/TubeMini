@@ -6,9 +6,11 @@ NSString *const TMSubscriptionsDidChangeNotification = @"TMSubscriptionsDidChang
 NSString *const TMHistoryDidChangeNotification = @"TMHistoryDidChange";
 
 static NSString *const kSubscribedKey = @"TMSubscribedChannels";
+static NSString *const kAvatarsKey = @"TMChannelAvatars";
 
 @implementation TMLibrary {
     NSMutableSet *_ids;
+    NSMutableDictionary *_avatars; // channel id -> avatar URL
 }
 
 + (instancetype)shared {
@@ -22,8 +24,21 @@ static NSString *const kSubscribedKey = @"TMSubscribedChannels";
     if ((self = [super init])) {
         NSArray *saved = [[NSUserDefaults standardUserDefaults] arrayForKey:kSubscribedKey];
         _ids = [NSMutableSet setWithArray:saved ?: @[]];
+        NSDictionary *avatars = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kAvatarsKey];
+        _avatars = [NSMutableDictionary dictionaryWithDictionary:avatars ?: @{}];
     }
     return self;
+}
+
+- (NSString *)avatarForChannel:(NSString *)channelID {
+    return channelID.length ? _avatars[channelID] : nil;
+}
+
+- (void)rememberChannel:(TMChannel *)c {
+    if (!c.channelID.length || !c.avatarURL.length || [_avatars[c.channelID] isEqualToString:c.avatarURL]) return;
+    if (_avatars.count > 500) [_avatars removeAllObjects]; // a cache, not a library: start over rather than grow
+    _avatars[c.channelID] = c.avatarURL;
+    [[NSUserDefaults standardUserDefaults] setObject:_avatars forKey:kAvatarsKey];
 }
 
 - (BOOL)isSubscribed:(NSString *)channelID {
@@ -43,7 +58,9 @@ static NSString *const kSubscribedKey = @"TMSubscribedChannels";
 - (void)updateWithChannels:(NSArray *)channels {
     NSMutableSet *ids = [NSMutableSet set];
     for (id c in channels) {
-        if ([c isKindOfClass:[TMChannel class]] && [c channelID].length) [ids addObject:[c channelID]];
+        if (![c isKindOfClass:[TMChannel class]] || ![c channelID].length) continue;
+        [ids addObject:[c channelID]];
+        [self rememberChannel:c];
     }
     if ([ids isEqualToSet:_ids]) return;
     _ids = ids;

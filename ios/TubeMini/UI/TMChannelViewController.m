@@ -1,25 +1,27 @@
 #import "TMChannelViewController.h"
+#import "TMAlert.h"
+#import "TMCells.h"
+#import "TMCompat.h"
 #import "TMFormat.h"
+#import "TMGlass.h"
 #import "TMImageLoader.h"
 #import "TMLibrary.h"
 #import "TMTheme.h"
 #import <QuartzCore/QuartzCore.h>
 
-static const CGFloat kAvatar = 88;
-
 @implementation TMChannelViewController {
     TMChannel *_channel;
     UIView *_header;
-    UIImageView *_avatar;
+    UIImageView *_avatar, *_descBack;
     UILabel *_name, *_meta, *_desc;
-    UIButton *_subscribe;
-    UISegmentedControl *_segment;
+    TMPill *_subscribe;
+    TMSegmentedControl *_segment;
     BOOL _descExpanded, _busy;
     CGFloat _laidOutWidth;
 }
 
 - (instancetype)initWithChannel:(TMChannel *)channel {
-    if ((self = [super initWithTitle:channel.name firstPage:nil])) {
+    if ((self = [super initWithTitle:@"" firstPage:nil])) {
         _channel = channel;
         [self useSection:0];
     }
@@ -61,30 +63,27 @@ static UILabel *headerLabel(UIFont *font, NSInteger lines) {
     l.font = font;
     l.numberOfLines = lines;
     l.backgroundColor = [UIColor clearColor];
+    l.lineBreakMode = TMLineBreakWord;
     return l;
 }
 
 - (void)buildHeader {
     _header = [[UIView alloc] initWithFrame:CGRectZero];
     _avatar = [[UIImageView alloc] init];
-    _avatar.layer.cornerRadius = kAvatar / 2;
-    _avatar.clipsToBounds = YES;
     [_header addSubview:_avatar];
-    _name = headerLabel([UIFont boldSystemFontOfSize:22], 2);
+    _name = headerLabel(TMFontBold(TMIsPhone() ? 22 : 26), 2);
     [_header addSubview:_name];
-    _meta = headerLabel([UIFont systemFontOfSize:15], 1);
+    _meta = headerLabel(TMFontRegular(13.5), 2);
     [_header addSubview:_meta];
-    _subscribe = [UIButton buttonWithType:UIButtonTypeCustom];
-    _subscribe.titleLabel.font = [UIFont boldSystemFontOfSize:16];
-    [_subscribe addTarget:self action:@selector(toggleSubscribe) forControlEvents:UIControlEventTouchUpInside];
+    _subscribe = [TMPill pillWithTitle:@"Theo dõi" icon:nil style:TMPillStyleInverse target:self action:@selector(toggleSubscribe)];
     [_header addSubview:_subscribe];
-    _desc = headerLabel([UIFont systemFontOfSize:14], 3);
-    _desc.userInteractionEnabled = YES;
-    [_desc addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleDescription)]];
-    [_header addSubview:_desc];
-    _segment = [[UISegmentedControl alloc] initWithItems:@[ @"Video", @"Playlist" ]];
-    _segment.segmentedControlStyle = UISegmentedControlStyleBar;
-    _segment.selectedSegmentIndex = 0;
+    _descBack = [[UIImageView alloc] init];
+    _descBack.userInteractionEnabled = YES;
+    [_descBack addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleDescription)]];
+    [_header addSubview:_descBack];
+    _desc = headerLabel(TMFontRegular(14), 3);
+    [_descBack addSubview:_desc];
+    _segment = [[TMSegmentedControl alloc] initWithItems:@[ @"Video", @"Playlist" ]];
     [_segment addTarget:self action:@selector(segmentChanged) forControlEvents:UIControlEventValueChanged];
     [_header addSubview:_segment];
     [self applyTheme];
@@ -96,14 +95,16 @@ static UILabel *headerLabel(UIFont *font, NSInteger lines) {
     _header.backgroundColor = t.background;
     _name.textColor = t.text;
     _meta.textColor = t.secondaryText;
-    _desc.textColor = t.secondaryText;
-    _segment.tintColor = t.dark ? [UIColor colorWithWhite:0.28 alpha:1] : [UIColor colorWithRed:0.62 green:0.08 blue:0.08 alpha:1];
+    _desc.textColor = t.text;
+    _descBack.image = TMRoundImage(t.elevated, 12);
     [self styleSubscribe];
 }
 
 - (void)styleSubscribe {
     if (!_subscribe) return;
-    [[TMTheme current] styleSubscribeButton:_subscribe subscribed:[[TMLibrary shared] isSubscribed:_channel.channelID] busy:_busy];
+    BOOL subscribed = [[TMLibrary shared] isSubscribed:_channel.channelID];
+    _subscribe.pillStyle = subscribed ? TMPillStyleGray : TMPillStyleInverse;
+    _subscribe.title = _busy ? @"…" : (subscribed ? @"Đã theo dõi" : @"Theo dõi");
 }
 
 - (void)fillHeader {
@@ -114,42 +115,48 @@ static UILabel *headerLabel(UIFont *font, NSInteger lines) {
     _desc.text = _channel.summary ?: @"";
     _desc.numberOfLines = _descExpanded ? 0 : 3;
     [self styleSubscribe];
-    if (_channel.avatarURL.length) {
-        CGSize size = CGSizeMake(kAvatar, kAvatar);
-        [[TMImageLoader shared] setImageURL:[NSURL URLWithString:_channel.avatarURL]
-                                onImageView:_avatar
-                                placeholder:[TMImageLoader placeholderOfSize:size]
-                                       size:size];
-    } else {
-        _avatar.image = [TMImageLoader placeholderOfSize:CGSizeMake(kAvatar, kAvatar)];
-    }
+    CGFloat a = [self avatarSize];
+    NSString *url = _channel.avatarURL.length ? _channel.avatarURL : [[TMLibrary shared] avatarForChannel:_channel.channelID];
+    [[TMImageLoader shared] setImageURL:url.length ? [NSURL URLWithString:url] : nil
+                            onImageView:_avatar
+                            placeholder:TMLetterAvatar(_channel.name ?: @"", a)
+                                   size:CGSizeMake(a, a)
+                                 radius:a / 2];
     [self layoutHeaderForce:YES];
+}
+
+- (CGFloat)avatarSize {
+    return TMIsPhone() ? 72 : 88;
 }
 
 - (void)layoutHeaderForce:(BOOL)force {
     CGFloat W = self.tableView.bounds.size.width;
     if (!force && W == _laidOutWidth) return;
     _laidOutWidth = W;
-    CGFloat pad = 15, inner = W - 2 * pad;
-    _avatar.frame = CGRectMake(pad, 14, kAvatar, kAvatar);
-    CGFloat x = pad + kAvatar + 16, w = W - x - pad;
-    CGSize ns = [_name.text sizeWithFont:_name.font constrainedToSize:CGSizeMake(w, 60) lineBreakMode:NSLineBreakByWordWrapping];
-    _name.frame = CGRectMake(x, 16, w, ns.height);
-    CGFloat y = CGRectGetMaxY(_name.frame) + 2;
-    _meta.frame = CGRectMake(x, y, w, _meta.text.length ? 20 : 0);
-    y = CGRectGetMaxY(_meta.frame) + 8;
-    _subscribe.frame = CGRectMake(x, y, MIN(190, w), 38);
-    y = MAX(CGRectGetMaxY(_avatar.frame), CGRectGetMaxY(_subscribe.frame)) + 12;
+    CGFloat m = TMListMargin(), inner = W - 2 * m, a = [self avatarSize];
+    _avatar.frame = CGRectMake(m, 12, a, a);
+    CGFloat x = m + a + 16, w = W - x - m;
+    CGSize ns = [_name.text sizeWithFont:_name.font constrainedToSize:CGSizeMake(w, 64) lineBreakMode:TMLineBreakWord];
+    CGSize ms = [_meta.text sizeWithFont:_meta.font constrainedToSize:CGSizeMake(w, 40) lineBreakMode:TMLineBreakWord];
+    CGFloat block = ceil(ns.height) + (ms.height > 0 ? 4 + ceil(ms.height) : 0);
+    CGFloat y = 12 + MAX(0, floor((a - block) / 2));
+    _name.frame = CGRectMake(x, y, w, ceil(ns.height));
+    _meta.frame = CGRectMake(x, CGRectGetMaxY(_name.frame) + 4, w, ceil(ms.height));
+    y = MAX(CGRectGetMaxY(_avatar.frame), CGRectGetMaxY(_meta.frame)) + 16;
+    _subscribe.frame = CGRectMake(m, y, MIN(inner, 420), 38);
+    y += 38 + 14;
     if (_desc.text.length) {
-        CGFloat maxH = _descExpanded ? 2000 : 3 * _desc.font.lineHeight + 2;
-        CGSize ds = [_desc.text sizeWithFont:_desc.font constrainedToSize:CGSizeMake(inner, maxH) lineBreakMode:NSLineBreakByWordWrapping];
-        _desc.frame = CGRectMake(pad, y, inner, ds.height);
-        y += ds.height + 12;
+        CGFloat maxH = _descExpanded ? 3000 : 3 * _desc.font.lineHeight + 2;
+        CGSize ds = [_desc.text sizeWithFont:_desc.font constrainedToSize:CGSizeMake(inner - 24, maxH) lineBreakMode:TMLineBreakWord];
+        _descBack.hidden = NO;
+        _descBack.frame = CGRectMake(m, y, inner, ceil(ds.height) + 22);
+        _desc.frame = CGRectMake(12, 11, inner - 24, ceil(ds.height));
+        y += _descBack.frame.size.height + 14;
     } else {
-        _desc.frame = CGRectZero;
+        _descBack.hidden = YES;
     }
-    _segment.frame = CGRectMake(pad, y, inner, 32);
-    y += 32 + 10;
+    _segment.frame = CGRectMake(m, y, MIN(inner, 420), 34);
+    y += 34 + 10;
     _header.frame = CGRectMake(0, 0, W, y);
     self.tableView.tableHeaderView = _header;
 }
@@ -170,7 +177,7 @@ static UILabel *headerLabel(UIFont *font, NSInteger lines) {
                            if (!full) return;
                            if (!full.name.length) full.name = self->_channel.name;
                            self->_channel = full;
-                           self.title = full.name;
+                           [[TMLibrary shared] rememberChannel:full];
                            [self fillHeader];
                        }];
 }
@@ -193,11 +200,7 @@ static UILabel *headerLabel(UIFont *font, NSInteger lines) {
                                self->_busy = NO;
                                [self styleSubscribe];
                                if (error) {
-                                   [[[UIAlertView alloc] initWithTitle:subscribe ? @"Không theo dõi được" : @"Không bỏ theo dõi được"
-                                                               message:error
-                                                              delegate:nil
-                                                     cancelButtonTitle:@"Đóng"
-                                                     otherButtonTitles:nil] show];
+                                   [TMAlert showTitle:subscribe ? @"Không theo dõi được" : @"Không bỏ theo dõi được" message:error button:@"Đóng"];
                                }
                            }];
 }

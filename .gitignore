@@ -13,6 +13,7 @@
 
 # Reference IPAs (Google binaries, not ours to distribute)
 /ipa tham khao/
+/Tham_Khao/
 
 # Theos build output
 .theos/

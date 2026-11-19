@@ -1,7 +1,7 @@
 #import "TMDebug.h"
 #import "TMAppDelegate.h"
 #import "TMAPIClient.h"
-#import "TMGridViewController.h"
+#import "TMAlert.h"
 #import "TMHomeViewController.h"
 #import "TMTheme.h"
 #import "TMListViewController.h"
@@ -32,6 +32,8 @@ static AVPlayer *gAVPlayer;
 
 + (void)start {
     TMLog(@"[debug] lệnh qua %@", [self cmdPath]);
+    // stderr (NSLog, NSZombie messages) into Documents/TubeMini-stderr.log: iOS 5/6 keep no readable system log
+    freopen([[TMDocumentsDir() stringByAppendingPathComponent:@"TubeMini-stderr.log"] fileSystemRepresentation], "a", stderr);
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     for (NSString *name in @[ MPMoviePlayerLoadStateDidChangeNotification, MPMoviePlayerPlaybackStateDidChangeNotification,
                               MPMovieNaturalSizeAvailableNotification, MPMovieDurationAvailableNotification ]) {
@@ -140,7 +142,6 @@ static AVPlayer *gAVPlayer;
     } else if ([verb isEqualToString:@"open"]) {
         UIViewController *top = [self topScreen];
         if ([top isKindOfClass:[TMListViewController class]]) [(TMListViewController *)top selectRow:[arg integerValue]];
-        if ([top isKindOfClass:[TMGridViewController class]]) [(TMGridViewController *)top selectItem:[arg integerValue]];
     } else if ([verb isEqualToString:@"theme"]) {
         [TMTheme setDark:[arg isEqualToString:@"dark"]];
     } else if ([verb isEqualToString:@"homemode"]) {
@@ -242,7 +243,6 @@ static AVPlayer *gAVPlayer;
         UIViewController *top = [self topScreen];
         UIScrollView *sv = nil;
         if ([top isKindOfClass:[UITableViewController class]]) sv = ((UITableViewController *)top).tableView;
-        if ([top isKindOfClass:[UICollectionViewController class]]) sv = ((UICollectionViewController *)top).collectionView;
         [sv setContentOffset:CGPointMake(0, MAX(0, sv.contentSize.height - sv.bounds.size.height)) animated:NO];
     } else if ([verb isEqualToString:@"back"]) {
         [[self nav] popViewControllerAnimated:NO];
@@ -251,6 +251,14 @@ static AVPlayer *gAVPlayer;
         app.tabs.selectedIndex = app.tabs.viewControllers.count - 1;
         UIViewController *root = [app nav].topViewController; // iPhone: Cài đặt sits under "Thêm"
         if ([root isKindOfClass:[TMSettingsViewController class]]) [(TMSettingsViewController *)root testConnection];
+    } else if ([verb isEqualToString:@"testsheet"]) {
+        // testsheet [n]: a choices sheet with n rows (UI tests)
+        NSMutableArray *rows = [NSMutableArray array];
+        for (NSInteger i = 0; i < MAX(1, [arg integerValue] ?: 3); i++) [rows addObject:[NSString stringWithFormat:@"Lựa chọn %ld", (long)i + 1]];
+        [TMAlert sheetWithTitle:arg.length > 2 ? arg : @"Bảng chọn thử" buttons:rows destructiveIndex:-1 handler:^(NSInteger i) { TMLog(@"[debug] sheet -> %ld", (long)i); }];
+    } else if ([verb isEqualToString:@"testalert"]) {
+        [TMAlert showTitle:@"Hộp thoại thử" message:@"Nội dung thử." buttons:@[ @"Huỷ", @"Đồng ý" ] cancelIndex:0 destructiveIndex:-1
+                   handler:^(NSInteger i) { TMLog(@"[debug] alert -> %ld", (long)i); }];
     } else if ([verb isEqualToString:@"dismissalert"]) {
         [self dismissAlerts];
     } else if ([verb isEqualToString:@"ui"]) {
@@ -297,6 +305,7 @@ static AVPlayer *gAVPlayer;
 }
 
 + (void)dismissAlerts {
+    [TMAlert dismissAll];
     for (UIWindow *w in [UIApplication sharedApplication].windows) {
         for (UIView *v in w.subviews) {
             [self dismissAlertsIn:v];
@@ -337,8 +346,12 @@ static AVPlayer *gAVPlayer;
                                                               NSStringFromClass([top class]), top.title];
     NSArray *items = nil;
     if ([top isKindOfClass:[TMListViewController class]]) items = ((TMListViewController *)top).items;
-    if ([top isKindOfClass:[TMGridViewController class]]) items = ((TMGridViewController *)top).items;
-    [line appendFormat:@" dark=%d", [TMTheme isDark]];
+    [line appendFormat:@" dark=%d current.dark=%d bg=%@", [TMTheme isDark], [TMTheme current].dark, [TMTheme current].background];
+    if ([top isKindOfClass:[UITableViewController class]]) {
+        UITableView *tv = ((UITableViewController *)top).tableView;
+        UITableViewCell *cell = tv.visibleCells.count ? tv.visibleCells[0] : nil;
+        [line appendFormat:@" table.bg=%@ cell.bg=%@ cell=%@", tv.backgroundColor, cell.backgroundColor, NSStringFromClass([cell class])];
+    }
     if (items) {
         [line appendFormat:@" rows=%lu", (unsigned long)items.count];
         if (items.count) {
@@ -349,12 +362,16 @@ static AVPlayer *gAVPlayer;
         }
     }
     if (top.presentedViewController) [line appendFormat:@" presented=%@", NSStringFromClass([top.presentedViewController class])];
+    UIView *rv = app.tabs.view;
+    [line appendFormat:@" root.frame=%@ root.bounds=%@ root.transform=%@ sbOrient=%d vcOrient=%d window=%@",
+                       NSStringFromCGRect(rv.frame), NSStringFromCGRect(rv.bounds), NSStringFromCGAffineTransform(rv.transform),
+                       (int)[UIApplication sharedApplication].statusBarOrientation, (int)app.tabs.interfaceOrientation,
+                       NSStringFromCGRect(app.window.bounds)];
     UIViewController *sel = app.tabs.selectedViewController;
-    UINavigationController *more = app.tabs.moreNavigationController;
-    [line appendFormat:@" sel=%@(%lu, onscreen=%d) more.top=%@ more.count=%lu", NSStringFromClass([sel class]),
+    [line appendFormat:@" sel=%@(%lu, onscreen=%d)", NSStringFromClass([sel class]),
                        (unsigned long)([sel isKindOfClass:[UINavigationController class]] ? ((UINavigationController *)sel).viewControllers.count : 0),
-                       sel.isViewLoaded && sel.view.window != nil, NSStringFromClass([more.topViewController class]),
-                       (unsigned long)more.viewControllers.count];
+                       sel.isViewLoaded && sel.view.window != nil];
+    if ([top isKindOfClass:[TMListViewController class]]) [line appendFormat:@" cards=%d", ((TMListViewController *)top).cards];
     TMLog(@"%@", line);
 }
 
@@ -507,28 +524,48 @@ static AVPlayer *gAVPlayer;
 }
 
 /// UIGetScreenImage (private, captures video layers too); falls back to rendering the key window
-+ (void)shot:(NSString *)name {
++ (void)shot:(NSString *)arg {
+    // "shot <name> [screen|draw|grab|render]": by default the first method that works on this iOS
+    NSArray *parts = [arg componentsSeparatedByString:@" "];
+    NSString *name = parts[0], *only = parts.count > 1 ? parts[1] : nil;
     NSString *dir = [TMDocumentsDir() stringByAppendingPathComponent:@"TubeMini-shots"];
     [[NSFileManager defaultManager] createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:NULL];
     NSString *path = [dir stringByAppendingPathComponent:[name stringByAppendingPathExtension:@"png"]];
     UIImage *img = nil;
+    NSString *used = nil;
+    UIWindow *key = [UIApplication sharedApplication].keyWindow;
+    // iOS 7+: the whole screen as the user sees it (UIGetScreenImage gives a blank picture on iOS 8)
+    UIImage *(*screen)(void) = (UIImage * (*)(void)) dlsym(RTLD_DEFAULT, "_UICreateScreenUIImage");
+    if (!img && screen && (!only || [only isEqualToString:@"screen"])) {
+        img = screen();
+        used = @"screen";
+    }
+    SEL draw = NSSelectorFromString(@"drawViewHierarchyInRect:afterScreenUpdates:");
+    if (!img && [key respondsToSelector:draw] && (!only || [only isEqualToString:@"draw"])) {
+        UIGraphicsBeginImageContextWithOptions(key.bounds.size, YES, 0);
+        ((BOOL (*)(id, SEL, CGRect, BOOL))objc_msgSend)(key, draw, key.bounds, YES);
+        img = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        used = @"draw";
+    }
     CGImageRef (*grab)(void) = (CGImageRef(*)(void))dlsym(RTLD_DEFAULT, "UIGetScreenImage");
-    if (grab) {
+    if (!img && grab && (!only || [only isEqualToString:@"grab"])) {
         CGImageRef cg = grab();
         if (cg) {
             img = [UIImage imageWithCGImage:cg];
             CGImageRelease(cg);
+            used = @"grab";
         }
     }
     if (!img) {
-        UIWindow *w = [UIApplication sharedApplication].keyWindow;
-        UIGraphicsBeginImageContextWithOptions(w.bounds.size, YES, 0);
-        [w.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIGraphicsBeginImageContextWithOptions(key.bounds.size, YES, 0);
+        [key.layer renderInContext:UIGraphicsGetCurrentContext()];
         img = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
+        used = @"render";
     }
     [UIImagePNGRepresentation(img) writeToFile:path atomically:YES];
-    TMLog(@"[shot] %@ (%.0fx%.0f)", path, img.size.width * img.scale, img.size.height * img.scale);
+    TMLog(@"[shot] %@ (%.0fx%.0f, %@)", path, img.size.width * img.scale, img.size.height * img.scale, used);
 }
 
 @end

@@ -1,6 +1,6 @@
 #import "TMTheme.h"
-#import <QuartzCore/QuartzCore.h>
-#import <objc/runtime.h>
+#import "TMCompat.h"
+#import <objc/message.h>
 
 NSString *const TMThemeDidChangeNotification = @"TMThemeDidChangeNotification";
 static NSString *const kDarkKey = @"TMDarkMode";
@@ -11,57 +11,6 @@ static UIColor *rgb(int r, int g, int b) {
 
 @interface TMTheme ()
 @property (nonatomic, readwrite) BOOL dark;
-@end
-
-/// The image's shape filled with one colour (its alpha is the mask).
-static UIImage *tinted(UIImage *image, UIColor *color) {
-    if (!image) return nil;
-    CGRect r = CGRectMake(0, 0, image.size.width, image.size.height);
-    UIGraphicsBeginImageContextWithOptions(r.size, NO, image.scale);
-    CGContextRef c = UIGraphicsGetCurrentContext();
-    CGContextTranslateCTM(c, 0, r.size.height);
-    CGContextScaleCTM(c, 1, -1);
-    CGContextClipToMask(c, r, image.CGImage);
-    [color setFill];
-    CGContextFillRect(c, r);
-    UIImage *out = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return out;
-}
-
-/// The iPhone "Thêm" (More) list is UIKit's own white table. This stands in front of its data source and
-/// recolours each cell for the theme; everything else goes to UIKit's data source.
-@interface TMMoreListStyler : NSObject <UITableViewDataSource>
-@property (nonatomic, weak) id<UITableViewDataSource> original;
-@end
-
-@implementation TMMoreListStyler
-
-- (BOOL)respondsToSelector:(SEL)sel {
-    return [super respondsToSelector:sel] || [self.original respondsToSelector:sel];
-}
-
-- (id)forwardingTargetForSelector:(SEL)sel {
-    return self.original;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.original tableView:tableView numberOfRowsInSection:section];
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [self.original tableView:tableView cellForRowAtIndexPath:indexPath];
-    TMTheme *t = [TMTheme current];
-    cell.backgroundColor = t.cellBackground;
-    cell.textLabel.backgroundColor = [UIColor clearColor];
-    cell.textLabel.textColor = t.text;
-    UIView *sel = [[UIView alloc] init];
-    sel.backgroundColor = t.selection;
-    cell.selectedBackgroundView = sel;
-    if (t.dark) cell.imageView.image = tinted(cell.imageView.image, t.secondaryText); // UIKit draws the icons dark grey
-    return cell;
-}
-
 @end
 
 @implementation TMTheme
@@ -96,94 +45,70 @@ static UIImage *tinted(UIImage *image, UIColor *color) {
 
 #pragma mark - Palette
 
-- (UIColor *)background { return self.dark ? rgb(18, 18, 18) : [UIColor whiteColor]; }
-- (UIColor *)cellBackground { return self.dark ? rgb(24, 24, 24) : [UIColor whiteColor]; }
-- (UIColor *)selection { return self.dark ? rgb(52, 52, 56) : rgb(217, 226, 240); }
-- (UIColor *)text { return self.dark ? rgb(236, 236, 236) : [UIColor blackColor]; }
-- (UIColor *)secondaryText { return self.dark ? rgb(158, 158, 158) : rgb(85, 85, 85); }
-- (UIColor *)separator { return self.dark ? rgb(48, 48, 48) : rgb(214, 214, 214); }
-- (UIColor *)placeholder { return self.dark ? rgb(44, 44, 44) : rgb(224, 224, 224); }
-- (UIColor *)barTint { return self.dark ? rgb(32, 32, 32) : rgb(158, 20, 20); }
-- (UIColor *)tabBarTint { return self.dark ? rgb(14, 14, 14) : rgb(30, 30, 30); }
-- (UIColor *)accent { return self.dark ? rgb(255, 92, 92) : rgb(51, 84, 140); }
-- (UIColor *)buttonBackground { return self.dark ? rgb(38, 38, 38) : rgb(246, 246, 246); }
-- (UIColor *)buttonBorder { return self.dark ? rgb(70, 70, 70) : rgb(190, 190, 190); }
+- (UIColor *)background { return self.dark ? rgb(15, 15, 15) : [UIColor whiteColor]; }
+- (UIColor *)groupedBackground { return self.dark ? rgb(15, 15, 15) : rgb(242, 242, 247); }
+- (UIColor *)cellBackground { return self.dark ? rgb(33, 33, 35) : [UIColor whiteColor]; }
+- (UIColor *)elevated { return self.dark ? rgb(39, 39, 39) : rgb(242, 242, 242); }
+- (UIColor *)elevatedPressed { return self.dark ? rgb(63, 63, 63) : rgb(222, 222, 222); }
+- (UIColor *)selection { return self.dark ? rgb(39, 39, 39) : rgb(240, 240, 240); }
+- (UIColor *)text { return self.dark ? rgb(241, 241, 241) : rgb(15, 15, 15); }
+- (UIColor *)secondaryText { return self.dark ? rgb(170, 170, 170) : rgb(96, 96, 96); }
+- (UIColor *)tertiaryText { return self.dark ? rgb(113, 113, 113) : rgb(144, 144, 144); }
+- (UIColor *)separator { return self.dark ? rgb(48, 48, 48) : rgb(229, 229, 229); }
+- (UIColor *)placeholder { return self.dark ? rgb(39, 39, 39) : rgb(229, 229, 229); }
+- (UIColor *)accent { return self.dark ? rgb(10, 145, 255) : rgb(0, 122, 255); }
+- (UIColor *)brand { return self.dark ? rgb(255, 64, 72) : rgb(255, 0, 51); }
+- (UIColor *)inverse { return self.dark ? rgb(241, 241, 241) : rgb(15, 15, 15); }
+- (UIColor *)inverseText { return self.dark ? rgb(15, 15, 15) : [UIColor whiteColor]; }
+- (UIColor *)switchOn { return rgb(52, 199, 89); }
+- (UIColor *)destructive { return self.dark ? rgb(255, 69, 58) : rgb(255, 56, 60); }
 - (UIKeyboardAppearance)keyboard { return self.dark ? UIKeyboardAppearanceAlert : UIKeyboardAppearanceDefault; }
+- (UIActivityIndicatorViewStyle)spinnerStyle { return self.dark ? UIActivityIndicatorViewStyleWhite : UIActivityIndicatorViewStyleGray; }
 
 #pragma mark - Helpers
 
-- (void)styleButton:(UIButton *)b {
-    b.backgroundColor = self.buttonBackground;
-    b.layer.cornerRadius = 8;
-    b.layer.borderWidth = 1;
-    b.layer.borderColor = self.buttonBorder.CGColor;
-    [b setTitleColor:self.accent forState:UIControlStateNormal];
-    [b setTitleColor:self.secondaryText forState:UIControlStateHighlighted];
-}
-
-- (void)styleSubscribeButton:(UIButton *)b subscribed:(BOOL)subscribed busy:(BOOL)busy {
-    [self styleButton:b];
-    if (!subscribed) {
-        b.backgroundColor = rgb(204, 24, 30);
-        b.layer.borderColor = rgb(170, 16, 22).CGColor;
-        [b setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [b setTitleColor:[UIColor colorWithWhite:1 alpha:0.6] forState:UIControlStateHighlighted];
-    } else {
-        [b setTitleColor:self.secondaryText forState:UIControlStateNormal];
-    }
-    NSString *title = busy ? @"…" : (subscribed ? @"✓ Đã theo dõi" : @"+ Theo dõi");
-    [b setTitle:title forState:UIControlStateNormal];
++ (UIImage *)imageWithColor:(UIColor *)color {
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(1, 1), NO, 0);
+    [color setFill];
+    UIRectFill(CGRectMake(0, 0, 1, 1));
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return TMStretchable(img, UIEdgeInsetsZero);
 }
 
 - (void)styleTableView:(UITableView *)tv {
-    tv.backgroundView = nil; // grouped tables on iOS 6 iPad draw their own background otherwise
+    tv.backgroundView = nil; // grouped tables on iOS 5/6 draw their own background otherwise
     tv.backgroundColor = self.background;
-    tv.separatorColor = self.separator;
+    tv.separatorStyle = UITableViewCellSeparatorStyleNone;
+}
+
+/// Flat bar in the page colour, no hairline, medium title: the iOS 26 top edge. Bar buttons are glass
+/// views of their own (TMGlassButton), so the bar's tint only matters for UIKit's own buttons.
++ (void)styleNavigationBar:(UINavigationBar *)bar {
+    [self styleNavigationBar:bar color:[self current].background];
+}
+
++ (void)styleNavigationBar:(UINavigationBar *)bar color:(UIColor *)color {
+    TMTheme *t = [self current];
+    UIImage *bg = [self imageWithColor:color];
+    [bar setBackgroundImage:bg forBarMetrics:UIBarMetricsDefault];
+    [bar setBackgroundImage:bg forBarMetrics:UIBarMetricsLandscapePhone];
+    SEL shadow = NSSelectorFromString(@"setShadowImage:"); // iOS 6+
+    if ([bar respondsToSelector:shadow]) ((void (*)(id, SEL, id))objc_msgSend)(bar, shadow, [[UIImage alloc] init]);
+    bar.tintColor = TMIsIOS7() ? t.text : (t.dark ? rgb(40, 40, 40) : [UIColor whiteColor]); // iOS 6 iPhone tints the status bar with it
+    bar.titleTextAttributes = @{
+        UITextAttributeFont : TMFontMedium(17),
+        UITextAttributeTextColor : t.text,
+        UITextAttributeTextShadowColor : [UIColor clearColor],
+        UITextAttributeTextShadowOffset : [NSValue valueWithUIOffset:UIOffsetZero],
+    };
 }
 
 + (void)applyGlobalAppearance {
     TMTheme *t = [self current];
-    [[UINavigationBar appearance] setTintColor:t.barTint];
-    [[UITabBar appearance] setTintColor:t.tabBarTint];
-    [[UISearchBar appearance] setTintColor:t.dark ? rgb(40, 40, 40) : rgb(190, 60, 60)];
-    [[UISegmentedControl appearance] setTintColor:t.dark ? rgb(70, 70, 70) : rgb(158, 20, 20)];
-    [[UIRefreshControl appearance] setTintColor:t.secondaryText];
-    // Appearance proxies only affect new views: recolour the bars already on screen
-    for (UIWindow *w in [UIApplication sharedApplication].windows) {
-        [self recolourBarsIn:w.rootViewController theme:t];
-    }
-}
-
-+ (void)recolourBarsIn:(UIViewController *)vc theme:(TMTheme *)t {
-    if (!vc) return;
-    if ([vc isKindOfClass:[UITabBarController class]]) {
-        UITabBarController *tabs = (UITabBarController *)vc;
-        tabs.tabBar.tintColor = t.tabBarTint;
-        for (UIViewController *child in tabs.viewControllers) [self recolourBarsIn:child theme:t];
-        [self styleMoreListOf:tabs theme:t];
-    } else if ([vc isKindOfClass:[UINavigationController class]]) {
-        ((UINavigationController *)vc).navigationBar.tintColor = t.barTint;
-    }
-    if (vc.presentedViewController) [self recolourBarsIn:vc.presentedViewController theme:t];
-}
-
-/// iPhone only (5 tabs fit; the iPad shows all 6): the "Thêm" bar and list in theme colours.
-+ (void)styleMoreListOf:(UITabBarController *)tabs theme:(TMTheme *)t {
-    if ([UIDevice currentDevice].userInterfaceIdiom != UIUserInterfaceIdiomPhone) return;
-    UINavigationController *more = tabs.moreNavigationController;
-    more.navigationBar.tintColor = t.barTint;
-    UIViewController *list = more.viewControllers.count ? more.viewControllers[0] : nil;
-    UITableView *tv = [list.view isKindOfClass:[UITableView class]] ? (UITableView *)list.view : nil;
-    if (!tv) return;
-    static char kStyler;
-    if (!objc_getAssociatedObject(tv, &kStyler)) {
-        TMMoreListStyler *styler = [[TMMoreListStyler alloc] init];
-        styler.original = tv.dataSource;
-        objc_setAssociatedObject(tv, &kStyler, styler, OBJC_ASSOCIATION_RETAIN_NONATOMIC); // dataSource is not retained
-        tv.dataSource = styler;
-    }
-    [t styleTableView:tv];
-    [tv reloadData];
+    [[UISwitch appearance] setOnTintColor:t.switchOn];
+    [[UISegmentedControl appearance] setTintColor:t.dark ? rgb(70, 70, 70) : rgb(120, 120, 128)];
+    // Navigation bars: TMNavigationController styles its own (styleNavigationBar:), again on theme changes
 }
 
 @end

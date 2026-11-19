@@ -7,7 +7,7 @@
 
 /// "Lịch sử" tab: watched videos, most recent first, with how far each was watched. Tap opens the
 /// video page (its Play button resumes), swipe left removes one, "Xoá hết" clears the history.
-@interface TMHistoryViewController : TMListViewController <UIAlertViewDelegate>
+@interface TMHistoryViewController : TMListViewController
 /// Same as confirming "Xoá hết" (debug commands).
 - (void)clearAll;
 @end

@@ -1,5 +1,9 @@
 #import "TMDownloadsViewController.h"
+#import "TMAlert.h"
 #import "TMAudioBar.h"
+#import "TMCompat.h"
+#import "TMIcons.h"
+#import "TMNavigationController.h"
 #import "TMAudioPlayer.h"
 #import "TMCells.h"
 #import "TMDownloads.h"
@@ -11,8 +15,9 @@ static NSString *const kCell = @"download";
 
 @implementation TMDownloadsViewController {
     NSArray *_items;
-    UILabel *_empty, *_usage;
-    TMDownload *_pending; // the row an action sheet is about
+    UIView *_empty;
+    UIImageView *_emptyIcon;
+    UILabel *_emptyLabel, *_usage;
 }
 
 - (instancetype)init {
@@ -24,14 +29,22 @@ static NSString *const kCell = @"download";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.tableView registerClass:[TMVideoCell class] forCellReuseIdentifier:kCell];
-    _empty = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 120)];
+    TMSetLargeTitle(self, @"Đã tải", NO);
+    // Empty state: a big icon over the explanation
+    _empty = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 230)];
     _empty.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    _empty.numberOfLines = 0;
-    _empty.textAlignment = NSTextAlignmentCenter;
     _empty.backgroundColor = [UIColor clearColor];
-    _empty.font = [UIFont systemFontOfSize:15];
-    _empty.text = @"Chưa tải video nào.\nMở một video rồi bấm “⬇ Tải về” để xem cả khi không có mạng.";
+    _emptyIcon = [[UIImageView alloc] initWithFrame:CGRectMake(floor((_empty.bounds.size.width - 64) / 2), 50, 64, 64)];
+    _emptyIcon.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    [_empty addSubview:_emptyIcon];
+    _emptyLabel = [[UILabel alloc] initWithFrame:CGRectMake(30, 126, _empty.bounds.size.width - 60, 80)];
+    _emptyLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    _emptyLabel.numberOfLines = 0;
+    _emptyLabel.textAlignment = TMAlignCenter;
+    _emptyLabel.backgroundColor = [UIColor clearColor];
+    _emptyLabel.font = TMFontRegular(15);
+    _emptyLabel.text = @"Chưa tải video nào.\nMở một video rồi bấm “Tải về” để xem cả khi không có mạng.";
+    [_empty addSubview:_emptyLabel];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(downloadsChanged:)
                                                  name:TMDownloadsDidChangeNotification
@@ -53,18 +66,12 @@ static NSString *const kCell = @"download";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (BOOL)shouldAutorotate {
-    return YES;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskAll;
-}
-
 - (void)applyTheme {
-    [[TMTheme current] styleTableView:self.tableView];
-    _empty.textColor = [TMTheme current].secondaryText;
-    _usage.textColor = [TMTheme current].secondaryText;
+    TMTheme *t = [TMTheme current];
+    [t styleTableView:self.tableView];
+    _emptyLabel.textColor = t.secondaryText;
+    _emptyIcon.image = TMIcon(@"download", 64, t.tertiaryText);
+    _usage.textColor = t.secondaryText;
     [self.tableView reloadData];
 }
 
@@ -78,9 +85,9 @@ static NSString *const kCell = @"download";
     if (!_usage) {
         _usage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 50)];
         _usage.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        _usage.textAlignment = NSTextAlignmentCenter;
+        _usage.textAlignment = TMAlignCenter;
         _usage.backgroundColor = [UIColor clearColor];
-        _usage.font = [UIFont systemFontOfSize:13];
+        _usage.font = TMFontRegular(13);
     }
     _usage.textColor = [TMTheme current].secondaryText;
     [self updateUsage];
@@ -138,7 +145,8 @@ static NSString *const kCell = @"download";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TMVideoCell *cell = [tableView dequeueReusableCellWithIdentifier:kCell forIndexPath:indexPath];
+    TMVideoCell *cell = [tableView dequeueReusableCellWithIdentifier:kCell];
+    if (!cell) cell = [[TMVideoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kCell];
     [self configure:cell with:_items[(NSUInteger)indexPath.row]];
     return cell;
 }
@@ -173,21 +181,15 @@ static NSString *const kCell = @"download";
         [[TMDownloads shared] retry:x.videoID];
         break;
     default: {
-        _pending = x;
-        UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:x.title
-                                                           delegate:self
-                                                  cancelButtonTitle:nil
-                                             destructiveButtonTitle:@"Huỷ tải và xoá"
-                                                  otherButtonTitles:nil];
-        CGRect r = [self.tableView rectForRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
-        [sheet showFromRect:r inView:self.tableView animated:YES];
+        NSString *vid = x.videoID;
+        [TMAlert sheetWithTitle:x.title
+                        buttons:@[ @"Huỷ tải và xoá" ]
+               destructiveIndex:0
+                        handler:^(NSInteger i) {
+                            if (i == 0) [[TMDownloads shared] remove:vid];
+                        }];
     }
     }
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == actionSheet.destructiveButtonIndex && _pending) [[TMDownloads shared] remove:_pending.videoID];
-    _pending = nil;
 }
 
 /// Room for the "Chỉ nghe" bar under the last rows.

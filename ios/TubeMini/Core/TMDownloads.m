@@ -161,7 +161,7 @@ static long long folderSize(NSString *dir) {
         NSFileManager *fm = [NSFileManager defaultManager];
         [fm createDirectoryAtPath:downloadsDir() withIntermediateDirectories:YES attributes:nil error:nil];
         // Big files the user can download again: keep them out of iCloud / iTunes backups
-        [[NSURL fileURLWithPath:downloadsDir()] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
+        [[NSURL fileURLWithPath:downloadsDir()] setResourceValue:@YES forKey:@"NSURLIsExcludedFromBackupKey" error:nil]; // the constant is iOS 5.1+
         [TMLocalServer shared].root = downloadsDir();
         _items = [NSMutableArray array];
         for (NSDictionary *d in [NSArray arrayWithContentsOfFile:[self indexPath]] ?: @[]) {
