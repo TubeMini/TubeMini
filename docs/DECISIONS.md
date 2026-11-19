@@ -614,3 +614,80 @@ Câu hỏi của anh: muốn TubeMini chạy không cần server thì máy phả
 - Đã thử trên iPad (bản debug 0.5.3-1+debug, respring): icon ở dock hiện đúng, góc trong suốt, mép mịn. Icon đặc che kín ô bóng
   tối mà SpringBoard vẽ dưới mọi icon (D27), nên ô bóng đó không lộ ra.
 - Phát hành ở bản **0.5.4** (chức năng không đổi so với 0.5.3). iPad lên 0.5.4 bằng OTA từ trang đã đăng.
+
+
+## D38. Giao diện kiểu iOS 26 (Liquid Glass, bố cục YouTube); app chạy từ iOS 5 đến iOS 8 — 19/11/2026
+
+Anh yêu cầu đổi giao diện sang phong cách iOS 26, tham khảo app YouTube trên iOS 26. Máy demo: iPad mini 1 iOS 8.4.1, iPhone 5
+iOS 6.1.4, iPad 1 iOS 5.1.1.
+
+**Mô phỏng "Liquid Glass" mà không có blur.** iOS 5/6 không có UIVisualEffectView; iPad 1 (A4) và iPad mini 1 (A5) không được làm
+mờ cả trên iOS 8. Nên "kính" được vẽ sẵn một lần thành ảnh co giãn (`UI/TMGlass.m`): nền trong mờ (trắng 90 % / xám tối 92 %), lớp
+bóng ở nửa trên, viền sáng nhạt dần xuống dưới, viền mảnh và bóng đổ mềm. Không tốn GPU lúc cuộn.
+
+**Bố cục mới:**
+- `TMTabBarController` thay UITabBarController: thanh tab là viên thuốc kính nổi gần mép dưới, tab đang chọn có "thấu kính" xám nhạt
+  và icon đặc màu đỏ. Tìm kiếm thành nút tròn kính tách riêng bên phải, như tab tìm kiếm của iOS 26. Chỉ số tab giữ như cũ (lệnh
+  debug `tab 5` vẫn là Cài đặt). iPhone hết mục "Thêm" (D35).
+- Thanh "Chỉ nghe" thành tấm kính nổi ngay trên thanh tab (kiểu "tab bar accessory" của iOS 26).
+- `TMNavigationController`: thanh trên phẳng cùng màu trang, không đường kẻ, mép dưới mờ dần. Nút là hình tròn kính (`TMGlassButton`).
+  Màn đầu mỗi tab có tiêu đề lớn bên trái; Trang chủ có logo + "TubeMini" như YouTube. Cử chỉ vuốt mép để quay lại trên iOS 7+ vẫn
+  chạy.
+- Trang chủ: chip "Đã theo dõi / Phổ biến" (cuộn theo nội dung như YouTube). Video dạng thẻ lớn: ảnh bo góc, avatar kênh, tiêu
+  đề, "kênh · lượt xem · thời gian". 1 cột trên iPhone dọc, 2 cột iPad dọc / iPhone ngang, 3 cột iPad ngang. Nút danh sách / lưới
+  vẫn còn; lưới (thẻ) thành mặc định khi chưa chọn.
+- Avatar kênh: ảnh thật khi app đã thấy kênh (danh sách theo dõi, trang kênh, trang video; `TMLibrary` lưu URL, tối đa 500), nếu
+  chưa thì chữ cái đầu trên nền màu (như YouTube).
+- Trang video: ảnh bo góc + nút Play kính, tiêu đề đậm, hàng kênh với nút "Theo dõi" đen (đã theo dõi: xám), hàng nút viên thuốc
+  (Phát đỏ / Xem tiếp, Chỉ nghe, Tải về, chất lượng), mô tả trong ô xám, segmented iOS 26.
+- Cài đặt: thẻ bo góc nhóm hàng như Cài đặt iOS, ô biểu tượng màu, công tắc và segmented tự vẽ (UISwitch / UISegmentedControl của
+  iOS 5/6 trông rất cũ).
+- Hộp thoại và bảng chọn tự vẽ (`TMAlert`) thay UIAlertView / UIActionSheet: thẻ kính bo lớn, nút viên thuốc; bảng chọn trượt từ
+  dưới lên, nút "Huỷ" tách riêng.
+- Icon vẽ bằng Core Graphics theo lưới 24 pt kiểu SF Symbols (`TMIcons`), có bản đặc cho tab đang chọn. Logo đầu trang
+  (`LogoMark.png`) do `scripts/make-icons.py` tạo từ logo gốc.
+- Kéo để làm mới tự viết (`TMRefreshControl`, UIRefreshControl chỉ có từ iOS 6). UICollectionView (iOS 6) bỏ: lưới là UITableView,
+  mỗi hàng chứa 1–3 thẻ.
+- Ảnh thumbnail / avatar được cắt và bo góc ngay lúc giải mã (`TMImageLoader … radius:`), không dùng `cornerRadius` + mask (mỗi ô
+  sẽ tốn một lần vẽ offscreen, A4 / A5 không kham nổi khi cuộn).
+
+**Chạy từ iOS 5.0.** Deployment target 5.0 (Makefile, Info.plist, `Depends: firmware (>= 5.0)`), vẫn một bản armv7.
+- `-Werror=unguarded-availability` vẫn bật, nên mọi API iOS 6+ là lỗi build. Những API mới cần dùng thì gọi qua kiểm tra lúc chạy
+  (`Core/TMCompat`): font, co chữ, kiểu thanh trạng thái, tắt tự chỉnh inset trên iOS 7+.
+- Cú pháp `mảng[i]` / `dict[key]` cần 4 hàm SDK ghi "iOS 6+". Trên iOS 5, toolchain của Apple gắn libarclite để bù; toolchain
+  Linux không có libarclite. `TMCompat.m` tự thêm 4 hàm đó lúc chạy khi thiếu, và `scripts/setup-theos.sh` (vá 4) ghi mốc iOS 5.0
+  cho 4 hàm trong SDK. Sau khi vá header phải xoá bộ nhớ đệm module của clang (`~/.cache/clang/ModuleCache`), không thì báo lỗi
+  "reference to 'NSDate' is ambiguous".
+- Hằng `NSTextAlignment…` / `NSLineBreakBy…` bị SDK ghi iOS 6+ dù giá trị có từ iPhone OS 2: dùng `TMAlignCenter`,
+  `TMLineBreakTail`… `AVAudioSessionInterruptionNotification` (iOS 6) gọi bằng chuỗi; iOS 5 không gửi thông báo này.
+- iOS 5 chỉ xoay view gốc khi view có autoresizing co giãn: `TMTabBarController` tự tạo view gốc (`loadView`).
+- `cbsymcheck` trên iPad 1: đủ 266/266 ký hiệu app cần.
+
+**Lỗi đã gặp và cách sửa:**
+- iOS 6 crash (EXC_BAD_ACCESS trong lúc dọn autorelease pool) sau khi đóng bảng chọn tải về rồi đổi giao diện. Bật NSZombie qua
+  `launchctl setenv NSZombieEnabled YES` và ghi stderr ra file (bản debug: `Documents/TubeMini-stderr.log`) thì thấy
+  `-[_UIImageViewPretiledImageCacheKey hash]: message sent to deallocated instance`. `resizableImageWithCapInsets:` mặc định
+  lát (tile) phần giữa. UIImageView trên iOS 6 giữ bộ đệm bản đã lát, và có lúc giải phóng khoá quá sớm. Sửa: mọi ảnh co giãn dùng
+  chế độ kéo giãn (`TMStretchable`: `resizingMode` Stretch trên iOS 6+, `stretchableImage…` trên iOS 5). Sau đó chạy lại kịch bản
+  gây lỗi và một vòng thử qua mọi tab: không còn zombie.
+- iOS 8: nút back hệ thống (chữ "Trang chủ") lộ sau nút tròn. Nút tròn phải gắn trước khi push, và `backBarButtonItem` để trống.
+- iPad mini iOS 8 có tweak **Eclipse 2** (chế độ tối toàn hệ thống). Tweak này đổi màu nền và chữ của mọi app, nên đè lên giao
+  diện TubeMini. TubeMini có giao diện tối riêng, nên trên máy demo TubeMini được loại khỏi Eclipse (`BlackListed-vn.tubemini.io`
+  trong `com.gmoran.eclipse.plist`; Eclipse đang ở chế độ đảo).
+
+**Công cụ thử:**
+- `tmshot` build lại với mốc iOS 5.0: bản cũ dùng LC_MAIN nên không chạy trên iOS 5. Trên iOS 8, tmshot chỉ ra ảnh đen; trên iOS 5
+  ảnh có thể lệch hướng. Hai máy này chụp bằng lệnh debug `shot <tên> draw|grab` trong app (iOS 8: `drawViewHierarchyInRect`,
+  iOS 5: `UIGetScreenImage`).
+- Lệnh debug mới: `testsheet [n]`, `testalert`; `ui` ghi thêm khung view gốc và hướng xoay.
+- iPad 1 iOS 5 khoá màn hình thì không mở khoá từ xa được (không có SBSUndimScreen). Cách làm: nạp một dylib nhỏ vào SpringBoard bằng
+  `cynject`; dylib gọi `-[SBAwayController unlockWithSound:]` (chỉ dùng khi không đặt mật mã).
+
+**Kết quả trên máy:** chụp và soát Trang chủ (thẻ / danh sách), trang video, kênh, Tìm kiếm, Theo dõi, Lịch sử, Đã tải, Cài đặt,
+hộp thoại, bảng chọn và thanh "Chỉ nghe", ở giao diện sáng và tối, màn dọc và ngang. Máy thử: iPhone 5 iOS 6.1.4, iPad mini 1
+iOS 8.4.1 và iPad 1 iOS 5.1.1.
+
+**Phát hành:** bản **0.6.0** (20/11/2026; server chỉ đổi số phiên bản). Trang web và trang Cydia ghi "iOS 5 – 8", ảnh chụp mới
+(iPad mini 1, màn dọc). Bản release cài qua SSH trên iPhone 5 trước khi đăng; sau khi đăng, iPad 1 iOS 5 và iPad mini 1 iOS 8 lên
+0.6.0 bằng OTA thật từ bản debug (tải qua HTTPS, kiểm SHA-256, `dpkg exit 0`, respring, app chạy). iOS 5 tải được `update.json`
+từ GitHub Pages. Sau khi respring, iPad 1 về màn hình khoá.

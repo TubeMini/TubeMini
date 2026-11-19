@@ -1,18 +1,21 @@
 # Tiến độ
 
-## Tình trạng hiện tại (cập nhật 19/11/2026)
+## Tình trạng hiện tại (cập nhật 20/11/2026)
 
 Đã xong cả 6 giai đoạn (0–5) của tài liệu dự án, cùng các phần anh yêu cầu thêm. Chi tiết từng giai đoạn ở các mục bên dưới;
-lý do kỹ thuật ở `DECISIONS.md` (D1–D37).
+lý do kỹ thuật ở `DECISIONS.md` (D1–D38).
 
-**Phiên bản:** app TubeMini và tubemini-server **0.5.4** (code server không đổi từ 0.5.0, chỉ đổi số phiên bản).
+**Mới nhất: bản 0.6.0 (20/11/2026):** giao diện kiểu iOS 26 / YouTube (thanh tab kính nổi, nút tìm kiếm tròn tách riêng, thẻ
+video lớn, Cài đặt dạng thẻ, hộp thoại tự vẽ) và app chạy từ iOS 5.0 đến iOS 8 (D38). Đã phát hành (GitHub, Cydia, OTA).
+
+**Phiên bản:** app TubeMini và tubemini-server **0.6.0** (code server không đổi từ 0.5.0, chỉ đổi số phiên bản).
 
 **Đã công khai**
 
 | Thứ | Ở đâu |
 | --- | --- |
 | Mã nguồn (server + app + tài liệu), GPL-3.0 | https://github.com/TubeMini/TubeMini |
-| Bản phát hành (`.deb` app + gói server) | v0.5.0 – v0.5.4: https://github.com/TubeMini/TubeMini/releases |
+| Bản phát hành (`.deb` app + gói server) | v0.5.0 – v0.6.0: https://github.com/TubeMini/TubeMini/releases |
 | Trang giới thiệu (Safari iOS 6 đọc được) | https://tubemini.github.io/ (repo `TubeMini/TubeMini.github.io`) |
 | Nguồn Cydia | `https://tubemini.github.io/cydia/` |
 | File cập nhật OTA cho app | https://tubemini.github.io/update.json |
@@ -21,9 +24,11 @@ lý do kỹ thuật ở `DECISIONS.md` (D1–D37).
 
 **Đang chạy**
 
-- iPad mini 1 (iOS 6.1.3): bản release 0.5.4, lên bằng OTA từ bản debug 0.5.3-1+debug. Bản release không có lệnh debug;
-  muốn thử qua SSH thì cài lại bản debug (`scripts/ios-build.sh` không có `FINALPACKAGE=1`).
-- iPhone 5 (iOS 6.1.4): cũng dùng TubeMini, bản 0.5.3 (app sẽ tự báo có bản 0.5.4).
+- iPad mini 1 (iOS 6.1.3): bản release 0.5.4 (app sẽ tự báo có bản 0.6.0). Bản release không có lệnh debug; muốn thử qua SSH
+  thì cài lại bản debug (`scripts/ios-build.sh` không có `FINALPACKAGE=1`).
+- iPhone 5 (iOS 6.1.4): cũng dùng TubeMini, bản 0.5.3 (app sẽ tự báo có bản 0.6.0).
+- Máy demo cho giao diện mới: iPad mini 1 iOS 8.4.1 và iPad 1 iOS 5.1.1 chạy bản release 0.6.0 (lên bằng OTA từ bản debug); iPhone 5
+  iOS 6.1.4 (máy đen) chạy 0.6.0 cài qua SSH.
 - Server chính trong nhà: service systemd trên máy Ubuntu (cài bằng `install.sh`), vẫn là 0.5.0. Chưa cần cập nhật vì code server
   không đổi.
 
@@ -35,6 +40,8 @@ lý do kỹ thuật ở `DECISIONS.md` (D1–D37).
 - Trên iPhone 5 (D35): chụp và soát từng màn (Trang chủ lưới / danh sách, trang video, thanh "Chỉ nghe", Tìm kiếm, kênh,
   Lịch sử, mục "Thêm", Đã tải, Cài đặt) ở màn dọc và ngang, giao diện sáng và tối: app dùng hết màn 4 inch, không còn chữ đè
   hay bị cắt.
+- Bản 0.6.0 (D38): chụp và soát mọi màn trên iPhone 5 iOS 6.1.4, iPad mini 1 iOS 8.4.1, iPad 1 iOS 5.1.1 (sáng / tối, dọc /
+  ngang). OTA trọn vòng 0.5.4-1+debug → 0.6.0 từ trang đã đăng trên iOS 5 và iOS 8 (`dpkg exit 0`, respring, app chạy).
 - Trên iPad: OTA trọn vòng 0.5.3-1+debug → 0.5.4 từ trang đã đăng (tải, kiểm SHA-256, `dpkg exit 0`, respring, app chạy, icon
   mới ở dock).
 
@@ -411,6 +418,9 @@ có trong git.
 - [x] **Bản 0.5.4, icon mới theo logo anh gửi** (D37): `scripts/make-icons.py` tạo mọi icon (app, README, trang web, Cydia)
   từ `art/TubeMini-logo.png`, nền quanh logo thành trong suốt. Đã phát hành (GitHub, Cydia, OTA); iPad lên 0.5.4 bằng OTA,
   icon mới hiện đúng ở dock.
+- [x] **Bản 0.6.0, giao diện kiểu iOS 26 và chạy từ iOS 5** (D38): thanh tab kính nổi với nút Tìm kiếm tròn, thẻ video lớn như
+  app YouTube, trang video / kênh / Cài đặt làm lại, hộp thoại và bảng chọn tự vẽ. Deployment target 5.0. Sửa lỗi thoát app trên
+  iOS 6 (ảnh co giãn kiểu lát). Đã phát hành (GitHub, Cydia, OTA); trang web có ảnh chụp mới.
 - [x] **Lên GitHub** (D31, D32): repo công khai https://github.com/TubeMini/TubeMini (lịch sử đã bỏ thông tin cá nhân),
   bundle id `vn.tubemini.io`, bản phát hành v0.5.0, trang https://tubemini.github.io/ (đọc được trên Safari iOS 6), nguồn
   Cydia `https://tubemini.github.io/cydia/`, cập nhật OTA trong app (tải, kiểm SHA-256, cài, respring). Đã thử OTA trọn vòng
